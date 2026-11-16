@@ -40,6 +40,8 @@
   .below{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;align-items:flex-start;justify-content:space-between}
   .how{font-family:system-ui,sans-serif;font-size:13.5px;color:var(--muted);line-height:1.55;max-width:520px}
   .how b{color:var(--ink)}
+  .how ul{margin:6px 0 0;padding-left:18px}
+  .how li{margin:3px 0}
   /* D-pad */
   .dpad{display:grid;grid-template-columns:56px 56px 56px;grid-template-rows:56px 56px 56px;gap:6px;flex:none;margin-left:auto}
   .dpad button{font-size:20px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -64,7 +66,6 @@
   #startBtn{margin-top:12px;background:#b3541e;color:#fff;border:none;border-radius:999px;padding:12px 30px;font-size:17px;font-weight:700;cursor:pointer;font-family:system-ui,sans-serif}
   #startBtn:active{transform:scale(.98)}
   .legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-family:system-ui,sans-serif;font-size:12.5px;color:#5b4a38;margin-top:10px}
-  footer{font-family:system-ui,sans-serif;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
   #minimap{position:absolute;right:10px;bottom:10px;width:124px;height:92px;background:rgba(15,12,10,.88);border:2px solid rgba(255,255,255,.75);border-radius:10px;display:none;z-index:3;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
   #pauseBtn{display:none}
   /* ---- Mobile portrait mode: automatic, same game ---- */
@@ -125,7 +126,6 @@
   <header class="top">
     <div>
       <h1>Bonefish Grill — <span>Food Runner Trainer</span></h1>
-      <div class="sub">Hear the bell, grab the tray off the pass, and run it to the right table. Floor plan matches the North Wales seating chart — all 62 tables and bar seats, kitchen along the top, the 406–415 booths flush with the walls, patio out the door above the 400s.</div>
     </div>
   </header>
 
@@ -156,8 +156,8 @@
       <div class="card">
         <div style="font-size:38px" aria-hidden="true">🔔</div>
         <h2>Ready for service?</h2>
-        <p>You're the food runner. When the <b>bell rings</b>, a tray appears on the expo pass inside the kitchen with a table number. Go in through the <b>IN door</b> to pick it up, then carry it out to that table.</p>
-        <p>Wrong table? You'll be told whose table it is — no penalty, just keep running. There's <b>no timer and no game over</b> — train as long as you like.</p>
+        <p>Bell rings → tray on the <b>expo pass</b>. In via the <b>IN door</b>, deliver to the table number.</p>
+        <p>Wrong table? No penalty. <b>No timer, no game over.</b></p>
         <button id="startBtn">▶ Start shift</button>
         <div class="legend"><span>⌨️ WASD / arrow keys</span><span>🕹️ Phone: joystick, Hand L/R at top</span><span>🔔 Sound starts with the shift</span></div>
       </div>
@@ -168,7 +168,15 @@
 
   <div class="below">
     <div class="how">
-      <b>How to play:</b> Move with <b>WASD</b> or the <b>arrow keys</b> (or the pad). <b>On a phone in portrait:</b> the view zooms in and follows you — steer with the <b>joystick</b> in the bottom corner (push gently to creep, full tilt for full speed; let go to stop), use the <b>Hand L / R</b> toggle at the top to put the joystick under your other thumb, and the minimap in the opposite corner shows where you are on the whole floor. You start inside the kitchen at the top, and the tray waits on the pass <b>inside the kitchen</b> — step up to it to pick it up, then walk into the correct table to deliver it. Tables are solid — work the aisles, just like the real floor. The pass doors are <b>one-way</b>: out of the kitchen through the <b>OUT door</b> on the left, back in through the <b>IN door</b> on the right, so every pickup means a trip back into the kitchen. A <b>half wall</b> runs between the 300s and the 400s — there's no cutting between those rows; go around the top or the bottom of it. The 800s are outside on the <b>patio</b> — reach them through the door at the top of the patio wall, above table 412. Turn on <b>Hint</b> if you want the target table to pulse while you learn the floor.
+      <b>How to play</b>
+      <ul>
+        <li>Bell → tray at <b>expo</b> (kitchen).</li>
+        <li>Deliver to ticket table.</li>
+        <li>Wrong table: bump shows its number. No penalty.</li>
+        <li>Doors one-way: <b>IN</b> right, <b>OUT</b> left.</li>
+        <li><b>Hint</b> glows target.</li>
+        <li><b>WASD</b> / arrows / D-pad · Phone: <b>joystick</b>, <b>Hand L/R</b>.</li>
+      </ul>
     </div>
     <div class="dpad" aria-label="Movement pad">
       <button class="up" data-dir="up" aria-label="Move up">▲</button>
@@ -179,7 +187,6 @@
     </div>
   </div>
 
-  <footer>Training aid built from the restaurant's seating chart: bar 101–114 along the left wall (111 sits right next to 110 at the same tight spacing, and the angled section starts at 111 and runs in one straight diagonal down to the left, with the room's bottom-left wall slanting out alongside it), 200s are high tops, and the 400s are booths — 413–415 flush with the top wall, 408–412 flush with the right wall, 406/407 at the bottom wall — a half wall separates the 300s row from the 400s row, the front door is marked on the bottom wall below the gap between the 200s and 300s columns, and 801–809 are outside on the patio. Every chair matches the chart: the 200s high tops and all the 400s booths have two seats along the top and two along the bottom, 301/302/305 are 2-tops with a seat at each end, 303/304/306 are portrait tables with two seats a side, 413–415 have a seat at each end, 501, 605 and 701 have two seats a side, the other 500s, 600s and 700s are octagons with a seat on each diagonal face, 603/604 are two small horizontal 2-tops pushed together (603 above 604, a seat at each end of each, the pair together about the size of one table) with 605 moved up close beneath them, and on the patio 801–805 are octagons with a seat on each diagonal face, 806 is a 2-top with a seat at each end, and 807–809 are portrait tables with a seat at the top and bottom ends. Kitchen and expo line run horizontally across the rear (top), with a one-way OUT door above the 300s and a one-way IN door just left of 415; the tray is picked up from the pass inside the kitchen.</footer>
 </div>
 
 <script>
@@ -467,7 +474,7 @@ var camGlideUntil=0;
 // Virtual analog joystick (mobile portrait only, replaces drag steering):
 // knob offset gives direction; tilt magnitude (0..1) scales speed from a
 // gentle creep at small tilt up to the boosted top speed at full tilt.
-var SPEED_BOOST=1.53; // top-speed multiplier at full tilt (1.7x scaled down 10%)
+var SPEED_BOOST=1.07; // top-speed multiplier at full tilt (1.53x scaled down a further 30%)
 var JOY_DEADZONE=0.12;
 var joy={active:false,id:null,dx:0,dy:0,mag:0}; // dx/dy: unit direction, mag: 0..1 tilt
 var handMode='right'; // 'right' (default): joystick bottom-right, minimap bottom-left
@@ -812,7 +819,7 @@ function loop(t){
         // Analog speed: gentle creep just past the deadzone, scaling
         // linearly with tilt up to SPEED_BOOST x at full tilt.
         var tilt=(joyMag-JOY_DEADZONE)/(1-JOY_DEADZONE); // 0..1 past deadzone
-        stepLen=sp*(0.27+(SPEED_BOOST-0.27)*tilt); // creep 0.27 = 0.3 scaled down 10%, matching the top speed
+        stepLen=sp*(0.19+(SPEED_BOOST-0.19)*tilt); // creep 0.19 = 0.27 scaled down 30%, matching the top speed
       }
       dx=dx/m*stepLen; dy=dy/m*stepLen;
       if(dy)player.face=Math.sign(dy);
