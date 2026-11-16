@@ -65,9 +65,62 @@
   #startBtn:active{transform:scale(.98)}
   .legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-family:system-ui,sans-serif;font-size:12.5px;color:#5b4a38;margin-top:10px}
   footer{font-family:system-ui,sans-serif;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+  #minimap{position:absolute;right:10px;bottom:10px;width:124px;height:92px;background:rgba(15,12,10,.88);border:2px solid rgba(255,255,255,.75);border-radius:10px;display:none;z-index:3;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+  #pauseBtn{display:none}
+  /* ---- Mobile portrait mode: automatic, same game ---- */
+  /* Slim top bar + full-viewport layout: no page scroll, game fills the rest,
+     minimap stays pinned inside the game view. */
+  body.mobile{padding:6px;height:100vh;height:100dvh;overflow:hidden}
+  body.mobile .wrap{display:flex;flex-direction:column;height:100%;max-height:100%;max-width:100%}
+  body.mobile header.top{display:none}
+  body.mobile footer,body.mobile .how,body.mobile .below{display:none}
+  body.mobile .wrap>div[style]{display:none}
+  /* ONE slim bar: ticket big, other stats as compact inline text, buttons on a slim second row */
+  body.mobile .hud{order:1;flex:0 0 auto;display:grid;grid-template-columns:auto auto auto 1fr;grid-template-rows:auto auto;align-items:center;gap:4px 10px;width:100%;max-width:100%;padding:6px 9px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:visible}
+  body.mobile .stat{background:none;border:none;border-radius:0;min-width:0;width:auto;padding:0;display:flex;align-items:baseline;gap:5px}
+  body.mobile .stat .k{font-size:10px;letter-spacing:.04em;white-space:nowrap}
+  body.mobile .stat .v{font-size:15px;line-height:1.1;white-space:nowrap}
+  body.mobile .stat.ticket{grid-column:1;grid-row:1;gap:7px}
+  body.mobile .stat.ticket .k{font-size:11px}
+  body.mobile .stat.ticket .v{font-size:30px;line-height:1;font-weight:800}
+  body.mobile .stat.ticket.waiting .v{font-size:15px;line-height:1.1}
+  body.mobile .stat:nth-child(2){grid-column:2;grid-row:1}
+  body.mobile .stat:nth-child(3){grid-column:3;grid-row:1}
+  body.mobile .stat:nth-child(4){grid-column:1/2;grid-row:2;align-self:center}
+  body.mobile #carryVal{font-size:12.5px!important;padding-top:0!important;font-weight:700}
+  body.mobile .controls{grid-column:2/5;grid-row:2;display:flex;gap:5px;justify-content:flex-end;width:auto;min-width:0}
+  body.mobile .toggle{min-height:32px;min-width:0;width:auto;padding:3px 6px;font-size:11.5px;white-space:nowrap;text-align:center;border-radius:8px}
+  body.mobile #pauseBtn{display:block}
+  /* Feedback: single line under the bar, wraps to at most 2 lines */
+  body.mobile #msg{order:2;flex:0 0 auto;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;width:100%;max-width:100%;font-size:13px;line-height:1.3;min-height:0;max-height:calc(1.3em * 2 + 12px);padding:6px 10px;margin:5px 0 6px;border-left-width:5px;border-radius:6px;overflow-wrap:break-word}
+  /* Game fills all remaining viewport height */
+  body.mobile .stage{order:3;flex:1 1 auto;min-height:0;display:flex;border-radius:10px}
+  body.mobile canvas#game{flex:1 1 auto;width:100%;height:100%;min-height:0}
+  /* Minimap: overlay pinned inside the game view, bottom-right, always visible */
+  body.mobile #minimap{display:block;position:absolute;right:8px;bottom:8px;width:122px;height:92px;background:rgba(15,12,10,.82);border:2px solid rgba(255,255,255,.8);border-radius:9px;z-index:4}
+  body.mobile .dpad{display:none}
+  /* ---- Virtual analog joystick (mobile portrait only) ---- */
+  #joycon{position:absolute;width:118px;height:118px;border-radius:50%;background:rgba(18,14,11,.48);border:2px solid rgba(255,255,255,.38);box-shadow:0 6px 20px rgba(0,0,0,.45), inset 0 0 0 6px rgba(255,255,255,.06);display:none;z-index:4;touch-action:none;user-select:none;-webkit-user-select:none;backdrop-filter:blur(2px)}
+  #joycon::before{content:"";position:absolute;inset:14px;border-radius:50%;border:1px dashed rgba(255,255,255,.22);pointer-events:none}
+  #joyKnob{position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff8ec,#e8dcc6 58%,#cbb99a);border:2px solid rgba(20,14,8,.35);box-shadow:0 4px 10px rgba(0,0,0,.45);transform:translate(-50%,-50%);pointer-events:none}
+  #joycon.active{border-color:rgba(255,255,255,.65);background:rgba(18,14,11,.58)}
+  #joycon.active #joyKnob{background:radial-gradient(circle at 35% 30%,#fff3d6,#f0c978 60%,#d99a2b)}
+  body.mobile #joycon{display:block}
+  body.mobile.hand-right #joycon{right:10px;bottom:10px;left:auto}
+  body.mobile.hand-left #joycon{left:10px;bottom:10px;right:auto}
+  /* Minimap moves to the corner the joystick is NOT in */
+  body.mobile.hand-right #minimap{right:auto;left:8px;bottom:8px}
+  body.mobile.hand-left #minimap{left:auto;right:8px;bottom:8px}
+  /* Hand L/R segmented control — mobile top bar only */
+  .handSeg{display:none}
+  body.mobile .handSeg{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none;background:var(--btn)}
+  body.mobile .handSeg .handLab{font-family:system-ui,sans-serif;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:0 5px 0 7px;white-space:nowrap}
+  body.mobile .handSeg button{min-height:32px;min-width:28px;width:28px;padding:3px 0;font-family:system-ui,sans-serif;font-size:12px;font-weight:700;background:transparent;color:var(--ink);border:none;border-left:1px solid var(--line);cursor:pointer;text-align:center}
+  body.mobile .controls{flex-wrap:wrap}
+  body.mobile .handSeg button[aria-pressed="true"]{background:var(--accent);color:#1d1408}
 </style>
 </head>
-<body>
+<body class="hand-right">
 <div class="wrap">
   <header class="top">
     <div>
@@ -82,8 +135,14 @@
     <div class="stat"><div class="k">🔥 Streak</div><div class="v" id="streakVal">0</div></div>
     <div class="stat"><div class="k">🧍 Carrying</div><div class="v" id="carryVal" style="font-size:16px;padding-top:5px">Empty hands</div></div>
     <div class="controls">
+      <div class="handSeg" role="group" aria-label="Hand mode — joystick side">
+        <span class="handLab">Hand</span>
+        <button id="handL" aria-pressed="false" aria-label="Left hand — joystick bottom-left">L</button>
+        <button id="handR" aria-pressed="true" aria-label="Right hand — joystick bottom-right">R</button>
+      </div>
       <button class="toggle" id="hintBtn" aria-pressed="false">💡 Hint: Off</button>
       <button class="toggle" id="soundBtn" aria-pressed="true">🔔 Sound: On</button>
+      <button class="toggle" id="pauseBtn" aria-pressed="false">⏸ Pause</button>
     </div>
   </div>
 
@@ -91,6 +150,8 @@
 
   <div class="stage">
     <canvas id="game" width="1100" height="820" aria-label="Top-down restaurant floor plan game"></canvas>
+    <canvas id="minimap" width="248" height="184" aria-label="Whole floor minimap"></canvas>
+    <div id="joycon" role="application" aria-label="Virtual joystick — drag the knob to move"><div id="joyKnob"></div></div>
     <div id="startOverlay">
       <div class="card">
         <div style="font-size:38px" aria-hidden="true">🔔</div>
@@ -98,7 +159,7 @@
         <p>You're the food runner. When the <b>bell rings</b>, a tray appears on the expo pass inside the kitchen with a table number. Go in through the <b>IN door</b> to pick it up, then carry it out to that table.</p>
         <p>Wrong table? You'll be told whose table it is — no penalty, just keep running. There's <b>no timer and no game over</b> — train as long as you like.</p>
         <button id="startBtn">▶ Start shift</button>
-        <div class="legend"><span>⌨️ WASD / arrow keys</span><span>📱 On-screen pad</span><span>🔔 Sound starts with the shift</span></div>
+        <div class="legend"><span>⌨️ WASD / arrow keys</span><span>🕹️ Phone: joystick, Hand L/R at top</span><span>🔔 Sound starts with the shift</span></div>
       </div>
     </div>
   </div>
@@ -107,7 +168,7 @@
 
   <div class="below">
     <div class="how">
-      <b>How to play:</b> Move with <b>WASD</b> or the <b>arrow keys</b> (or the pad). You start inside the kitchen at the top, and the tray waits on the pass <b>inside the kitchen</b> — step up to it to pick it up, then walk into the correct table to deliver it. Tables are solid — work the aisles, just like the real floor. The pass doors are <b>one-way</b>: out of the kitchen through the <b>OUT door</b> on the left, back in through the <b>IN door</b> on the right, so every pickup means a trip back into the kitchen. A <b>half wall</b> runs between the 300s and the 400s — there's no cutting between those rows; go around the top or the bottom of it. The 800s are outside on the <b>patio</b> — reach them through the door at the top of the patio wall, above table 412. Turn on <b>Hint</b> if you want the target table to pulse while you learn the floor.
+      <b>How to play:</b> Move with <b>WASD</b> or the <b>arrow keys</b> (or the pad). <b>On a phone in portrait:</b> the view zooms in and follows you — steer with the <b>joystick</b> in the bottom corner (push gently to creep, full tilt for full speed; let go to stop), use the <b>Hand L / R</b> toggle at the top to put the joystick under your other thumb, and the minimap in the opposite corner shows where you are on the whole floor. You start inside the kitchen at the top, and the tray waits on the pass <b>inside the kitchen</b> — step up to it to pick it up, then walk into the correct table to deliver it. Tables are solid — work the aisles, just like the real floor. The pass doors are <b>one-way</b>: out of the kitchen through the <b>OUT door</b> on the left, back in through the <b>IN door</b> on the right, so every pickup means a trip back into the kitchen. A <b>half wall</b> runs between the 300s and the 400s — there's no cutting between those rows; go around the top or the bottom of it. The 800s are outside on the <b>patio</b> — reach them through the door at the top of the patio wall, above table 412. Turn on <b>Hint</b> if you want the target table to pulse while you learn the floor.
     </div>
     <div class="dpad" aria-label="Movement pad">
       <button class="up" data-dir="up" aria-label="Move up">▲</button>
@@ -208,7 +269,7 @@ tables.push(T(809,18.05,3.35,0.75,0.95,'rect',{style:'portrait',seats:'endsTB'})
 var counterH=0.55, counterY=KITCHEN_H-counterH;
 var gaps=[[5.3,6.4],[8.35,9.45]]; // x ranges that are open — OUT (left) above the 300s column, IN (right) just left of 415, above the 401s
 var counterSegs=[]; (function(){ var edges=[0.4].concat([gaps[0][0],gaps[0][1],gaps[1][0],gaps[1][1]]).concat([19.6]); for(var i=0;i<edges.length;i+=2){counterSegs.push({x1:edges[i],x2:edges[i+1]});} })();
-var passX=9.4, passY=1.7; // tray spot on the expo pass INSIDE the kitchen — the player must enter the kitchen to collect it
+var passX=7.1, passY=1.3; // tray spot on the expo pass INSIDE the kitchen — directly above the half wall (x=7.1) between the 300s (x=6.0) and 400s (x=8.2), set higher/deeper in the kitchen (y=1.3 vs old 1.7) so there is clear maneuvering room between the pass and the counter line at y=2.45; the player must enter the kitchen to collect it
 
 // Table types: 200s = high tops, 300s & 400s = booths, everything else regular
 tables.forEach(function(tb){
@@ -318,7 +379,7 @@ function deliver(){
   // so no collision / bump feedback fires, and it works from the patio too.
   // The next ticket still comes 3–7s after delivery (scheduleNext below), so the
   // teleport at 2s lands the player on the pass before the next tray spawns.
-  setTimeout(function(){ player.x=passX; player.y=passY; player.moving=false; }, 2000);
+  setTimeout(function(){ player.x=passX; player.y=passY; player.moving=false; camGlideUntil=performance.now()+400; if(mobileMode){ /* camera eases fast via camGlideUntil in updateCamera */ } }, 2000);
   chime();
   setMsg('✅ <b>Delivered to table '+deliveredTo+'!</b> Nice run. '+(deliveries===1?'First one down.':deliveries+' delivered, streak of '+streak+'.')+' You\'re back at the kitchen pass — next ticket in a few seconds…','good');
   scheduleNext();
@@ -397,7 +458,57 @@ function tryMove(dx,dy){
 
 // ---------- Canvas rendering ----------
 var cv=document.getElementById('game'), ctx=cv.getContext('2d');
-var S=cv.width/(W+EXT); // px per unit (1100/22.0 = 50)
+var WORLD_W=1100, WORLD_H=820;
+var S=50; // px per unit (1100/22.0 = 50) — fixed logical scale, independent of canvas backing size
+// ---------- Mobile mode: camera, drag, minimap ----------
+var mobileMode=false, paused=false;
+var cam={x:0,y:0,init:false}; // top-left in world px
+var camGlideUntil=0;
+// Virtual analog joystick (mobile portrait only, replaces drag steering):
+// knob offset gives direction; tilt magnitude (0..1) scales speed from a
+// gentle creep at small tilt up to the boosted top speed at full tilt.
+var SPEED_BOOST=1.53; // top-speed multiplier at full tilt (1.7x scaled down 10%)
+var JOY_DEADZONE=0.12;
+var joy={active:false,id:null,dx:0,dy:0,mag:0}; // dx/dy: unit direction, mag: 0..1 tilt
+var handMode='right'; // 'right' (default): joystick bottom-right, minimap bottom-left
+function computeMobile(){ return window.innerWidth<window.innerHeight && window.innerWidth<=860; }
+function viewWorldW(){ return WORLD_W/3; } // roughly one third of the room width
+function viewWorldH(){ return viewWorldW()*(cv.height/cv.width); }
+function mobileCanvasHeight(){
+  // Size the backing store so the canvas CSS box (full width, all remaining
+  // viewport height below the ~110px slim top bar) maps without distortion.
+  var availW=Math.max(280,window.innerWidth-12);
+  var availH=Math.max(320,window.innerHeight-140);
+  var h=Math.round(720*availH/availW);
+  return Math.max(900,Math.min(1500,h));
+}
+function applyMode(){
+  var m=computeMobile();
+  var was=mobileMode;
+  mobileMode=m;
+  document.body.classList.toggle('mobile',m);
+  if(m){ var mh=mobileCanvasHeight(); if(cv.width!==720||cv.height!==mh){cv.width=720;cv.height=mh;} }
+  else { if(cv.width!==1100||cv.height!==820){cv.width=1100;cv.height=820;} cam.x=0;cam.y=0; }
+  if(m && (!cam.init || !was)){ snapCamera(); }
+}
+function snapCamera(){
+  var vw=viewWorldW(), vh=viewWorldH();
+  cam.x=Math.max(0,Math.min(WORLD_W-vw, X(player.x)-vw/2));
+  cam.y=Math.max(0,Math.min(WORLD_H-vh, Y(player.y)-vh/2));
+  cam.init=true;
+}
+function updateCamera(now){
+  if(!mobileMode) return;
+  var vw=viewWorldW(), vh=viewWorldH();
+  var tx=Math.max(0,Math.min(WORLD_W-vw, X(player.x)-vw/2));
+  var ty=Math.max(0,Math.min(WORLD_H-vh, Y(player.y)-vh/2));
+  var gliding = now<camGlideUntil;
+  var ease = gliding?0.28:0.10; // ~300ms glide after teleport, smooth eased follow otherwise
+  cam.x+=(tx-cam.x)*ease; cam.y+=(ty-cam.y)*ease;
+  if(Math.abs(tx-cam.x)<0.5)cam.x=tx; if(Math.abs(ty-cam.y)<0.5)cam.y=ty;
+}
+window.addEventListener('resize',applyMode);
+window.addEventListener('orientationchange',function(){ setTimeout(applyMode,60); });
 function X(u){return (u+EXT)*S;} function Y(u){return u*S;} function D(u){return u*S;} // D: size/scale only, NO extension offset — use for every width/height/radius/lineWidth
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function oct(x,y,w,h){ var c=Math.min(w,h)*0.28; ctx.beginPath(); ctx.moveTo(x+c,y); ctx.lineTo(x+w-c,y); ctx.lineTo(x+w,y+c); ctx.lineTo(x+w,y+h-c); ctx.lineTo(x+w-c,y+h); ctx.lineTo(x+c,y+h); ctx.lineTo(x,y+h-c); ctx.lineTo(x,y+c); ctx.closePath(); }
@@ -443,27 +554,35 @@ function drawSeats(tb,bx,by,bw,bh,hl){
 }
 
 function draw(now){
+  updateCamera(now||0);
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle='#0f0c0a'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.save();
+  if(mobileMode){
+    var sc=cv.width/viewWorldW();
+    ctx.scale(sc,sc); ctx.translate(-cam.x,-cam.y);
+  }
   // Floors — kitchen across the top, dining room below it
-  ctx.fillStyle='#3d3a38'; ctx.fillRect(0,0,cv.width,Y(KITCHEN_H)); // kitchen tiles
+  ctx.fillStyle='#3d3a38'; ctx.fillRect(0,0,WORLD_W,Y(KITCHEN_H)); // kitchen tiles
   ctx.strokeStyle='rgba(255,255,255,.09)'; ctx.lineWidth=1;
   for(var kx=0;kx<W;kx+=1){ ctx.beginPath(); ctx.moveTo(X(kx),0); ctx.lineTo(X(kx),Y(KITCHEN_H)); ctx.stroke(); }
-  for(var ky=0;ky<KITCHEN_H;ky+=1){ ctx.beginPath(); ctx.moveTo(0,Y(ky)); ctx.lineTo(cv.width,Y(ky)); ctx.stroke(); }
-  ctx.fillStyle='#c99a5b'; ctx.fillRect(0,Y(DINING_TOP),cv.width,cv.height-Y(DINING_TOP)); // warm dining wood
+  for(var ky=0;ky<KITCHEN_H;ky+=1){ ctx.beginPath(); ctx.moveTo(0,Y(ky)); ctx.lineTo(WORLD_W,Y(ky)); ctx.stroke(); }
+  ctx.fillStyle='#c99a5b'; ctx.fillRect(0,Y(DINING_TOP),WORLD_W,WORLD_H-Y(DINING_TOP)); // warm dining wood
   ctx.strokeStyle='rgba(120,72,20,.18)';
-  for(var gy=DINING_TOP;gy<H;gy+=1){ ctx.beginPath(); ctx.moveTo(0,Y(gy)); ctx.lineTo(cv.width,Y(gy)); ctx.stroke(); }
+  for(var gy=DINING_TOP;gy<H;gy+=1){ ctx.beginPath(); ctx.moveTo(0,Y(gy)); ctx.lineTo(WORLD_W,Y(gy)); ctx.stroke(); }
   // Patio (800s zone): outdoor stone pavers east of the partition wall
-  ctx.fillStyle='#93908a'; ctx.fillRect(X(patioWallX),Y(DINING_TOP),D(W-patioWallX),cv.height-Y(DINING_TOP));
+  ctx.fillStyle='#93908a'; ctx.fillRect(X(patioWallX),Y(DINING_TOP),D(W-patioWallX),WORLD_H-Y(DINING_TOP));
   ctx.strokeStyle='rgba(60,58,54,.35)'; ctx.lineWidth=1;
-  for(var px2=patioWallX;px2<W;px2+=0.9){ ctx.beginPath(); ctx.moveTo(X(px2),Y(DINING_TOP)); ctx.lineTo(X(px2),cv.height); ctx.stroke(); }
-  for(var py2=DINING_TOP;py2<H;py2+=0.9){ ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(py2)); ctx.lineTo(cv.width,Y(py2)); ctx.stroke(); }
+  for(var px2=patioWallX;px2<W;px2+=0.9){ ctx.beginPath(); ctx.moveTo(X(px2),Y(DINING_TOP)); ctx.lineTo(X(px2),WORLD_H); ctx.stroke(); }
+  for(var py2=DINING_TOP;py2<H;py2+=0.9){ ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(py2)); ctx.lineTo(WORLD_W,Y(py2)); ctx.stroke(); }
   // Patio railing around the outer edges (top, right, bottom)
   ctx.strokeStyle='#4c4a46'; ctx.lineWidth=3;
-  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(DINING_TOP+0.12)); ctx.lineTo(cv.width,Y(DINING_TOP+0.12)); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(X(W-0.14),Y(DINING_TOP)); ctx.lineTo(X(W-0.14),cv.height); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.14)); ctx.lineTo(cv.width,Y(H-0.14)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(DINING_TOP+0.12)); ctx.lineTo(WORLD_W,Y(DINING_TOP+0.12)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(W-0.14),Y(DINING_TOP)); ctx.lineTo(X(W-0.14),WORLD_H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.14)); ctx.lineTo(WORLD_W,Y(H-0.14)); ctx.stroke();
   ctx.lineWidth=1.5; ctx.strokeStyle='rgba(76,74,70,.6)';
-  ctx.beginPath(); ctx.moveTo(X(W-0.3),Y(DINING_TOP)); ctx.lineTo(X(W-0.3),cv.height); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.3)); ctx.lineTo(cv.width,Y(H-0.3)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(W-0.3),Y(DINING_TOP)); ctx.lineTo(X(W-0.3),WORLD_H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.3)); ctx.lineTo(WORLD_W,Y(H-0.3)); ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='700 13px system-ui'; ctx.textAlign='center';
   ctx.fillText('P A T I O',X(17.9),Y(DINING_TOP+0.5));
   // Dining-room outline: left wall, then the bottom-left corner slants OUT down-left,
@@ -471,7 +590,7 @@ function draw(now){
   // bar counter) until it meets the bottom wall at x=-1.69 — the room extends into the extra
   // canvas space on the left to fit the bar tail. Everything west of the wall/slant is outside.
   ctx.fillStyle='#0f0c0a';
-  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(X(0.12),0); ctx.lineTo(X(0.12),Y(11.57)); ctx.lineTo(X(-1.69),Y(H-0.06)); ctx.lineTo(X(-1.69),cv.height); ctx.lineTo(0,cv.height); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(X(0.12),0); ctx.lineTo(X(0.12),Y(11.57)); ctx.lineTo(X(-1.69),Y(H-0.06)); ctx.lineTo(X(-1.69),WORLD_H); ctx.lineTo(0,WORLD_H); ctx.closePath(); ctx.fill();
   ctx.strokeStyle='#4a3826'; ctx.lineWidth=3;
   ctx.beginPath(); ctx.moveTo(X(0.12),Y(DINING_TOP)); ctx.lineTo(X(0.12),Y(11.57)); ctx.lineTo(X(-1.69),Y(H-0.06)); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(X(-1.69),Y(H-0.06)); ctx.lineTo(X(4.15),Y(H-0.06)); ctx.moveTo(X(5.45),Y(H-0.06)); ctx.lineTo(X(patioWallX),Y(H-0.06)); ctx.stroke();
@@ -631,6 +750,42 @@ function draw(now){
     ctx.textBaseline='alphabetic';
   }
   ctx.restore();
+  ctx.restore(); // camera transform
+  if(paused){ ctx.save(); ctx.fillStyle='rgba(0,0,0,.45)'; ctx.fillRect(0,0,cv.width,cv.height); ctx.fillStyle='#fff'; ctx.font='800 34px system-ui'; ctx.textAlign='center'; ctx.fillText('⏸ Paused',cv.width/2,cv.height/2); ctx.restore(); }
+  drawEdgeArrow();
+  if(mobileMode) drawMinimap();
+}
+
+function drawEdgeArrow(){
+  if(!mobileMode||!hint||!target) return;
+  var vw=viewWorldW(), vh=viewWorldH();
+  var tx=X(target.x), ty=Y(target.y);
+  if(tx>=cam.x&&tx<=cam.x+vw&&ty>=cam.y&&ty<=cam.y+vh) return; // on screen
+  var cx=cv.width/2, cy=cv.height/2;
+  var sx=(tx-cam.x)*(cv.width/vw), sy=(ty-cam.y)*(cv.height/vh);
+  var ang=Math.atan2(sy-cy,sx-cx);
+  var mx=cx+Math.cos(ang)*(cv.width/2-44), my=cy+Math.sin(ang)*(cv.height/2-44);
+  ctx.save(); ctx.translate(mx,my); ctx.rotate(ang);
+  ctx.fillStyle='#ffc400'; ctx.strokeStyle='#1d1408'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(26,0); ctx.lineTo(-14,-15); ctx.lineTo(-6,0); ctx.lineTo(-14,15); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  ctx.save(); ctx.fillStyle='#ffc400'; ctx.font='800 15px system-ui'; ctx.textAlign='center';
+  ctx.fillText(target.n, mx, my-26); ctx.restore();
+}
+function drawMinimap(){
+  var mm=document.getElementById('minimap'); if(!mm) return;
+  var c=mm.getContext('2d'); var mw=mm.width, mh=mm.height;
+  c.clearRect(0,0,mw,mh);
+  c.fillStyle='#c99a5b'; c.fillRect(0,0,mw,mh);
+  c.fillStyle='#3d3a38'; c.fillRect(0,0,mw,mh*(KITCHEN_H/H));
+  c.fillStyle='#93908a'; var pxx=(patioWallX+EXT)/ (W+EXT)*mw; c.fillRect(pxx,mh*(DINING_TOP/H),mw-pxx,mh-mh*(DINING_TOP/H));
+  c.fillStyle='rgba(43,33,24,.65)';
+  tables.forEach(function(tb){ var x=(tb.x+EXT)/(W+EXT)*mw, y=tb.y/H*mh; c.fillRect(x-3,y-3,6,6); });
+  if(hint&&target){ var tx2=(target.x+EXT)/(W+EXT)*mw, ty2=target.y/H*mh; c.fillStyle='#ffc400'; c.strokeStyle='#1d1408'; c.lineWidth=2; c.beginPath(); c.arc(tx2,ty2,9,0,Math.PI*2); c.fill(); c.stroke(); }
+  var px3=(player.x+EXT)/(W+EXT)*mw, py3=player.y/H*mh;
+  c.fillStyle='#fff'; c.strokeStyle='#111'; c.lineWidth=2; c.beginPath(); c.arc(px3,py3,7,0,Math.PI*2); c.fill(); c.stroke();
+  c.fillStyle='#1a7a2e'; c.beginPath(); c.arc(px3,py3,4,0,Math.PI*2); c.fill();
+  if(mobileMode){ c.strokeStyle='rgba(255,255,255,.9)'; c.lineWidth=2; c.strokeRect(cam.x/WORLD_W*mw, cam.y/WORLD_H*mh, viewWorldW()/WORLD_W*mw, viewWorldH()/WORLD_H*mh); }
 }
 
 // ---------- Main loop ----------
@@ -638,14 +793,28 @@ var lastT=0;
 function loop(t){
   requestAnimationFrame(loop);
   var dt=Math.min(50,t-lastT||16); lastT=t;
-  if(started){
+  if(started && !paused){
     var sp=3.4*dt/1000; // units per frame-step — ample, unhurried pace
     var dx=0,dy=0;
     if(keys.left||pad.left)dx-=1; if(keys.right||pad.right)dx+=1;
     if(keys.up||pad.up)dy-=1; if(keys.down||pad.down)dy+=1;
+    var joyMag=0;
+    if(mobileMode && joy.active && joy.mag>JOY_DEADZONE){
+      // Joystick wins over keys/pad while tilted: direction is the knob
+      // offset direction, speed scales with tilt.
+      dx=joy.dx; dy=joy.dy; joyMag=joy.mag;
+    }
     player.moving=!!(dx||dy);
     if(player.moving){
-      var m=Math.hypot(dx,dy); dx=dx/m*sp; dy=dy/m*sp;
+      var m=Math.hypot(dx,dy);
+      var stepLen=sp;
+      if(joyMag>0){
+        // Analog speed: gentle creep just past the deadzone, scaling
+        // linearly with tilt up to SPEED_BOOST x at full tilt.
+        var tilt=(joyMag-JOY_DEADZONE)/(1-JOY_DEADZONE); // 0..1 past deadzone
+        stepLen=sp*(0.27+(SPEED_BOOST-0.27)*tilt); // creep 0.27 = 0.3 scaled down 10%, matching the top speed
+      }
+      dx=dx/m*stepLen; dy=dy/m*stepLen;
       if(dy)player.face=Math.sign(dy);
       player.walk+=dt/90;
       tryMove(dx,dy);
@@ -683,7 +852,58 @@ document.querySelectorAll('.dpad button').forEach(function(b){
   b.addEventListener('touchstart',on,{passive:false}); b.addEventListener('touchend',off);
 });
 
+// Virtual analog joystick (mobile portrait only) — fixed base in a bottom
+// corner of the game view; the knob follows the thumb within the base radius.
+// Release the thumb and the server stops. No more drag-anywhere steering.
+var joyEl=document.getElementById('joycon');
+var joyKnob=document.getElementById('joyKnob');
+var JOY_TRAVEL=34; // px the knob centre can move from base centre (base 118px, knob 54px)
+function joyUpdate(e){
+  var r=joyEl.getBoundingClientRect();
+  var cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var ox=e.clientX-cx, oy=e.clientY-cy;
+  var dist=Math.hypot(ox,oy);
+  var clamped=dist>JOY_TRAVEL?JOY_TRAVEL:dist;
+  var nx=dist>0?ox/dist:0, ny=dist>0?oy/dist:0;
+  var kx=nx*clamped, ky=ny*clamped;
+  joyKnob.style.transform='translate(-50%,-50%) translate('+kx+'px,'+ky+'px)';
+  joy.mag=clamped/JOY_TRAVEL;
+  if(dist>0){ joy.dx=ox/dist; joy.dy=oy/dist; } else { joy.dx=0; joy.dy=0; }
+}
+function joyReset(){
+  joy.active=false; joy.id=null; joy.dx=0; joy.dy=0; joy.mag=0;
+  joyEl.classList.remove('active');
+  joyKnob.style.transform='translate(-50%,-50%)';
+}
+joyEl.addEventListener('pointerdown',function(e){
+  if(!mobileMode||paused) return;
+  joy.active=true; joy.id=e.pointerId; joyEl.classList.add('active');
+  try{joyEl.setPointerCapture(e.pointerId);}catch(err){}
+  joyUpdate(e); e.preventDefault();
+});
+joyEl.addEventListener('pointermove',function(e){ if(joy.active && e.pointerId===joy.id) joyUpdate(e); });
+joyEl.addEventListener('pointerup',function(e){ if(e.pointerId===joy.id) joyReset(); });
+joyEl.addEventListener('pointercancel',function(e){ if(e.pointerId===joy.id) joyReset(); });
+joyEl.addEventListener('touchstart',function(e){ e.preventDefault(); },{passive:false});
+
+// Hand toggle: L = joystick bottom-left / minimap bottom-right,
+// R = joystick bottom-right / minimap bottom-left (default).
+function setHand(mode){
+  handMode=mode;
+  document.body.classList.toggle('hand-left',mode==='left');
+  document.body.classList.toggle('hand-right',mode==='right');
+  document.getElementById('handL').setAttribute('aria-pressed',mode==='left');
+  document.getElementById('handR').setAttribute('aria-pressed',mode==='right');
+  joyReset();
+}
+document.getElementById('handL').addEventListener('click',function(){ setHand('left'); });
+document.getElementById('handR').addEventListener('click',function(){ setHand('right'); });
+
 // ---------- Controls ----------
+document.getElementById('pauseBtn').addEventListener('click',function(){
+  paused=!paused; this.setAttribute('aria-pressed',paused); this.textContent=paused?'▶ Resume':'⏸ Pause';
+  if(paused) setMsg('⏸ <b>Paused.</b> Tap Resume to keep running.',''); else setMsg('▶ <b>Back on the floor.</b>','');
+});
 document.getElementById('hintBtn').addEventListener('click',function(){
   hint=!hint; this.setAttribute('aria-pressed',hint); this.textContent=hint?'💡 Hint: On':'💡 Hint: Off';
 });
@@ -699,6 +919,7 @@ document.getElementById('startBtn').addEventListener('click',function(){
   updateHUD();
   setTimeout(newTicket, 1200);
 });
+applyMode(); snapCamera();
 updateHUD();
 })();
 </script>
