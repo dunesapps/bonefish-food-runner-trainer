@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Bonefish Food Runner Trainer</title>
+<style>
+  :root{
+    --bg:#171310; --panel:#241d18; --panel2:#2e251f; --ink:#f5ead9; --muted:#c9b8a3;
+    --accent:#e8a33d; --accent2:#7fb069; --danger:#e07a5f; --line:#4a3b2f;
+    --btn:#3a2e24;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f3ece1; --panel:#fffaf1; --panel2:#f7efe0; --ink:#2b2118; --muted:#6f5d4b; --line:#d8c9b4; --btn:#efe3d0; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;}
+  body{padding:10px 12px 18px;}
+  button{min-height:44px;min-width:44px}
+  .wrap{max-width:1060px;margin:0 auto}
+  header.top{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;margin:4px 0 10px}
+  h1{font-size:26px;line-height:1.1;margin:0;font-weight:700;letter-spacing:.2px}
+  h1 span{color:var(--accent)}
+  .sub{font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:13.5px;color:var(--muted);margin-top:4px;max-width:560px;line-height:1.45}
+  .hud{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:104px}
+  .stat .k{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .stat .v{font-size:22px;font-weight:700;line-height:1.15}
+  .stat.ticket .v{color:var(--accent)}
+  .stat.ticket.waiting .v{color:var(--muted);font-size:16px;padding-top:4px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .toggle{font-family:system-ui,sans-serif;font-size:14px;background:var(--btn);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+  .toggle[aria-pressed="true"]{background:var(--accent);color:#1d1408;border-color:var(--accent);font-weight:700}
+  .stage{position:relative;background:#0f0c0a;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  canvas{display:block;width:100%;height:auto;touch-action:none}
+  #msg{margin:10px 0 0;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:8px;padding:10px 14px;font-family:system-ui,sans-serif;font-size:15.5px;line-height:1.45;min-height:48px}
+  #msg.good{border-left-color:var(--accent2)} #msg.bad{border-left-color:var(--danger)}
+  .below{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;align-items:flex-start;justify-content:space-between}
+  .how{font-family:system-ui,sans-serif;font-size:13.5px;color:var(--muted);line-height:1.55;max-width:520px}
+  .how b{color:var(--ink)}
+  /* D-pad */
+  .dpad{display:grid;grid-template-columns:56px 56px 56px;grid-template-rows:56px 56px 56px;gap:6px;flex:none;margin-left:auto}
+  .dpad button{font-size:20px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+  .dpad button:active,.dpad button.on{background:var(--accent);color:#1d1408}
+  .dpad .up{grid-column:2;grid-row:1}.dpad .left{grid-column:1;grid-row:2}.dpad .mid{grid-column:2;grid-row:2;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:system-ui,sans-serif;color:var(--muted);background:transparent;border:1px dashed var(--line)}
+  .dpad .right{grid-column:3;grid-row:2}.dpad .down{grid-column:2;grid-row:3}
+  @media(min-width:900px){ .dpad{opacity:.92} }
+  /* Start overlay */
+  #startOverlay{position:absolute;inset:0;background:rgba(12,9,7,.88);display:flex;align-items:center;justify-content:center;padding:18px;z-index:5;overflow-y:auto}
+  @media(max-width:640px){
+    #startOverlay{position:fixed;align-items:center;padding:12px}
+    #startOverlay .card{padding:16px 14px}
+    #startOverlay h2{font-size:21px}
+    #startOverlay p{font-size:13px;margin:6px 0}
+    #startOverlay .card>div:first-child{font-size:26px!important}
+    #startBtn{margin-top:8px;padding:10px 24px;font-size:16px}
+    .legend{display:none}
+  }
+  #startOverlay .card{background:#fff8ec;color:#2b2118;border-radius:16px;max-width:480px;width:100%;padding:24px 22px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  #startOverlay h2{margin:0 0 6px;font-size:26px}
+  #startOverlay p{font-family:system-ui,sans-serif;font-size:14.5px;line-height:1.55;color:#5b4a38;margin:8px 0}
+  #startBtn{margin-top:12px;background:#b3541e;color:#fff;border:none;border-radius:999px;padding:12px 30px;font-size:17px;font-weight:700;cursor:pointer;font-family:system-ui,sans-serif}
+  #startBtn:active{transform:scale(.98)}
+  .legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-family:system-ui,sans-serif;font-size:12.5px;color:#5b4a38;margin-top:10px}
+  footer{font-family:system-ui,sans-serif;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Bonefish Grill — <span>Food Runner Trainer</span></h1>
+      <div class="sub">Hear the bell, grab the tray off the pass, and run it to the right table. Floor plan matches the North Wales seating chart — all 62 tables and bar seats, kitchen along the top, the 406–415 booths flush with the walls, patio out the door above the 400s.</div>
+    </div>
+  </header>
+
+  <div class="hud" role="region" aria-label="Game status">
+    <div class="stat ticket waiting" id="ticketBox"><div class="k">🎫 Ticket — table</div><div class="v" id="ticketVal">—</div></div>
+    <div class="stat"><div class="k">🍽️ Delivered</div><div class="v" id="delivVal">0</div></div>
+    <div class="stat"><div class="k">🔥 Streak</div><div class="v" id="streakVal">0</div></div>
+    <div class="stat"><div class="k">🧍 Carrying</div><div class="v" id="carryVal" style="font-size:16px;padding-top:5px">Empty hands</div></div>
+    <div class="controls">
+      <button class="toggle" id="hintBtn" aria-pressed="false">💡 Hint: Off</button>
+      <button class="toggle" id="soundBtn" aria-pressed="true">🔔 Sound: On</button>
+    </div>
+  </div>
+
+  <div style="height:10px"></div>
+
+  <div class="stage">
+    <canvas id="game" width="1100" height="820" aria-label="Top-down restaurant floor plan game"></canvas>
+    <div id="startOverlay">
+      <div class="card">
+        <div style="font-size:38px" aria-hidden="true">🔔</div>
+        <h2>Ready for service?</h2>
+        <p>You're the food runner. When the <b>bell rings</b>, a tray appears on the expo pass inside the kitchen with a table number. Go in through the <b>IN door</b> to pick it up, then carry it out to that table.</p>
+        <p>Wrong table? You'll be told whose table it is — no penalty, just keep running. There's <b>no timer and no game over</b> — train as long as you like.</p>
+        <button id="startBtn">▶ Start shift</button>
+        <div class="legend"><span>⌨️ WASD / arrow keys</span><span>📱 On-screen pad</span><span>🔔 Sound starts with the shift</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="msg" role="status" aria-live="polite">Press <b>Start shift</b> to begin. Your first ticket will ring in shortly.</div>
+
+  <div class="below">
+    <div class="how">
+      <b>How to play:</b> Move with <b>WASD</b> or the <b>arrow keys</b> (or the pad). You start inside the kitchen at the top, and the tray waits on the pass <b>inside the kitchen</b> — step up to it to pick it up, then walk into the correct table to deliver it. Tables are solid — work the aisles, just like the real floor. The pass doors are <b>one-way</b>: out of the kitchen through the <b>OUT door</b> on the left, back in through the <b>IN door</b> on the right, so every pickup means a trip back into the kitchen. A <b>half wall</b> runs between the 300s and the 400s — there's no cutting between those rows; go around the top or the bottom of it. The 800s are outside on the <b>patio</b> — reach them through the door at the top of the patio wall, above table 412. Turn on <b>Hint</b> if you want the target table to pulse while you learn the floor.
+    </div>
+    <div class="dpad" aria-label="Movement pad">
+      <button class="up" data-dir="up" aria-label="Move up">▲</button>
+      <button class="left" data-dir="left" aria-label="Move left">◀</button>
+      <div class="mid">MOVE</div>
+      <button class="right" data-dir="right" aria-label="Move right">▶</button>
+      <button class="down" data-dir="down" aria-label="Move down">▼</button>
+    </div>
+  </div>
+
+  <footer>Training aid built from the restaurant's seating chart: bar 101–114 along the left wall (111 sits right next to 110 at the same tight spacing, and the angled section starts at 111 and runs in one straight diagonal down to the left, with the room's bottom-left wall slanting out alongside it), 200s are high tops, and the 400s are booths — 413–415 flush with the top wall, 408–412 flush with the right wall, 406/407 at the bottom wall — a half wall separates the 300s row from the 400s row, the front door is marked on the bottom wall below the gap between the 200s and 300s columns, and 801–809 are outside on the patio. Every chair matches the chart: the 200s high tops and all the 400s booths have two seats along the top and two along the bottom, 301/302/305 are 2-tops with a seat at each end, 303/304/306 are portrait tables with two seats a side, 413–415 have a seat at each end, 501, 605 and 701 have two seats a side, the other 500s, 600s and 700s are octagons with a seat on each diagonal face, 603/604 are two small horizontal 2-tops pushed together (603 above 604, a seat at each end of each, the pair together about the size of one table) with 605 moved up close beneath them, and on the patio 801–805 are octagons with a seat on each diagonal face, 806 is a 2-top with a seat at each end, and 807–809 are portrait tables with a seat at the top and bottom ends. Kitchen and expo line run horizontally across the rear (top), with a one-way OUT door above the 300s and a one-way IN door just left of 415; the tray is picked up from the pass inside the kitchen.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ---------- Floor plan: exact verified layout ----------
+// Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
+// Table y values below are chart coordinates (0..13.4); T() shifts them down by KITCHEN_H.
+// EXT: the room is extended on the lower-left to fit the bar's diagonal tail — the canvas is
+// EXT units wider than the logical room, X() shifts everything east by EXT, and the dining
+// room's slanted bottom-left wall runs down-left into that extra space (see draw()).
+var W=20.0, H=16.4, EXT=2.0, KITCHEN_H=3.0, DINING_TOP=3.0, DINING_H=13.4;
+function T(n,x,y,w,h,shape,opts){var t={n:n,x:x,y:y+KITCHEN_H,w:w||1.05,h:h||0.82,shape:shape||'rect'};if(opts){if(opts.style)t.style=opts.style;if(opts.seats)t.seats=opts.seats;}return t;}
+var tables=[];
+// Bar stools (round)
+[[101,0.9],[102,1.75],[103,2.6],[104,3.45],[105,4.3],[106,5.15],[107,6.0],[108,6.85],[109,7.7],[110,8.55]].forEach(function(p){tables.push(T(p[0],1.15,p[1],0.68,0.68,'circle'));});
+// Angled section: starts AT 111, which sits one tight step (0.85, same as the straight run)
+// down-left of 110. From 111, one clean straight diagonal runs down and to the LEFT —
+// 112, 113, 114 evenly spaced along the same line (step −0.30 x, +0.80 y), no jog or bump-out.
+tables.push(T(111,0.85,9.35,0.68,0.68,'circle'),T(112,0.55,10.14,0.68,0.68,'circle'),T(113,0.25,10.94,0.68,0.68,'circle'),T(114,-0.06,11.73,0.68,0.68,'circle'));
+// 200s high tops: landscape rectangles, 4 seats each (2 top + 2 bottom)
+[[201,2.3],[211,4.1],[221,5.9],[231,7.7],[241,9.7]].forEach(function(p){tables.push(T(p[0],3.55,p[1],1.05,0.82,'rect',{seats:'tb2'}));});
+// 300s: 301/302/305 small landscape 2-tops (1 seat at each end);
+// 303/304/306 portrait rectangles (2 seats along each long side)
+tables.push(T(301,6.0,2.3,1.05,0.55,'rect',{style:'mini',seats:'ends'}),
+            T(302,6.0,3.85,1.05,0.55,'rect',{style:'mini',seats:'ends'}),
+            T(303,6.0,5.4,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}),
+            T(304,6.0,6.95,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}),
+            T(305,6.0,8.5,1.05,0.55,'rect',{style:'mini',seats:'ends'}),
+            T(306,6.0,10.2,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}));
+// 400s left column: wide landscape booths, same design as 408–412 (2 seats top + 2 bottom)
+[[401,2.5],[402,4.3],[403,6.1],[404,7.9],[405,9.7]].forEach(function(p){tables.push(T(p[0],8.2,p[1],1.4,0.95,'rect',{style:'booth',seats:'tb2'}));});
+// ---- Right half rebuilt from the seating chart (406–415, 500s, 600s, 700s) ----
+// Columns left→right: 500s x=9.95, 600s x=11.5, 700s x=13.05, 408–412 booths flush with the right wall (x=14.88).
+// Seats replicate the chart's black ticks exactly (see drawSeats): count + edge + position.
+// 413/414/415: small landscape booths FLUSH with the top wall (top edge at chart y=0), over their
+// columns (415 over the 500s, 414 over the 600s, 413 over the 700s), 2 seats — one at each END only
+tables.push(T(415,9.95,0.275,1.05,0.55,'rect',{style:'mini',seats:'ends'}),
+            T(414,11.5,0.275,1.05,0.55,'rect',{style:'mini',seats:'ends'}),
+            T(413,13.05,0.275,1.05,0.55,'rect',{style:'mini',seats:'ends'}));
+// 412–408: wide landscape booths FLUSH with the right wall (right edge touches the patio wall's
+// dining face), 4 seats (2 top + 2 bottom), spaced wider than the inner columns;
+// 412 just below the patio door, then 411, 410, 409, 408 lowest
+tables.push(T(412,14.88,2.35,1.4,0.95,'rect',{style:'booth',seats:'tb2'}),
+            T(411,14.88,4.85,1.4,0.95,'rect',{style:'booth',seats:'tb2'}),
+            T(410,14.88,7.45,1.4,0.95,'rect',{style:'booth',seats:'tb2'}),
+            T(409,14.88,10.0,1.4,0.95,'rect',{style:'booth',seats:'tb2'}),
+            T(408,14.88,12.3,1.4,0.95,'rect',{style:'booth',seats:'tb2'}));
+// 406/407: bottom-row booths under the 500s / 600s columns, exactly 4 seat blocks each
+// (2 top + 2 bottom). The booth body sits a seat-depth above the bottom wall so all four
+// blocks render fully on the floor — body + bottom seat blocks together end flush at the wall.
+tables.push(T(406,9.95,12.775,1.4,0.95,'rect',{style:'booth',seats:'tb2'}),
+            T(407,11.5,12.775,1.4,0.95,'rect',{style:'booth',seats:'tb2'}));
+// 500s: 501 portrait (2 seats a side); 502–504 octagons (one seat per diagonal face)
+tables.push(T(501,9.95,3.3,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}),
+            T(502,9.95,5.15,1.0,1.0,'oct',{seats:'diag'}),
+            T(503,9.95,6.9,1.0,1.0,'oct',{seats:'diag'}),
+            T(504,9.95,8.55,1.0,1.0,'oct',{seats:'diag'}));
+// 600s: 601/602 octagons; 603+604 TWO SMALL HORIZONTAL 2-TOPS pushed together — each a small
+// landscape rectangle in the 301/302/305 family (wider than tall, 1 seat at each end), stacked
+// and touching with no gap: 603 on top, 604 directly below, both still separate delivery
+// targets. The pair's COMBINED footprint (0.85 × 1.2) is about the size of ONE normal table —
+// 605 in its entirety — and the pair is centered on the 503/703 row band.
+// 605 portrait (2 seats a side), moved UP close under the pair per the chart: the gap between
+// 604 and 605 (0.4) is tighter than the standard row gap (0.65), leaving a long empty stretch
+// below 605 down toward the 406/407 row.
+tables.push(T(601,11.5,3.3,1.0,1.0,'oct',{seats:'diag'}),
+            T(602,11.5,5.15,1.0,1.0,'oct',{seats:'diag'}),
+            T(603,11.5,6.6,0.85,0.6,'rect',{style:'mini',seats:'ends'}),
+            T(604,11.5,7.2,0.85,0.6,'rect',{style:'mini',seats:'ends'}),
+            T(605,11.5,8.5,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}));
+// 700s: 701 portrait (2 seats a side); 702–704 octagons (one seat per diagonal face)
+tables.push(T(701,13.05,3.3,0.85,1.2,'rect',{style:'portrait',seats:'lr2'}),
+            T(702,13.05,5.15,1.0,1.0,'oct',{seats:'diag'}),
+            T(703,13.05,6.9,1.0,1.0,'oct',{seats:'diag'}),
+            T(704,13.05,8.55,1.0,1.0,'oct',{seats:'diag'}));
+// 800s patio: 801–805 octagons (1 seat per diagonal face, same as the dining-room octagons);
+// 806 small landscape 2-top (1 seat at each end); 807/808/809 portrait rectangles
+// (1 seat on the top end, 1 on the bottom end)
+[[801,2.35],[802,4.25],[803,6.25],[804,8.2],[805,10.25]].forEach(function(p){tables.push(T(p[0],16.65,p[1],0.95,0.95,'oct',{seats:'diag'}));});
+tables.push(T(809,18.05,3.35,0.75,0.95,'rect',{style:'portrait',seats:'endsTB'}),
+            T(808,18.35,5.6,0.75,0.95,'rect',{style:'portrait',seats:'endsTB'}),
+            T(807,18.95,7.95,0.75,0.95,'rect',{style:'portrait',seats:'endsTB'}),
+            T(806,18.05,10.25,0.9,0.55,'rect',{style:'mini',seats:'ends'}));
+
+// Expo counter: along bottom edge of kitchen (the dining side), with two walk-through gaps
+var counterH=0.55, counterY=KITCHEN_H-counterH;
+var gaps=[[5.3,6.4],[8.35,9.45]]; // x ranges that are open — OUT (left) above the 300s column, IN (right) just left of 415, above the 401s
+var counterSegs=[]; (function(){ var edges=[0.4].concat([gaps[0][0],gaps[0][1],gaps[1][0],gaps[1][1]]).concat([19.6]); for(var i=0;i<edges.length;i+=2){counterSegs.push({x1:edges[i],x2:edges[i+1]});} })();
+var passX=9.4, passY=1.7; // tray spot on the expo pass INSIDE the kitchen — the player must enter the kitchen to collect it
+
+// Table types: 200s = high tops, 300s & 400s = booths, everything else regular
+tables.forEach(function(tb){
+  if(tb.n>=200&&tb.n<300) tb.type='hightop';
+  else if(tb.n>=300&&tb.n<500) tb.type='booth';
+  else tb.type='regular';
+});
+
+// Patio partition: solid wall at x=14.3 between dining room and patio (800s),
+// with one in/out doorway at the top, just above table 412 (world y 4.85)
+var patioWallX=15.65, patioDoor={y1:3.6,y2:4.8};
+var wallSegs=[
+  {x:patioWallX,y:(DINING_TOP+patioDoor.y1)/2,w:0.14,h:patioDoor.y1-DINING_TOP},
+  {x:patioWallX,y:(patioDoor.y2+H)/2,w:0.14,h:H-patioDoor.y2},
+  // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2): no path between those rows;
+  // you go around its top end (below the pass) or its bottom end (above 406/407)
+  {x:7.1,y:9.25,w:0.14,h:8.7}
+];
+
+// ---------- State ----------
+var started=false, carrying=false, target=null, trayOnPass=false, lastTable=null;
+var deliveries=0, streak=0, hint=false, soundOn=true, nextTimer=null;
+var player={x:passX,y:passY,r:0.21,face:1,walk:0,moving:false}; // starts inside the kitchen ON the expo pass / handoff point (passX, passY); deliveries teleport back here
+var keys={}, pad={};
+var msgEl=document.getElementById('msg');
+var lastBumpAt=0, lastBumpTable=null;
+function setMsg(html,kind){ msgEl.innerHTML=html; msgEl.className=kind||''; }
+function updateHUD(){
+  document.getElementById('ticketVal').textContent = target? String(target.n) : '—';
+  document.getElementById('ticketBox').className='stat ticket'+(target?'':' waiting');
+  if(!target) document.getElementById('ticketVal').textContent='Waiting…';
+  document.getElementById('delivVal').textContent=deliveries;
+  document.getElementById('streakVal').textContent=streak;
+  document.getElementById('carryVal').textContent=carrying?('Tray → '+target.n):(trayOnPass?'Tray on pass':'Empty hands');
+}
+
+// ---------- Audio (WebAudio, synthesized) ----------
+var AC=null;
+function audio(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } if(AC&&AC.state==='suspended')AC.resume(); return AC; }
+function bell(){
+  if(!soundOn) return; var ac=audio(); if(!ac)return;
+  var t=ac.currentTime;
+  [0,0.28].forEach(function(off){
+    [2093,2637,3520].forEach(function(f,i){
+      var o=ac.createOscillator(), g=ac.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(i===0?0.22:0.07, t+off);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+off+0.55);
+      o.connect(g); g.connect(ac.destination); o.start(t+off); o.stop(t+off+0.6);
+    });
+  });
+}
+function chime(){
+  if(!soundOn) return; var ac=audio(); if(!ac)return; var t=ac.currentTime;
+  [523.25,659.25,783.99].forEach(function(f,i){
+    var o=ac.createOscillator(), g=ac.createGain(); o.type='triangle'; o.frequency.value=f;
+    var s=t+i*0.09; g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(0.18,s+0.02); g.gain.exponentialRampToValueAtTime(0.0001,s+0.4);
+    o.connect(g); g.connect(ac.destination); o.start(s); o.stop(s+0.45);
+  });
+}
+function thud(){
+  if(!soundOn) return; var ac=audio(); if(!ac)return; var t=ac.currentTime;
+  var o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(160,t); o.frequency.exponentialRampToValueAtTime(70,t+0.12);
+  g.gain.setValueAtTime(0.12,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.14);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+0.15);
+}
+
+// ---------- Game flow ----------
+// Shuffled-deck ticket system: every table is shuffled into a random order
+// and dealt one per ticket. No table repeats until all 62 have been dealt,
+// then a fresh deck is shuffled and play continues.
+var deck=[], deckIndex=0;
+function buildDeck(){
+  deck=tables.slice();
+  for(var i=deck.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=deck[i]; deck[i]=deck[j]; deck[j]=tmp;
+  }
+  // Guard: never deal the same table twice in a row across a reshuffle
+  if(lastTable!==null && deck.length>1 && deck[0].n===lastTable){
+    var first=deck[0]; deck[0]=deck[1]; deck[1]=first;
+  }
+  deckIndex=0;
+}
+function nextTableFromDeck(){
+  if(deckIndex>=deck.length) buildDeck();
+  return deck[deckIndex++];
+}
+function newTicket(){
+  target=nextTableFromDeck();
+  trayOnPass=true; carrying=false;
+  bell();
+  setMsg('🔔 <b>Order up!</b> Tray for <b>table '+target.n+'</b> is on the pass inside the kitchen. Go in through the <b>IN door</b> on the right to pick it up.','');
+  updateHUD();
+}
+function scheduleNext(){
+  target=null; trayOnPass=false; carrying=false; updateHUD();
+  var wait=3000+Math.random()*4000; // 3–7 seconds
+  nextTimer=setTimeout(newTicket, wait);
+}
+function deliver(){
+  var deliveredTo=target.n;
+  deliveries++; streak++; lastTable=deliveredTo;
+  // Teleport back to the kitchen handoff point 2 seconds AFTER the delivery
+  // registers — the player is usually still holding a direction at that moment,
+  // so the delay gives them time to let go before the jump. Direct position set,
+  // so no collision / bump feedback fires, and it works from the patio too.
+  // The next ticket still comes 3–7s after delivery (scheduleNext below), so the
+  // teleport at 2s lands the player on the pass before the next tray spawns.
+  setTimeout(function(){ player.x=passX; player.y=passY; player.moving=false; }, 2000);
+  chime();
+  setMsg('✅ <b>Delivered to table '+deliveredTo+'!</b> Nice run. '+(deliveries===1?'First one down.':deliveries+' delivered, streak of '+streak+'.')+' You\'re back at the kitchen pass — next ticket in a few seconds…','good');
+  scheduleNext();
+}
+function bumpTable(tb){
+  var now=performance.now();
+  if(tb===lastBumpTable && now-lastBumpAt<1200) return;
+  lastBumpTable=tb; lastBumpAt=now;
+  if(!target) return;
+  if(carrying){
+    if(tb.n===target.n){ deliver(); }
+    else { thud(); setMsg('✋ That\'s <b>'+tb.n+'</b> — you need <b>'+target.n+'</b>. Keep going, no penalty.','bad'); }
+  } else if(trayOnPass){
+    if(tb.n===target.n){ setMsg('👀 Table <b>'+tb.n+'</b> — right table, but the food is still on the pass in the kitchen. Go in through the IN door and grab the tray first.','bad'); }
+  }
+}
+
+// ---------- Collision ----------
+function circleRect(cx,cy,r,tb){
+  var hw=tb.w/2, hh=tb.h/2;
+  var nx=Math.max(tb.x-hw,Math.min(cx,tb.x+hw)), ny=Math.max(tb.y-hh,Math.min(cy,tb.y+hh));
+  var dx=cx-nx, dy=cy-ny; return dx*dx+dy*dy < r*r;
+}
+function circleCircle(cx,cy,r,tb){ var dx=cx-tb.x, dy=cy-tb.y, rr=r+tb.w/2; return dx*dx+dy*dy < rr*rr; }
+function hitsTable(cx,cy){
+  for(var i=0;i<tables.length;i++){ var tb=tables[i];
+    var hit = tb.shape==='circle' ? circleCircle(cx,cy,player.r,tb) : circleRect(cx,cy,player.r,tb);
+    if(hit) return tb;
+  }
+  return null;
+}
+function hitsCounter(cx,cy){
+  if(cy+player.r < counterY || cy-player.r > counterY+counterH) return false;
+  for(var i=0;i<counterSegs.length;i++){ var s=counterSegs[i]; if(cx+player.r>s.x1 && cx-player.r<s.x2) return true; }
+  return false;
+}
+function hitsWall(cx,cy){
+  for(var i=0;i<wallSegs.length;i++){ if(circleRect(cx,cy,player.r,wallSegs[i])) return true; }
+  return false;
+}
+// One-way kitchen doors: left gap (index 0) is OUT (down only), right gap (index 1) is IN (up only)
+var lastDoorMsgAt=0, lastDoorWhich='';
+function doorHint(which){
+  var now=performance.now();
+  if(which===lastDoorWhich && now-lastDoorMsgAt<1600) return;
+  lastDoorWhich=which; lastDoorMsgAt=now;
+  thud();
+  if(which==='in') setMsg('🚪 That\'s the <b>IN door</b> — into the kitchen only. Head out through the <b>OUT door</b> on the left.','bad');
+  else setMsg('🚪 That\'s the <b>OUT door</b> — out of the kitchen only. Come in through the <b>IN door</b> on the right.','bad');
+}
+function gapIndexAt(x){
+  for(var i=0;i<gaps.length;i++){ if(x>gaps[i][0]-0.02 && x<gaps[i][1]+0.02) return i; }
+  return -1;
+}
+function tryMove(dx,dy){
+  var nx=player.x+dx, ny=player.y+dy;
+  nx=Math.max(player.r+0.15,Math.min(W-player.r-0.15,nx));
+  ny=Math.max(player.r+0.15,Math.min(H-player.r-0.15,ny));
+  // X axis
+  var tb=hitsTable(nx,player.y);
+  if(tb||hitsCounter(nx,player.y)||hitsWall(nx,player.y)){ if(tb)bumpTable(tb); } else player.x=nx;
+  // Y axis
+  var blocked = hitsTable(player.x,ny)||hitsCounter(player.x,ny)||hitsWall(player.x,ny);
+  tb=hitsTable(player.x,ny);
+  if(!blocked && dy!==0){
+    // Crossing the counter line inside a gap? Enforce the one-way doors.
+    var midY=counterY+counterH/2;
+    if((player.y-midY)*(ny-midY)<=0 && player.y!==ny){
+      var gi=gapIndexAt(player.x);
+      if(gi===0 && dy<0){ blocked=true; doorHint('out'); }      // OUT door: no going up
+      else if(gi===1 && dy>0){ blocked=true; doorHint('in'); }  // IN door: no going down
+    }
+  }
+  if(blocked){ if(tb)bumpTable(tb); } else player.y=ny;
+}
+
+// ---------- Canvas rendering ----------
+var cv=document.getElementById('game'), ctx=cv.getContext('2d');
+var S=cv.width/(W+EXT); // px per unit (1100/22.0 = 50)
+function X(u){return (u+EXT)*S;} function Y(u){return u*S;} function D(u){return u*S;} // D: size/scale only, NO extension offset — use for every width/height/radius/lineWidth
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function oct(x,y,w,h){ var c=Math.min(w,h)*0.28; ctx.beginPath(); ctx.moveTo(x+c,y); ctx.lineTo(x+w-c,y); ctx.lineTo(x+w,y+c); ctx.lineTo(x+w,y+h-c); ctx.lineTo(x+w-c,y+h); ctx.lineTo(x+c,y+h); ctx.lineTo(x,y+h-c); ctx.lineTo(x,y+c); ctx.closePath(); }
+// Seats: one chair block per black tick on the seating chart, attached to the table edge
+// exactly where the chart shows it. Visual only — collision stays on the table body.
+// seats: 'ends' = 1 centered on each end (left/right) · 'endsTB' = 1 on the top end + 1 on the bottom end ·
+//        'tb2' = 2 top + 2 bottom · 'lr2' = 2 left + 2 right · 'diag' = 1 per octagon diagonal face
+function drawSeats(tb,bx,by,bw,bh,hl){
+  ctx.save();
+  ctx.shadowColor='transparent';
+  ctx.fillStyle = hl ? '#d98e2b' : (tb.style==='booth' ? '#6e3527' : '#4a3826');
+  ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1;
+  var along=D(0.30), depth=D(0.15);
+  function block(cx,cy,w,h){ rr(cx-w/2,cy-h/2,w,h,3); ctx.fill(); ctx.stroke(); }
+  if(tb.seats==='ends'){
+    block(bx-depth/2,by+bh/2,depth,along);
+    block(bx+bw+depth/2,by+bh/2,depth,along);
+  } else if(tb.seats==='endsTB'){
+    block(bx+bw/2,by-depth/2,along,depth);
+    block(bx+bw/2,by+bh+depth/2,along,depth);
+  } else if(tb.seats==='tb2'){
+    [0.28,0.72].forEach(function(f){
+      block(bx+f*bw,by-depth/2,along,depth);
+      block(bx+f*bw,by+bh+depth/2,along,depth);
+    });
+  } else if(tb.seats==='lr2'){
+    [0.28,0.72].forEach(function(f){
+      block(bx-depth/2,by+f*bh,depth,along);
+      block(bx+bw+depth/2,by+f*bh,depth,along);
+    });
+  } else if(tb.seats==='diag'){
+    var c=Math.min(bw,bh)*0.28;
+    var pts=[[bx+c/2,by+c/2,-1,-1],[bx+bw-c/2,by+c/2,1,-1],[bx+c/2,by+bh-c/2,-1,1],[bx+bw-c/2,by+bh-c/2,1,1]];
+    pts.forEach(function(p){
+      ctx.save();
+      ctx.translate(p[0]+p[2]*0.707*(depth/2-1), p[1]+p[3]*0.707*(depth/2-1));
+      ctx.rotate((p[2]*p[3]>0?-1:1)*Math.PI/4);
+      rr(-along/2,-depth/2,along,depth,3); ctx.fill(); ctx.stroke();
+      ctx.restore();
+    });
+  }
+  ctx.restore();
+}
+
+function draw(now){
+  // Floors — kitchen across the top, dining room below it
+  ctx.fillStyle='#3d3a38'; ctx.fillRect(0,0,cv.width,Y(KITCHEN_H)); // kitchen tiles
+  ctx.strokeStyle='rgba(255,255,255,.09)'; ctx.lineWidth=1;
+  for(var kx=0;kx<W;kx+=1){ ctx.beginPath(); ctx.moveTo(X(kx),0); ctx.lineTo(X(kx),Y(KITCHEN_H)); ctx.stroke(); }
+  for(var ky=0;ky<KITCHEN_H;ky+=1){ ctx.beginPath(); ctx.moveTo(0,Y(ky)); ctx.lineTo(cv.width,Y(ky)); ctx.stroke(); }
+  ctx.fillStyle='#c99a5b'; ctx.fillRect(0,Y(DINING_TOP),cv.width,cv.height-Y(DINING_TOP)); // warm dining wood
+  ctx.strokeStyle='rgba(120,72,20,.18)';
+  for(var gy=DINING_TOP;gy<H;gy+=1){ ctx.beginPath(); ctx.moveTo(0,Y(gy)); ctx.lineTo(cv.width,Y(gy)); ctx.stroke(); }
+  // Patio (800s zone): outdoor stone pavers east of the partition wall
+  ctx.fillStyle='#93908a'; ctx.fillRect(X(patioWallX),Y(DINING_TOP),D(W-patioWallX),cv.height-Y(DINING_TOP));
+  ctx.strokeStyle='rgba(60,58,54,.35)'; ctx.lineWidth=1;
+  for(var px2=patioWallX;px2<W;px2+=0.9){ ctx.beginPath(); ctx.moveTo(X(px2),Y(DINING_TOP)); ctx.lineTo(X(px2),cv.height); ctx.stroke(); }
+  for(var py2=DINING_TOP;py2<H;py2+=0.9){ ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(py2)); ctx.lineTo(cv.width,Y(py2)); ctx.stroke(); }
+  // Patio railing around the outer edges (top, right, bottom)
+  ctx.strokeStyle='#4c4a46'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(DINING_TOP+0.12)); ctx.lineTo(cv.width,Y(DINING_TOP+0.12)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(W-0.14),Y(DINING_TOP)); ctx.lineTo(X(W-0.14),cv.height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.14)); ctx.lineTo(cv.width,Y(H-0.14)); ctx.stroke();
+  ctx.lineWidth=1.5; ctx.strokeStyle='rgba(76,74,70,.6)';
+  ctx.beginPath(); ctx.moveTo(X(W-0.3),Y(DINING_TOP)); ctx.lineTo(X(W-0.3),cv.height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(patioWallX),Y(H-0.3)); ctx.lineTo(cv.width,Y(H-0.3)); ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='700 13px system-ui'; ctx.textAlign='center';
+  ctx.fillText('P A T I O',X(17.9),Y(DINING_TOP+0.5));
+  // Dining-room outline: left wall, then the bottom-left corner slants OUT down-left,
+  // following the bar's diagonal (same angle, a normal counter-to-wall distance west of the
+  // bar counter) until it meets the bottom wall at x=-1.69 — the room extends into the extra
+  // canvas space on the left to fit the bar tail. Everything west of the wall/slant is outside.
+  ctx.fillStyle='#0f0c0a';
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(X(0.12),0); ctx.lineTo(X(0.12),Y(11.57)); ctx.lineTo(X(-1.69),Y(H-0.06)); ctx.lineTo(X(-1.69),cv.height); ctx.lineTo(0,cv.height); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='#4a3826'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(X(0.12),Y(DINING_TOP)); ctx.lineTo(X(0.12),Y(11.57)); ctx.lineTo(X(-1.69),Y(H-0.06)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(-1.69),Y(H-0.06)); ctx.lineTo(X(4.15),Y(H-0.06)); ctx.moveTo(X(5.45),Y(H-0.06)); ctx.lineTo(X(patioWallX),Y(H-0.06)); ctx.stroke();
+  ctx.lineWidth=1;
+  // Front door (landmark only, not a gameplay exit): threshold + label on the bottom wall,
+  // centered below the gap between the 200s and 300s columns
+  ctx.fillStyle='#8a6a45'; ctx.fillRect(X(4.15),Y(H-0.13),D(1.3),D(0.13));
+  ctx.fillStyle='rgba(43,33,24,.75)'; ctx.font='700 10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('F R O N T   D O O R',X(4.8),Y(H-0.32));
+  // Bar counter along left wall — the straight run ends at the pivot, just past stool 110
+  ctx.fillStyle='#6b4226'; rr(X(0.15),Y(DINING_TOP+0.35),D(0.55),D(8.75),8); ctx.fill();
+  // Angled bar tail: ONE straight diagonal segment behind 111-114, starting tucked under the
+  // end of the straight bar (the pivot at 111) and running down-LEFT at the same angle as the
+  // stool line — no jog, step, or bump-out where it leaves the straight run
+  ctx.strokeStyle='#6b4226'; ctx.lineWidth=D(0.55); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath(); ctx.moveTo(X(0.35),Y(11.95)); ctx.lineTo(X(-0.75),Y(14.85)); ctx.stroke(); ctx.lineCap='butt';
+  ctx.fillStyle='rgba(255,255,255,.14)'; ctx.font='700 11px system-ui'; ctx.save(); ctx.translate(X(0.42),Y(DINING_TOP+6.6)); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('B A R',0,4); ctx.restore();
+  // Kitchen equipment hints
+  ctx.fillStyle='#55504c'; rr(X(0.6),Y(0.85),D(3.4),D(1.3),6); ctx.fill(); rr(X(16.3),Y(0.85),D(3.2),D(1.3),6); ctx.fill();
+  ctx.fillStyle='#cfc8c2'; ctx.font='700 12px system-ui'; ctx.textAlign='center';
+  ctx.fillText('🔥 LINE',X(2.3),Y(1.6)); ctx.fillText('🧊 PREP',X(17.9),Y(1.6));
+  ctx.fillStyle='#8f8a86'; ctx.font='700 15px system-ui'; ctx.fillText('K I T C H E N',X(9.4),Y(0.5));
+
+  // Target pulse (hint)
+  if(hint && target){
+    var pulse=0.5+0.5*Math.sin(now/280);
+    ctx.save(); ctx.strokeStyle='rgba(255,196,0,'+(0.45+0.5*pulse)+')'; ctx.lineWidth=3+3*pulse;
+    ctx.beginPath(); ctx.arc(X(target.x),Y(target.y),D(0.75+0.12*pulse),0,Math.PI*2); ctx.stroke(); ctx.restore();
+  }
+  // Tables
+  tables.forEach(function(tb){
+    var isTarget = target && tb.n===target.n;
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=4; ctx.shadowOffsetY=2;
+    var bx=X(tb.x-tb.w/2), by=Y(tb.y-tb.h/2), bw=D(tb.w), bh=D(tb.h);
+    var hl = !!(isTarget&&hint); // Hint is the ONLY glow: assigned table glows/pulses only when Hint is on
+    if(tb.style==='mini'||tb.style==='portrait'){
+      // Mini 2-tops (301/302/305, 413–415, 603, 604, 806) and portrait tables
+      // (303/304/306, 501, 605, 701, 807–809): plain tabletops
+      rr(bx,by,bw,bh,7);
+      ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; ctx.fill(); ctx.shadowColor='transparent';
+      ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      ctx.fillStyle='#4a3826';
+    }
+    else if(tb.shape==='circle'){ // bar stools
+      ctx.beginPath(); ctx.arc(X(tb.x),Y(tb.y),D(tb.w/2),0,Math.PI*2);
+      ctx.fillStyle='#8a5a33'; ctx.fill(); ctx.shadowColor='transparent';
+      ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      ctx.fillStyle='#fff3df';
+    }
+    else if(tb.type==='booth'){ // bench seats along both long sides, tabletop in the middle
+      ctx.fillStyle='#7a3b2e'; rr(bx,by,bw,bh,7); ctx.fill(); ctx.shadowColor='transparent';
+      ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.lineWidth=1;
+      if(bw>=bh){
+        var benchH=bh*0.26;
+        ctx.beginPath(); ctx.moveTo(bx+5,by+benchH); ctx.lineTo(bx+bw-5,by+benchH); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx+5,by+bh-benchH); ctx.lineTo(bx+bw-5,by+bh-benchH); ctx.stroke();
+        ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; rr(bx+3,by+benchH+2,bw-6,bh-2*benchH-4,4); ctx.fill();
+        ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      } else {
+        var benchW=bw*0.26;
+        ctx.beginPath(); ctx.moveTo(bx+benchW,by+5); ctx.lineTo(bx+benchW,by+bh-5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx+bw-benchW,by+5); ctx.lineTo(bx+bw-benchW,by+bh-5); ctx.stroke();
+        ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; rr(bx+benchW+2,by+3,bw-2*benchW-4,bh-6,4); ctx.fill();
+        ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      }
+      ctx.fillStyle='#4a3826';
+    }
+    else if(tb.type==='hightop'){ // compact tall top: dark rim, lighter surface, pedestal dot
+      var inset=3;
+      ctx.fillStyle='#4e3520'; rr(bx+1,by+1,bw-2,bh-2,6); ctx.fill(); ctx.shadowColor='transparent';
+      ctx.fillStyle= hl ? '#ffe1a8' : '#caa06a'; rr(bx+inset+1,by+inset+1,bw-2*inset-2,bh-2*inset-2,4); ctx.fill();
+      ctx.strokeStyle= hl ? '#e8a33d' : '#3a2812'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      ctx.fillStyle='rgba(58,40,18,.5)'; ctx.beginPath(); ctx.arc(X(tb.x),Y(tb.y),3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#33241a';
+    }
+    else if(tb.shape==='oct'){
+      oct(bx,by,bw,bh);
+      ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; ctx.fill(); ctx.shadowColor='transparent';
+      ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      ctx.fillStyle='#4a3826';
+    }
+    else {
+      rr(bx,by,bw,bh,7);
+      ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; ctx.fill(); ctx.shadowColor='transparent';
+      ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
+      ctx.fillStyle='#4a3826';
+    }
+    if(tb.seats) drawSeats(tb,bx,by,bw,bh,hl);
+    ctx.restore();
+  });
+  // Patio partition wall (with the in/out doorway at the top, above 412)
+  ctx.save();
+  ctx.fillStyle='#5a4632';
+  wallSegs.forEach(function(s){ ctx.fillRect(X(s.x-s.w/2),Y(s.y-s.h/2),D(s.w),D(s.h)); });
+  ctx.fillStyle='#3d2f20'; ctx.fillRect(X(patioWallX-0.07),Y(patioDoor.y1)-3,D(0.14),6); ctx.fillRect(X(patioWallX-0.07),Y(patioDoor.y2)-3,D(0.14),6);
+  ctx.fillStyle='#fff3df'; ctx.font='800 13px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('⇔',X(patioWallX),Y((patioDoor.y1+patioDoor.y2)/2));
+  ctx.font='700 9px system-ui'; ctx.fillStyle='rgba(43,33,24,.75)';
+  ctx.fillText('PATIO DOOR',X(patioWallX+0.85),Y((patioDoor.y1+patioDoor.y2)/2));
+  // Half-wall label (the wall itself is drawn by the wallSegs loop above)
+  ctx.save(); ctx.translate(X(7.1)-9,Y(9.25)); ctx.rotate(-Math.PI/2); ctx.fillStyle='rgba(255,243,223,.85)'; ctx.font='700 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('H A L F   W A L L',0,0); ctx.restore();
+  ctx.restore();
+  // Expo counter
+  counterSegs.forEach(function(s){
+    ctx.fillStyle='#7a4a21'; ctx.fillRect(X(s.x1),Y(counterY),D(s.x2-s.x1),D(counterH));
+    ctx.fillStyle='#a9743a'; ctx.fillRect(X(s.x1),Y(counterY),D(s.x2-s.x1),D(0.14));
+  });
+  // Heat lamps
+  ctx.fillStyle='#ffd76a';
+  for(var lx=1.2;lx<19.4;lx+=1.7){ if(gaps.some(function(g){return lx>g[0]-0.4&&lx<g[1]+0.4;})) continue; ctx.beginPath(); ctx.arc(X(lx),Y(counterY+0.1),4,0,Math.PI*2); ctx.fill(); }
+  gaps.forEach(function(g,i){ ctx.fillStyle='#ffe9a8'; ctx.font='800 12px system-ui'; ctx.textAlign='center'; ctx.fillText(i===0?'⬇ OUT':'⬆ IN',X((g[0]+g[1])/2),Y(counterY+0.37)); });
+  // Expo pass shelf INSIDE the kitchen — the tray is collected in here, not from the dining side
+  ctx.fillStyle='#7a4a21'; rr(X(passX-1.1),Y(passY-0.44),D(2.2),D(0.88),6); ctx.fill();
+  ctx.fillStyle='#a9743a'; rr(X(passX-1.1),Y(passY-0.44),D(2.2),D(0.16),6); ctx.fill();
+  ctx.fillStyle='#ffe9a8'; ctx.font='800 11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('EXPO PASS',X(passX),Y(passY-0.66));
+
+  // Tray on pass
+  if(trayOnPass && target){
+    var bob=Math.sin(now/300)*2;
+    ctx.save();
+    ctx.fillStyle='rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(X(passX),Y(passY)+3,D(0.5),7,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e8e4de'; rr(X(passX-0.52),Y(passY)-13+bob,D(1.04),24,8); ctx.fill();
+    ctx.strokeStyle='#9a958e'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(X(passX-0.22),Y(passY)-1+bob,8,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#c9c2b8'; ctx.stroke();
+    ctx.fillStyle='#d96f32'; ctx.beginPath(); ctx.arc(X(passX-0.22),Y(passY)-1+bob,4.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#b3541e'; rr(X(passX+0.08),Y(passY)-9+bob,D(0.36),17,3); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='800 11px system-ui'; ctx.textAlign='center'; ctx.fillText(target.n,X(passX+0.26),Y(passY)+3+bob);
+    ctx.fillStyle='#ffe9a8'; ctx.font='800 12px system-ui'; ctx.fillText('🔔',X(passX+0.82),Y(passY)+3+bob);
+    ctx.restore();
+  }
+  // Player (server)
+  var px=X(player.x), py=Y(player.y);
+  var step=player.moving?Math.sin(player.walk)*2:0;
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(px,py+13,11,4.5,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#22252b'; ctx.fillRect(px-8,py+4+Math.abs(step),5,9); ctx.fillRect(px+3,py+4-Math.abs(step),5,9); // legs
+  ctx.fillStyle='#f7f3ea'; rr(px-10,py-8,20,15,5); ctx.fill(); // shirt
+  ctx.fillStyle='#20242c'; rr(px-10,py-1,20,8,3); ctx.fill(); // apron
+  ctx.fillStyle='#e8b48c'; ctx.beginPath(); ctx.arc(px,py-14,7.5,0,Math.PI*2); ctx.fill(); // head
+  ctx.fillStyle='#3a2a1c'; ctx.beginPath(); ctx.arc(px,py-16.5,7.5,Math.PI,Math.PI*2); ctx.fill(); // hair
+  if(carrying && target){
+    var ty=py-6;
+    // Carried tray — drawn a little wider than before so the order ticket slip
+    // sits ON the tray itself, with the current table number legible at game
+    // scale, and travels with the player mid-run.
+    ctx.fillStyle='#d9d4cc'; rr(px+5,ty-9,34,18,5); ctx.fill(); ctx.strokeStyle='#9a958e'; ctx.lineWidth=1; ctx.stroke();
+    // Plate on the right end of the tray
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(px+31.5,ty,5,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#c9c2b8'; ctx.stroke();
+    ctx.fillStyle='#d96f32'; ctx.beginPath(); ctx.arc(px+31.5,ty,2.8,0,Math.PI*2); ctx.fill();
+    // Order ticket slip on the tray, carrying the target table number
+    ctx.fillStyle='#b3541e'; rr(px+7,ty-6,19,12,3); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='800 10px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(target.n,px+16.5,ty+0.5);
+    ctx.textBaseline='alphabetic';
+  }
+  ctx.restore();
+}
+
+// ---------- Main loop ----------
+var lastT=0;
+function loop(t){
+  requestAnimationFrame(loop);
+  var dt=Math.min(50,t-lastT||16); lastT=t;
+  if(started){
+    var sp=3.4*dt/1000; // units per frame-step — ample, unhurried pace
+    var dx=0,dy=0;
+    if(keys.left||pad.left)dx-=1; if(keys.right||pad.right)dx+=1;
+    if(keys.up||pad.up)dy-=1; if(keys.down||pad.down)dy+=1;
+    player.moving=!!(dx||dy);
+    if(player.moving){
+      var m=Math.hypot(dx,dy); dx=dx/m*sp; dy=dy/m*sp;
+      if(dy)player.face=Math.sign(dy);
+      player.walk+=dt/90;
+      tryMove(dx,dy);
+    }
+    // Pickup check
+    if(trayOnPass && target && !carrying){
+      var d=Math.hypot(player.x-passX,player.y-passY);
+      if(d<1.05){
+        carrying=true; trayOnPass=false;
+        setMsg('🍽️ <b>Tray picked up — table '+target.n+'.</b> Carry it out to the floor and walk into table '+target.n+'.','');
+        updateHUD();
+      }
+    }
+  }
+  draw(t);
+}
+requestAnimationFrame(loop);
+
+// ---------- Input ----------
+var keymap={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};
+document.addEventListener('keydown',function(e){
+  var k=keymap[(e.key||'').toLowerCase()];
+  if(k){ keys[k]=true; e.preventDefault(); }
+});
+document.addEventListener('keyup',function(e){
+  var k=keymap[(e.key||'').toLowerCase()];
+  if(k){ keys[k]=false; e.preventDefault(); }
+});
+document.querySelectorAll('.dpad button').forEach(function(b){
+  var dir=b.getAttribute('data-dir');
+  function on(e){ e.preventDefault(); pad[dir]=true; b.classList.add('on'); }
+  function off(e){ if(e)e.preventDefault(); pad[dir]=false; b.classList.remove('on'); }
+  b.addEventListener('pointerdown',on);
+  b.addEventListener('pointerup',off); b.addEventListener('pointerleave',off); b.addEventListener('pointercancel',off);
+  b.addEventListener('touchstart',on,{passive:false}); b.addEventListener('touchend',off);
+});
+
+// ---------- Controls ----------
+document.getElementById('hintBtn').addEventListener('click',function(){
+  hint=!hint; this.setAttribute('aria-pressed',hint); this.textContent=hint?'💡 Hint: On':'💡 Hint: Off';
+});
+document.getElementById('soundBtn').addEventListener('click',function(){
+  soundOn=!soundOn; this.setAttribute('aria-pressed',soundOn); this.textContent=soundOn?'🔔 Sound: On':'🔕 Sound: Off';
+  if(soundOn) bell();
+});
+document.getElementById('startBtn').addEventListener('click',function(){
+  audio(); // unlock audio on user gesture
+  started=true;
+  document.getElementById('startOverlay').style.display='none';
+  setMsg('Shift started! First ticket ringing in…','');
+  updateHUD();
+  setTimeout(newTicket, 1200);
+});
+updateHUD();
+})();
+</script>
+</body>
+</html>
