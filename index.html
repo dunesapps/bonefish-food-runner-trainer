@@ -81,7 +81,16 @@
   .bookPage li{margin:3px 0}
   .bookPage p{margin:5px 0}
   .bookPage li b,.bookPage p b{color:#2b2118}
-  #demoCanvas{display:block;width:84%;height:auto;background:#c99a5b;border:1px solid #d8c9b4;border-radius:10px;margin:6px auto 2px}
+  #demoCanvas,.demoCanvas{display:block;width:84%;height:auto;background:#c99a5b;border:1px solid #d8c9b4;border-radius:10px;margin:6px auto 2px}
+  /* Booklet bite-size cards — same card format as the Menu Training pop-up */
+  .bSteps{display:flex;flex-direction:column;gap:7px;margin:8px 0 4px}
+  .bStep{display:flex;gap:10px;align-items:flex-start;background:#fffdf7;border:1px solid #e2d3b8;border-radius:11px;padding:8px 10px;text-align:left}
+  .bStep .bIco{font-size:19px;line-height:1.25;flex:0 0 26px;text-align:center}
+  .bStepBody{flex:1;min-width:0}
+  .bStepBody b{display:block;font-family:system-ui,sans-serif;font-size:13.5px;line-height:1.25;color:#2b2118}
+  .bStepBody span{display:block;font-family:system-ui,sans-serif;font-size:12.5px;line-height:1.42;color:#5b4a38;margin-top:2px}
+  .bStepBody span b{display:inline;font-size:12.5px}
+  .bookNote{font-family:system-ui,sans-serif;font-size:12px!important;text-align:center;color:#8a7458!important}
   .demoCaption{font-family:system-ui,sans-serif;font-size:11.5px!important;text-align:center;color:#8a7458!important;margin:1px 0 0!important}
   .bookNav{display:flex;align-items:center;gap:8px;margin-top:10px;border-top:1px solid #e8dcc6;padding-top:9px}
   .bookNavBtn{background:var(--btn,#efe3d0);background:#efe3d0;color:#2b2118;border:1px solid #d8c9b4;border-radius:999px;padding:8px 15px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:system-ui,sans-serif;min-height:44px}
@@ -135,6 +144,17 @@
   .mKicker{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
   .mBig{font-size:30px;font-weight:800}
   .mList{margin:6px 0;padding-left:18px;font-size:14.5px;line-height:1.55;color:var(--muted)}
+  /* Menu Training intro — bite-size steps, each with its own little demo scene */
+  .mIntroChips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px}
+  .mIntroChips span{display:inline-block;background:var(--btn);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700}
+  .mSteps{display:flex;flex-direction:column;gap:8px;margin:10px 0 6px}
+  .mStep{display:flex;gap:11px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px 8px 8px}
+  .mStepCanvas{flex:0 0 132px;width:132px;height:99px;display:block;border-radius:8px;background:#c99a5b;border:1px solid var(--line)}
+  .mStepBody{flex:1;min-width:0}
+  .mStepTitle{font-size:15.5px;font-weight:800;line-height:1.2;color:var(--ink)}
+  .mStepText{font-size:13.5px;line-height:1.42;color:var(--muted);margin-top:3px}
+  .mStepText b{color:var(--ink)}
+  @media(max-width:420px){ .mStepCanvas{flex-basis:112px;width:112px;height:84px} .mStep{gap:9px} .mStepTitle{font-size:14.5px} .mStepText{font-size:12.5px} }
   .mTimerBar{height:6px;background:var(--btn);border-radius:99px;overflow:hidden;margin:8px 0}
   .mTimerBar>i{display:block;height:100%;background:var(--accent)}
   /* Menu Training in-world: live tray panel (two dishes + destination table) — compact so the kitchen stays visible */
@@ -232,7 +252,6 @@
       <button class="toggle" id="guideBtn" aria-label="Open the guide booklet">📖 Guide</button>
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me — start a quiz round">❓ Quiz me</button>
-      <button class="toggle" id="menuBlocksBtn" style="display:none" aria-label="Blocks — back to the block picker">📋 Blocks</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
     </div>
   </div>
@@ -256,44 +275,37 @@
           <section class="bookPage" data-book-page="1" aria-label="Page 2 of 4 — Choosing a training track">
             <div class="bookKicker">Choosing a track · Page 2 of 4</div>
             <h2>Pick your training at the PCs</h2>
-            <p>🖥️ Walk to a <b>PC terminal</b> along the top wall on the left, <b>between the bar and the kitchen door</b>, and <b>stand in its glowing ring for 2 seconds</b> to enter. The ring fills gold — step out and it resets.</p>
             <canvas id="demoCanvas" width="440" height="220" aria-label="Animated demo: the server walks up to a terminal ring and the ring fills as he stands in it"></canvas>
             <p class="demoCaption">Walk up to a ring and hold still — the ring fills, then you're in.</p>
-            <ul>
-              <li><b>Table Training</b> — learn the floor and table numbers by running trays to the ticket table.</li>
-              <li><b>Menu Training</b> — pick a block; each tray carries <b>two dishes</b> to a table. Deliver to get <b>both info cards</b>, then you're <b>quizzed only on dishes you've served</b> — a miss comes back as a <b>refire</b>. Descriptions first, allergens last.</li>
-            </ul>
-            <p>Only the two terminals live in this hub — <b>no exit ring here</b>, you're not in a scenario yet.</p>
+            <div class="bSteps">
+              <div class="bStep"><div class="bIco" aria-hidden="true">🖥️</div><div class="bStepBody"><b>Stand in a ring — 2 seconds</b><span>PCs are on the <b>top wall, left side</b>, between the bar and the kitchen door. Ring fills gold; step out and it resets.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🎫</div><div class="bStepBody"><b>Table Training</b><span>Learn the floor and table numbers by running trays.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Menu Training</b><span>Learn the food menu by running trays. Its pop-up explains the rest once you're in.</span></div></div>
+            </div>
+            <p class="bookNote">No exit ring in the hub — you're not in a scenario yet.</p>
           </section>
           <section class="bookPage" data-book-page="2" aria-label="Page 3 of 4 — Controls">
             <div class="bookKicker">Controls · Page 3 of 4</div>
             <h2>Moving &amp; running trays</h2>
-            <ul>
-              <li>⌨️ <b>Computer:</b> <b>WASD</b> / <b>arrow keys</b> (or the on-screen D-pad).</li>
-              <li>🕹️ <b>Phone:</b> drag the <b>joystick</b> — tilt further to walk faster. Swap corners with <b>Hand L / R</b>.</li>
-            </ul>
-            <p><b>Table Training:</b></p>
-            <ul>
-              <li>🔔 At the <b>bell</b>, enter via the <b>IN door</b> (right; left is OUT only) and pick up at the <b>expo</b>.</li>
-              <li>🍽️ The <b>tray shows the table number</b> — walk into that table to deliver; you <b>return to the expo automatically</b>.</li>
-            </ul>
-            <p><b>Menu Training:</b></p>
-            <ul>
-              <li>📋 Pick a <b>block</b>; each tray is <b>two dishes</b> for a table — names are in the <b>top-left panel</b>, the tray shows the number only.</li>
-              <li>📖 Deliver to open <b>both dishes' info cards</b> (photo, description, ingredients), then you're back at the expo.</li>
-              <li>❓ <b>Quizzes</b> pop up after a few runs (or tap <b>Quiz me</b>) — <b>served dishes only</b>; a miss <b>refires</b> that dish for re-delivery. <b>📋 Blocks</b> returns to the picker.</li>
-            </ul>
-            <p>🚪 <b>Leave either track:</b> stand 2 seconds in the small <b>coral EXIT ring on the dining floor, just below the kitchen wall left of the OUT door</b> — or <b>Exit</b> / <b>Esc</b>.</p>
+            <canvas id="controlsCanvas" class="demoCanvas" width="440" height="180" aria-label="Animated demo: the server picks up a tray at the expo and carries it into the ticket table to deliver"></canvas>
+            <p class="demoCaption">Pick up at the expo, carry the tray into the table — delivered.</p>
+            <div class="bSteps">
+              <div class="bStep"><div class="bIco" aria-hidden="true">⌨️</div><div class="bStepBody"><b>Computer</b><span><b>WASD</b> / <b>arrow keys</b> — or the on-screen D-pad.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🕹️</div><div class="bStepBody"><b>Phone</b><span>Drag the <b>joystick</b> — tilt further to walk faster. Swap corners with <b>Hand L / R</b>.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🔔</div><div class="bStepBody"><b>Pick up at the expo</b><span>At the bell, in through the <b>IN door</b> (right; OUT is exit only).</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Deliver</b><span>The tray shows the <b>table number</b> — walk into that table. You return to the expo automatically.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🚪</div><div class="bStepBody"><b>Leave a track</b><span>2 seconds in the small <b>coral EXIT ring</b> on the dining floor by the OUT door — or <b>Exit</b> / <b>Esc</b>.</span></div></div>
+            </div>
           </section>
           <section class="bookPage" data-book-page="3" aria-label="Page 4 of 4 — Good to know">
             <div class="bookKicker">Good to know · Page 4 of 4</div>
             <h2>Before you start</h2>
-            <ul>
-              <li>💡 <b>Hint</b> (top bar) makes your target table glow while you learn the floor.</li>
-              <li>🔔🎵 <b>Sound</b> and <b>Music</b> toggles are in the top bar — mute the lounge music there anytime.</li>
-              <li>💾 <b>Progress saves automatically on this device</b> — close and pick up where you left off.</li>
-              <li>📖 Reopen this booklet anytime with <b>Guide</b> in the top bar.</li>
-            </ul>
+            <div class="bSteps">
+              <div class="bStep"><div class="bIco" aria-hidden="true">💡</div><div class="bStepBody"><b>Hint</b><span>Top bar — makes your target table glow and puts the number labels back on every table while you learn.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🔔</div><div class="bStepBody"><b>Sound &amp; Music</b><span>Top bar toggles — mute the lounge music anytime.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">💾</div><div class="bStepBody"><b>Progress saves</b><span>Automatically, on this device. Close and pick up where you left off.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">📖</div><div class="bStepBody"><b>This booklet</b><span>Reopen it anytime with <b>Guide</b> in the top bar.</span></div></div>
+            </div>
             <p>Ready? Walk in the front door and pick your track at the PCs. Good luck, Angler!</p>
           </section>
         </div>
@@ -431,9 +443,15 @@ var patioWallX=15.65, patioDoor={y1:3.6,y2:4.8};
 var wallSegs=[
   {x:patioWallX,y:(DINING_TOP+patioDoor.y1)/2,w:0.14,h:patioDoor.y1-DINING_TOP},
   {x:patioWallX,y:(patioDoor.y2+H)/2,w:0.14,h:H-patioDoor.y2},
-  // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2): no path between those rows;
-  // you go around its top end (below the pass) or its bottom end (above 406/407)
-  {x:7.1,y:9.25,w:0.14,h:8.7}
+  // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2):
+  // it now runs from the kitchen counter (DINING_TOP, y 3.0) down past the
+  // last booth row (306's bottom edge is y 13.8) to y 14.3, so there is NO
+  // dining-floor crossing between the 300s and the 400s at all — not along
+  // its length and not across the old open strip below the counter. The
+  // only way between the two sections is around its bottom end, on the
+  // open floor south of 306/405 and above the 406/407 row (or through the
+  // kitchen via the IN/OUT doors).
+  {x:7.1,y:8.65,w:0.14,h:11.3}
 ];
 // Bottom wall of the building (collision only; the wall itself is stroked in draw()):
 // solid except the front-door gap (x 4.15–5.45), which is a real passable opening.
@@ -477,13 +495,17 @@ var termZoneY=3.62, termState={zone:null,t:0};
 var exitSpot={x:2.9, y:3.45, label:'EXIT', name:'Exit'};
 var exitState={inside:false,t:0};
 // ---------- Menu Training in-world state ----------
-// mode stays 'menu' for the whole track: the block picker, quizzes, allergen
-// rounds and mocks are overlays (menuWorldActive=false, floor frozen), while a
-// block shift is the floor itself (menuWorldActive=true) with learning runs,
-// info cards (menuInfoOpen) and quiz rounds (menuQuizOpen) pausing it.
-// Served / refire / dish-deck state itself lives in the Menu Training store
-// (same localStorage key as always) — see MenuModule below.
+// mode stays 'menu' for the whole track: the entry explainer pop-up, quizzes,
+// allergen rounds and mocks are overlays (menuWorldActive=false, floor
+// frozen), while the ONE unified session is the floor itself
+// (menuWorldActive=true) with learning runs, info cards (menuInfoOpen) and
+// quiz rounds (menuQuizOpen) pausing it. There are no blocks: the session
+// deck is the whole food menu, shuffled — menuCurrentBlock is the sentinel
+// 'all' for the whole session. Served / refire / dish-deck state itself
+// lives in the Menu Training store (same localStorage key as always) —
+// see MenuModule below.
 var menuWorldActive=false, menuCurrentBlock=null, menuTrayDishes=[], menuInfoOpen=false, menuQuizOpen=false, menuDeliveriesSinceQuiz=0;
+var menuIntroCanvases=[]; // Menu Training intro demo canvases (set by renderIntro)
 var menuPhotoImgs={}; // canvas thumbnail cache for tray slips (id -> Image)
 function menuFloorLive(){ return mode==='menu' && menuWorldActive && !menuInfoOpen && !menuQuizOpen; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
@@ -505,10 +527,9 @@ function updateMenuTrayPanel(){
   } else { panel.style.display='none'; panel.innerHTML=''; }
 }
 function updateMenuWorldButtons(){
-  var qb=document.getElementById('menuQuizBtn'), bb=document.getElementById('menuBlocksBtn');
+  var qb=document.getElementById('menuQuizBtn');
   var show = (mode==='menu' && menuWorldActive);
   if(qb) qb.style.display=show?'':'none';
-  if(bb) bb.style.display=show?'':'none';
   if(qb && show){
     var n=0; try{ if(typeof MenuModule!=='undefined' && MenuModule.quizPoolCount) n=MenuModule.quizPoolCount(menuCurrentBlock); }catch(e){}
     qb.textContent = document.body.classList.contains('mobile')
@@ -519,7 +540,6 @@ function updateMenuWorldButtons(){
 function hideMenuWorldChrome(){
   var eb=document.getElementById('exitBtn'); if(eb) eb.style.display='none';
   var qb=document.getElementById('menuQuizBtn'); if(qb) qb.style.display='none';
-  var bb=document.getElementById('menuBlocksBtn'); if(bb) bb.style.display='none';
   var panel=document.getElementById('menuTrayPanel'); if(panel){ panel.style.display='none'; panel.innerHTML=''; }
 }
 var keys={}, pad={};
@@ -916,7 +936,7 @@ function oct(x,y,w,h){ var c=Math.min(w,h)*0.28; ctx.beginPath(); ctx.moveTo(x+c
 function drawSeats(tb,bx,by,bw,bh,hl){
   ctx.save();
   ctx.shadowColor='transparent';
-  ctx.fillStyle = hl ? '#d98e2b' : (tb.style==='booth' ? '#6e3527' : '#4a3826');
+  ctx.fillStyle = hl ? '#d98e2b' : ((tb.type==='booth'||tb.style==='booth') ? '#6e3527' : '#4a3826');
   ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1;
   var along=D(0.30), depth=D(0.15);
   function block(cx,cy,w,h){ rr(cx-w/2,cy-h/2,w,h,3); ctx.fill(); ctx.stroke(); }
@@ -1151,9 +1171,11 @@ function draw(now){
     ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=4; ctx.shadowOffsetY=2;
     var bx=X(tb.x-tb.w/2), by=Y(tb.y-tb.h/2), bw=D(tb.w), bh=D(tb.h);
     var hl = !!(isTarget&&hint); // Hint is the ONLY glow: assigned table glows/pulses only when Hint is on
-    if(tb.style==='mini'||tb.style==='portrait'){
-      // Mini 2-tops (301/302/305, 413–415, 603, 604, 806) and portrait tables
-      // (303/304/306, 501, 605, 701, 807–809): plain tabletops
+    if((tb.style==='mini'||tb.style==='portrait') && tb.type!=='booth'){
+      // Mini 2-tops (603, 604, 806) and portrait tables (501, 605, 701,
+      // 807–809): plain tabletops. Booth tables in those shapes (all 300s
+      // and 400s — 301–306, 401–415) skip this branch and draw as booths
+      // below, so every booth shares the same red bench colour.
       rr(bx,by,bw,bh,7);
       ctx.fillStyle= hl ? '#ffe1a8' : '#f3e7d3'; ctx.fill(); ctx.shadowColor='transparent';
       ctx.strokeStyle= hl ? '#e8a33d' : '#a68b64'; ctx.lineWidth= hl?3:1.5; ctx.stroke();
@@ -1206,9 +1228,12 @@ function draw(now){
     if(tb.seats) drawSeats(tb,bx,by,bw,bh,hl);
     ctx.restore();
   });
-  // Hub mode: table numbers ON, so the floor can be learned while walking to the terminals.
-  // Entering Table Training turns them off again (hard mode); back in the hub they return.
-  if(mode==='hub'){
+  // Table numbers: ON in the hub, so the floor can be learned while walking
+  // to the terminals. In a training shift they stay OFF (hard mode) — unless
+  // Hint is on, which now shows every table's number label on the table
+  // itself in addition to the target table's glow/pulse. Hint off hides
+  // the labels again.
+  if(mode==='hub' || hint){
     ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
     tables.forEach(function(tb){
       ctx.font='800 '+(tb.shape==='circle'?10:12)+'px system-ui';
@@ -1227,7 +1252,7 @@ function draw(now){
   ctx.font='700 9px system-ui'; ctx.fillStyle='rgba(43,33,24,.75)';
   ctx.fillText('PATIO DOOR',X(patioWallX+0.85),Y((patioDoor.y1+patioDoor.y2)/2));
   // Half-wall label (the wall itself is drawn by the wallSegs loop above)
-  ctx.save(); ctx.translate(X(7.1)-9,Y(9.25)); ctx.rotate(-Math.PI/2); ctx.fillStyle='rgba(255,243,223,.85)'; ctx.font='700 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.save(); ctx.translate(X(7.1)-9,Y(8.65)); ctx.rotate(-Math.PI/2); ctx.fillStyle='rgba(255,243,223,.85)'; ctx.font='700 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('H A L F   W A L L',0,0); ctx.restore();
   ctx.restore();
   // Expo counter
@@ -1430,7 +1455,8 @@ function loop(t){
     }
   }
   draw(t);
-  if(bookletOpen) drawDemo(t);
+  if(bookletOpen){ drawDemo(t); drawControlsDemo(t); }
+  drawMenuIntroDemos(t);
 }
 requestAnimationFrame(loop);
 
@@ -1506,7 +1532,10 @@ function enterTableTraining(){
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   exitState.inside=false; exitState.t=0;
   document.getElementById('exitBtn').style.display='';
-  setMsg('🎫 <b>Table Training.</b> First ticket ringing in… To leave, stand in the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or use Exit / Esc).','');
+  // Entry teleport: straight to the kitchen pass for the first dish, the
+  // same spot deliveries return to — no walk in through the IN door first.
+  player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
+  setMsg('🎫 <b>Table Training.</b> You start at the <b>kitchen pass</b> — first ticket ringing in… To leave, stand in the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or use Exit / Esc).','');
   updateHUD();
   nextTimer=setTimeout(newTicket,1200);
 }
@@ -1529,36 +1558,45 @@ function enterMenuTraining(){
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
+  // Menu Training explains itself here: the entry pop-up (rendered by
+  // MenuModule.open) covers how the one session works; its Start button
+  // begins the session on the floor.
   MenuModule.open();
+  setMsg('🍽️ <b>Menu Training</b> — one session, the whole food menu. Read the pop-up, then start the session.','');
   updateHUD();
 }
-// Picking a block in the Menu Training picker starts a shift on the floor:
-// overlay away, exit ring + Quiz me / Blocks controls live, first two-dish
-// ticket ringing in on the usual rhythm.
+// Starting the session (from the entry pop-up / session home) puts you on
+// the floor: overlay away, exit ring + Quiz me controls live, first
+// two-dish ticket ringing in on the usual rhythm. One session only — the
+// deck is the whole food menu shuffled, no blocks, no set order.
 function startMenuWorld(block){
-  menuCurrentBlock=block; menuWorldActive=true; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
+  menuCurrentBlock='all'; menuWorldActive=true; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
   menuTrayDishes=[]; target=null; trayOnPass=false; carrying=false;
   exitState.inside=false; exitState.t=0;
   document.getElementById('menuOverlay').style.display='none';
   document.getElementById('exitBtn').style.display='';
   updateMenuWorldButtons();
-  player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
-  setMsg('📋 <b>Menu Training — Block '+block+' shift.</b> The bell will ring with a tray of <b>two dishes</b> and a table. Deliver it to read both dishes\' cards; quizzes only cover dishes you\'ve served. Leave via the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  // Entry teleport: straight to the kitchen pass for the first dish, same
+  // as Table Training — no walk in through the IN door first.
+  player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
+  setMsg('🍽️ <b>Menu Training — one session.</b> You start at the <b>kitchen pass</b>. The bell will ring with a tray of <b>two dishes</b> and a table. Deliver it to read both dishes\' cards; a quiz on dishes you\'ve served pops up after a few runs. Leave via the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
   updateHUD();
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   nextTimer=setTimeout(newTicket,1200);
 }
-// Back to the block picker from a shift (Blocks button / after a quiz):
-// the shift's tray and ticket are cleared, the picker overlay returns.
-function returnToMenuBlocks(){
+// Back to the Menu Training session home from a shift (after a quiz chose
+// allergens, etc.): the shift's tray and ticket are cleared, the overlay
+// returns with the unified session home (progress, allergens, mock, reset).
+function returnToMenuHome(){
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   target=null; trayOnPass=false; carrying=false; menuTrayDishes=[];
   menuWorldActive=false; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
+  menuCurrentBlock=null;
   exitState.inside=false; exitState.t=0;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  MenuModule.open();
-  setMsg('📋 <b>Menu Training</b> — pick a block to start a shift, or open allergens / test morning.','');
+  MenuModule.openHome();
+  setMsg('🍽️ <b>Menu Training</b> — session home. Start the session to get back on the floor.','');
   updateHUD();
 }
 // After a served-dishes quiz round, back on the floor: if a tray was already
@@ -1664,7 +1702,10 @@ var MENU_RAW=[
 ];
 var MENU_ITEMS=MENU_RAW.map(function(r,i){return {id:i,name:r[0],section:r[1],block:r[2],desc:r[3],alg:r[4]==='X'?null:r[4].split('').filter(function(c){return c!==' ';})};});
 var STEAK_TEMPS=[["Rare","Cool, red center"],["Medium Rare","Warm, red center"],["Medium","Bright pink, touch of red in the middle"],["Medium Well","Warm brown, pink center"],["Well Done","Hot brown center, no pink"]];
-var BLOCK_INFO={1:{label:'Block 1 · Pages 1–4',test:'Test: Wed (Day 2)'},2:{label:'Block 2 · Pages 5–8',test:'Test: Thu (Day 3)'},3:{label:'Block 3 · Pages 9–12',test:'Final: Fri (Day 4)'}};
+// Note: each MENU_RAW row still carries the study guide's page-group number
+// (the old 1/2/3 split) as an internal field — it is only used to pick
+// nearby quiz distractors. The session itself has NO blocks and NO
+// test-week order: one deck, the whole menu, shuffled.
 // Photo audit (Nov 17, 2026, from ~/workspace/bonefish/photo-matches.md): photos
 // harvested from the official DoorDash storefront for Bonefish Grill, North Wales
 // (store 441783), each displayed with that item name and checked against the study
@@ -1804,7 +1845,7 @@ var MENU_PHOTO_SOURCES={
 var MenuModule=(function(){
   var root=null, store=null;
   var KEY='bfg-menu-v1';
-  function blankProg(){ return {prog:{}, roundSeq:0, gates:{1:false,2:false,3:false}, visits:0, refire:[], decks:{}}; }
+  function blankProg(){ return {prog:{}, roundSeq:0, gates:{all:false}, visits:0, refire:[], decks:{}}; }
   function load(){
     try{ var s=localStorage.getItem(KEY); if(s){ store=JSON.parse(s); if(store&&store.prog){ normalizeStore(); return; } } }catch(e){}
     store=blankProg();
@@ -1814,7 +1855,8 @@ var MenuModule=(function(){
   // missing, and a dish studied under the old preview system (seen) counts
   // as served, so nobody's quiz pool or Solid progress resets.
   function normalizeStore(){
-    if(!store.gates) store.gates={1:false,2:false,3:false};
+    if(!store.gates) store.gates={all:false};
+    if(store.gates.all===undefined) store.gates.all=false;
     if(!Array.isArray(store.refire)) store.refire=[];
     if(!store.decks||typeof store.decks!=='object') store.decks={};
     Object.keys(store.prog).forEach(function(k){
@@ -1831,7 +1873,7 @@ var MenuModule=(function(){
   function removeRefire(id){ store.refire=store.refire.filter(function(x){return x!==id;}); }
   function servedList(b){ return itemsInBlock(b).filter(function(it){return P(it.id).served;}); }
   function quizPool(b){ return servedList(b).filter(function(it){return !isRefire(it.id);}); }
-  function refireCount(b){ return store.refire.filter(function(id){return MENU_ITEMS[id]&&MENU_ITEMS[id].block===b;}).length; }
+  function refireCount(b){ if(b==='all'||b===null||b===undefined) return store.refire.length; return store.refire.filter(function(id){return MENU_ITEMS[id]&&MENU_ITEMS[id].block===b;}).length; }
   function ensureDeck(b){
     if(!store.decks[b]||!Array.isArray(store.decks[b].order)){
       store.decks[b]={order:shuffle(itemsInBlock(b).map(function(it){return it.id;})), idx:0};
@@ -1839,15 +1881,17 @@ var MenuModule=(function(){
     }
     return store.decks[b];
   }
-  // Next tray for a shift in block b: refires first (they must be re-delivered
+  // Next tray for the session: refires first (they must be re-delivered
   // before they can be quizzed again), then the next not-yet-served dishes
-  // off the block's shuffled deck — up to 2 dishes a tray. Once the block is
-  // fully served, trays carry random served dishes so the shift can continue.
+  // off the session's shuffled deck — the whole food menu in random order,
+  // no blocks and no test-week order — up to 2 dishes a tray. Once the
+  // whole menu is served, trays carry random served dishes so the session
+  // can continue.
   function nextDishesForTray(b){
     var dishes=[], used={};
     store.refire.slice().forEach(function(id){
       var it=MENU_ITEMS[id];
-      if(it&&it.block===b&&dishes.length<2&&!used[it.id]){ dishes.push(it); used[it.id]=1; }
+      if(it&&(b==='all'||b===null||b===undefined||it.block===b)&&dishes.length<2&&!used[it.id]){ dishes.push(it); used[it.id]=1; }
     });
     if(dishes.length<2){
       var deck=ensureDeck(b);
@@ -1870,7 +1914,10 @@ var MenuModule=(function(){
   }
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
-  function itemsInBlock(b){ return MENU_ITEMS.filter(function(it){return it.block===b;}); }
+  // 'all' (the one unified session) = the whole food menu. The old per-block
+  // filter stays only so saved progress keyed by the guide's block numbers
+  // still resolves; nothing in the session flow deals by block any more.
+  function itemsInBlock(b){ if(b==='all'||b===null||b===undefined) return MENU_ITEMS.slice(); return MENU_ITEMS.filter(function(it){return it.block===b;}); }
   function sectionsInBlock(b){ var seen=[],out=[]; itemsInBlock(b).forEach(function(it){ if(seen.indexOf(it.section)<0){seen.push(it.section);out.push(it.section);} }); return out; }
   function solidCount(list){ return list.filter(function(it){return P(it.id).solid;}).length; }
   function algEligible(it){ return it.alg!==null; }
@@ -1897,31 +1944,68 @@ var MenuModule=(function(){
   }
   function bindHub(){ var b=document.getElementById('mHubBtn'); if(b) b.addEventListener('click',function(){ save(); exitToHub(terminals[1].x); }); }
 
-  // ----- Home / block picker -----
+  // ----- Entry pop-up: Menu Training explains itself -----
+  // Shown every time the track is entered from its hub terminal. This is
+  // where the how-it-works lives now — the guide booklet only says how to
+  // get here. One Start button begins the single session on the floor.
+  function renderIntro(){
+    var list=MENU_ITEMS, servedN=servedList('all').length, refN=refireCount('all');
+    // Bite-size cards — gist first, one short line each, every card with its
+    // own little demo scene in the game's art (drawn live by
+    // drawMenuIntroDemos in the main loop, same treatment as the booklet's
+    // walk-to-the-ring demo). Skippable: a Start button sits at the top as
+    // well as the bottom, so nobody has to scroll to begin.
+    function step(scene,icon,title,text,alt){
+      return '<div class="mStep"><canvas class="mStepCanvas" data-scene="'+scene+'" width="264" height="198" aria-label="'+alt+'"></canvas>'+
+        '<div class="mStepBody"><div class="mStepTitle">'+icon+' '+title+'</div><div class="mStepText">'+text+'</div></div></div>';
+    }
+    var html=topBar('🍽️ Menu Training')+
+      '<div class="mCard"><div class="mCardTitle" style="font-size:20px">The whole menu — one session</div>'+
+      '<div class="mIntroChips"><span>'+list.length+' dishes</span><span>One shuffled deck</span><span>Food only — no drinks yet</span></div>'+
+      '<div class="mRow"><button class="mBtn" id="mIntroStartTop">▶ Start the session — skip the tour</button></div>'+
+      '<div class="mSteps">'+
+      step('bell','🔔','Bell rings','Tray\'s on the <b>pass</b> — <b>2 dishes, 1 table</b>. Names are in the <b>top-left panel</b>.','Demo: a tray appears on the expo pass as the bell rings, with the dish panel at the top-left')+
+      step('deliver','🍽️','Pick up &amp; deliver','In through the <b>IN door</b>, grab it at the expo, <b>walk into that table</b>.','Demo: the server carries the tray from the expo to the ticket table')+
+      step('info','📖','Read the cards','Delivering opens <b>both info cards</b> — photo &amp; what\'s in them. <b>That\'s the quiz material.</b>','Demo: an info card opens showing a dish photo and its description lines')+
+      step('quiz','❓','Quiz pops up','After a few runs, <b>only on dishes you\'ve served</b>. Or tap <b>Quiz me</b> anytime.','Demo: a quiz card with answer options, one turning green with a check')+
+      step('refire','🔥','Miss one? It refires','It comes <b>back out of the kitchen</b> on a later tray. Re-deliver &amp; re-read it first.','Demo: a tray with a flame returns to the expo pass along a looping arrow')+
+      step('solid','⭐','Get it Solid','Right in <b>2 different rounds</b> = <b>Solid</b>. Then its <b>allergens unlock</b>.','Demo: two stars fill gold round by round, then an allergens tag unlocks')+
+      step('exit','🚪','Leaving','<b>2 seconds</b> in the small <b>coral EXIT ring</b> by the OUT door — or <b>Exit / Esc</b>.','Demo: the server stands in the coral exit ring on the dining floor and the ring fills')+
+      '</div>'+
+      (servedN?'<p class="mMeta">Picking up where you left off: <b>'+servedN+' of '+list.length+'</b> dishes served'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+'. Progress saves on this device.</p>':'<p class="mMeta">Progress saves on this device.</p>')+
+      '<div class="mRow"><button class="mBtn" id="mIntroStart">▶ Start the session</button></div></div>';
+    root.innerHTML=html; bindHub();
+    menuIntroCanvases=Array.prototype.slice.call(root.querySelectorAll('.mStepCanvas'));
+    function go(){ menuIntroCanvases=[]; startMenuWorld('all'); }
+    document.getElementById('mIntroStart').addEventListener('click',go);
+    document.getElementById('mIntroStartTop').addEventListener('click',go);
+    var hb=document.getElementById('mHubBtn'); if(hb) hb.addEventListener('click',function(){ menuIntroCanvases=[]; });
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- Session home (one session — progress & tools) -----
   function renderHome(){
-    var html=topBar('📋 Menu Training')+
-      '<p><b>Menu Training is a shift now.</b> Pick a block and you\'re on the floor: the bell rings, a tray carries <b>two dishes</b> to a table, and delivering it opens the <b>info card for both dishes</b>. Quiz rounds pop up after every couple of runs — and on demand with <b>Quiz me</b> — and they only cover <b>dishes you\'ve served</b>. Miss one and it <b>refires</b>: you re-deliver it before it can be quizzed again. An item is <b>Solid</b> after correct answers in <b>2 different rounds</b>. <b>Allergens come last</b> — they unlock per item once its description is Solid.</p>';
-    [1,2,3].forEach(function(b){
-      var list=itemsInBlock(b), sc=solidCount(list);
-      var elig=list.filter(algEligible), unlocked=list.filter(algUnlocked).length;
-      var gate=store.gates[b];
-      var servedN=servedList(b).length, refN=refireCount(b);
-      html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">'+esc(BLOCK_INFO[b].label)+'</div><div class="mMeta">'+esc(BLOCK_INFO[b].test)+'</div></div>'+
-        '<div class="mProg"><i style="width:'+Math.round(100*sc/list.length)+'%"></i></div>'+
-        '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Descriptions Solid: <b>'+sc+' / '+list.length+'</b> · Allergens unlocked: '+unlocked+' / '+elig.length+(gate?' · ✅ <b>Allergen gate passed</b>':' · Allergen gate: not yet passed')+'</div>'+
-        '<div class="mRow"><button class="mBtn" data-act="shift" data-b="'+b+'">▶ Start shift — deliver Block '+b+' dishes</button>'+
-        '<button class="mBtn ghost" data-act="alg" data-b="'+b+'">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
-        '<button class="mBtn ghost" data-act="morning" data-b="'+b+'">☀️ Test morning</button></div>'+
-        '<div class="mRow"><button class="mBtn ghost small" data-act="browse" data-b="'+b+'">Sections &amp; progress</button></div></div>';
-    });
+    var list=MENU_ITEMS, sc=solidCount(list);
+    var elig=list.filter(algEligible), unlocked=list.filter(algUnlocked).length;
+    var gate=store.gates.all;
+    var servedN=servedList('all').length, refN=refireCount('all');
+    var html=topBar('🍽️ Menu Training — session home')+
+      '<p><b>One session, the whole food menu.</b> Run trays → read the cards → get quizzed on dishes you\'ve served. Miss one and it <b>refires</b>. Food only — no drinks yet.</p>';
+    html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">The session — all '+list.length+' dishes</div></div>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*sc/list.length)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Descriptions Solid: <b>'+sc+' / '+list.length+'</b> · Allergens unlocked: '+unlocked+' / '+elig.length+(gate?' · ✅ <b>Allergen gate passed</b>':' · Allergen gate: not yet passed')+'</div>'+
+      '<div class="mRow"><button class="mBtn" data-act="shift">▶ Start session — back on the floor</button>'+
+      '<button class="mBtn ghost" data-act="alg">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
+      '<button class="mBtn ghost" data-act="morning">☀️ Test morning</button></div>'+
+      '<div class="mRow"><button class="mBtn ghost small" data-act="browse">Sections &amp; progress</button></div></div>';
     var wc=watchCount();
-    html+='<div class="mCard"><div class="mCardTitle">Cumulative mock — all 76 items</div><p>Text-only, no feedback until the end — like the written final. Use it Friday morning if the final turns out cumulative.</p><div class="mRow"><button class="mBtn ghost" data-act="cum">Start cumulative mock</button></div></div>'+
-      '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' item'+(wc===1?'':'s')+'</b> waiting for a clean re-check. Refires waiting across all blocks: <b>'+store.refire.length+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
+    html+='<div class="mCard"><div class="mCardTitle">Cumulative mock — all '+list.length+' items</div><p>Text-only, no feedback until the end — like the written final.</p><div class="mRow"><button class="mBtn ghost" data-act="cum">Start cumulative mock</button></div></div>'+
+      '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' item'+(wc===1?'':'s')+'</b> waiting for a clean re-check. Refires waiting: <b>'+store.refire.length+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
       '<div class="mRow"><button class="mBtn ghost small" id="mReset">Reset menu progress</button></div><div id="mResetMsg"></div></div>';
     root.innerHTML=html; bindHub();
     root.querySelectorAll('[data-act]').forEach(function(btn){ btn.addEventListener('click',function(){
-      var act=btn.getAttribute('data-act'), b=parseInt(btn.getAttribute('data-b'),10);
-      if(act==='shift') startMenuWorld(b); else if(act==='browse') renderBlock(b); else if(act==='alg') renderAlgHome(b); else if(act==='morning') startMorning(b); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock — all 76 items',null);
+      var act=btn.getAttribute('data-act');
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBlock('all'); else if(act==='alg') renderAlgHome('all'); else if(act==='morning') startMorning('all'); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock — all '+list.length+' items',null);
     });});
     var rs=document.getElementById('mReset');
     rs.addEventListener('click',function(){
@@ -1931,7 +2015,7 @@ var MenuModule=(function(){
     root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
   }
 
-  // ----- Block study view: section chunks -----
+  // ----- Study view: section chunks (whole menu) -----
   // Sprints launched from here follow the same rule as on-shift rounds: they
   // only quiz dishes already SERVED (and not waiting on a refire). Preview
   // stays as a reference read — it does not put a dish in the quiz pool;
@@ -1940,8 +2024,8 @@ var MenuModule=(function(){
     var pool=scope.filter(function(it){return P(it.id).served&&!isRefire(it.id);});
     if(!pool.length){
       root.innerHTML=topBar('🍽️ Nothing to quiz yet')+
-        '<div class="mCard"><p>Quiz questions only cover dishes you\'ve <b>served</b> on a shift — and a dish waiting on a <b>refire</b> has to be re-delivered before it can be quizzed again. Run a tray or two for this block first.</p>'+
-        '<div class="mRow"><button class="mBtn" id="mNoticeShift">▶ Start shift — Block '+b+'</button><button class="mBtn ghost" id="mNoticeBack">← All blocks</button></div></div>';
+        '<div class="mCard"><p>Quiz questions only cover dishes you\'ve <b>served</b> in the session — and a dish waiting on a <b>refire</b> has to be re-delivered before it can be quizzed again. Run a tray or two first.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mNoticeShift">▶ Start session</button><button class="mBtn ghost" id="mNoticeBack">← Session home</button></div></div>';
       bindHub();
       document.getElementById('mNoticeBack').addEventListener('click',renderHome);
       document.getElementById('mNoticeShift').addEventListener('click',function(){ startMenuWorld(b); });
@@ -1953,8 +2037,8 @@ var MenuModule=(function(){
   }
   function renderBlock(b){
     var list=itemsInBlock(b);
-    var html=topBar(esc(BLOCK_INFO[b].label))+'<p>The way in is a <b>shift</b>: deliver two-dish trays and read their cards — that\'s what puts dishes in the quiz pool. This page is the reference view: <b>Preview</b> re-reads a section\'s cards, and sprints here quiz <b>served dishes only</b>, same as on the floor.</p>'+
-      '<div class="mRow"><button class="mBtn" id="mBlockShift">▶ Start shift — Block '+b+'</button><button class="mBtn ghost" id="mBlockSprint">⚡ Sprint served dishes (up to 12)</button></div>';
+    var html=topBar('All dishes — sections & progress')+'<p>The way in is the <b>session</b>: deliver two-dish trays and read their cards — that\'s what puts dishes in the quiz pool. This page is the reference view: <b>Preview</b> re-reads a section\'s cards, and sprints here quiz <b>served dishes only</b>, same as on the floor.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mBlockShift">▶ Start session</button><button class="mBtn ghost" id="mBlockSprint">⚡ Sprint served dishes (up to 12)</button></div>';
     sectionsInBlock(b).forEach(function(sec){
       var items=list.filter(function(it){return it.section===sec;});
       var sc=solidCount(items);
@@ -1963,14 +2047,14 @@ var MenuModule=(function(){
         '<div class="mProg"><i style="width:'+Math.round(100*sc/items.length)+'%"></i></div>'+
         '<div class="mRow"><button class="mBtn ghost small" data-prev="'+esc(sec)+'">👀 Preview chunk</button><button class="mBtn ghost small" data-sprint="'+esc(sec)+'">⚡ Sprint this chunk</button></div></div>';
     });
-    if(b===2){
+    if(b==='all'||b===2){
       html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">🥩 Steak Temperatures (mini-chunk)</div><div class="mMeta">5 temps</div></div><p>The temperature chart printed on the From the Land page, drilled on its own.</p><div class="mRow"><button class="mBtn ghost small" id="mTempSprint">⚡ Sprint steak temps</button></div></div>';
     }
-    html+='<div class="mRow"><button class="mBtn ghost" id="mBackHome">← All blocks</button></div>';
+    html+='<div class="mRow"><button class="mBtn ghost" id="mBackHome">← Session home</button></div>';
     root.innerHTML=html; bindHub();
     document.getElementById('mBackHome').addEventListener('click',renderHome);
-    document.getElementById('mBlockShift').addEventListener('click',function(){ startMenuWorld(b); });
-    document.getElementById('mBlockSprint').addEventListener('click',function(){ startServedSprint(list,'Block '+b+' mixed sprint',b); });
+    document.getElementById('mBlockShift').addEventListener('click',function(){ startMenuWorld('all'); });
+    document.getElementById('mBlockSprint').addEventListener('click',function(){ startServedSprint(list,'Mixed sprint — served dishes','all'); });
     root.querySelectorAll('[data-prev]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.getAttribute('data-prev'); startPreview(list.filter(function(it){return it.section===sec;}),b); }); });
     root.querySelectorAll('[data-sprint]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.getAttribute('data-sprint'); startServedSprint(list.filter(function(it){return it.section===sec;}),sec+' sprint',b); }); });
     var tb=document.getElementById('mTempSprint'); if(tb) tb.addEventListener('click',startTempSprint);
@@ -2169,12 +2253,11 @@ var MenuModule=(function(){
     if(isWorld){
       var wb=S.worldBlock;
       var algReady=itemsInBlock(wb).filter(algUnlocked).length;
-      root.innerHTML=topBar('Round complete — Block '+wb)+
+      root.innerHTML=topBar('Round complete')+
         '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+S.correct+' of '+S.answered+' correct'+(S.kind==='sprint'?' · Score <b>'+S.score+'</b>':'')+'</p>'+speedNote+solidNote+missList+
-        '<div class="mRow"><button class="mBtn" id="mFloorBtn">▶ Back to the floor</button><button class="mBtn ghost" id="mBlocksBtn2">📋 Blocks</button>'+(algReady?'<button class="mBtn ghost" id="mAlgFromQuiz">⚠️ Allergen rounds ('+algReady+' ready)</button>':'')+'</div></div>';
+        '<div class="mRow"><button class="mBtn" id="mFloorBtn">▶ Back to the floor</button>'+(algReady?'<button class="mBtn ghost" id="mAlgFromQuiz">⚠️ Allergen rounds ('+algReady+' ready)</button>':'')+'</div></div>';
       bindHub();
       document.getElementById('mFloorBtn').addEventListener('click',function(){ returnToFloorFromMenuQuiz(); });
-      document.getElementById('mBlocksBtn2').addEventListener('click',function(){ returnToMenuBlocks(); });
       var ab=document.getElementById('mAlgFromQuiz');
       if(ab) ab.addEventListener('click',function(){
         menuQuizOpen=false; menuWorldActive=false; menuTrayDishes=[]; target=null; trayOnPass=false; carrying=false;
@@ -2187,7 +2270,7 @@ var MenuModule=(function(){
     }
     root.innerHTML=topBar('Round complete')+
       '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+S.correct+' of '+S.answered+' correct'+(S.kind==='sprint'?' · Score <b>'+S.score+'</b>':'')+'</p>'+speedNote+solidNote+missList+
-      '<div class="mRow"><button class="mBtn" id="mAgain">↻ Another round</button><button class="mBtn ghost" id="mHome2">All blocks</button></div><div id="mDoneSlot"></div></div>';
+      '<div class="mRow"><button class="mBtn" id="mAgain">↻ Another round</button><button class="mBtn ghost" id="mHome2">Session home</button></div><div id="mDoneSlot"></div></div>';
     bindHub();
     document.getElementById('mHome2').addEventListener('click',renderHome);
     document.getElementById('mAgain').addEventListener('click',function(){ renderHome(); });
@@ -2198,15 +2281,15 @@ var MenuModule=(function(){
   // ----- Test morning ritual -----
   function startMorning(b){
     var list=itemsInBlock(b);
-    root.innerHTML=topBar('☀️ Test morning — Block '+b)+'<div class="mCard"><p><b>The ritual (12–18 min):</b></p><ul class="mList"><li><b>1. Cold mock</b> of the whole block — no previews, no re-reading first. This measures what sleep kept.</li><li><b>2. Miss-only sprint</b> — just what the mock shook loose.</li><li><b>3. Allergen gate</b> — a 100%-clean allergen round, the last step before the test.</li></ul><div class="mRow"><button class="mBtn" id="mStartMock">Start cold mock ('+list.length+' questions)</button><button class="mBtn ghost" id="mSkipRitual">Back</button></div></div>';
+    root.innerHTML=topBar('☀️ Test morning')+'<div class="mCard"><p><b>The ritual:</b></p><ul class="mList"><li><b>1. Cold mock</b> of the whole menu — no previews, no re-reading first. This measures what sleep kept.</li><li><b>2. Miss-only sprint</b> — just what the mock shook loose.</li><li><b>3. Allergen gate</b> — a 100%-clean allergen round, the last step before the test.</li></ul><div class="mRow"><button class="mBtn" id="mStartMock">Start cold mock ('+list.length+' questions)</button><button class="mBtn ghost" id="mSkipRitual">Back</button></div></div>';
     bindHub();
     document.getElementById('mSkipRitual').addEventListener('click',renderHome);
     document.getElementById('mStartMock').addEventListener('click',function(){
-      startMock(list,'Cold mock — Block '+b,function(misses){
+      startMock(list,'Cold mock — whole menu',function(misses){
         if(misses.length){
           root.innerHTML=topBar('☀️ Step 2 — miss-only sprint')+'<div class="mCard"><p>The mock shook loose <b>'+misses.length+'</b> item'+(misses.length===1?'':'s')+'. One focused sprint on just those, then the allergen gate.</p><div class="mRow"><button class="mBtn" id="mMissGo">Start miss-only sprint</button></div></div>';
           bindHub();
-          document.getElementById('mMissGo').addEventListener('click',function(){ newSession('miss','Miss-only sprint — Block '+b, shuffle(misses).map(makeQ), function(){ renderGateIntro(b); }); });
+          document.getElementById('mMissGo').addEventListener('click',function(){ newSession('miss','Miss-only sprint', shuffle(misses).map(makeQ), function(){ renderGateIntro(b); }); });
         } else { renderGateIntro(b); }
       });
     });
@@ -2217,13 +2300,13 @@ var MenuModule=(function(){
     var list=itemsInBlock(b), elig=list.filter(algEligible), unlocked=list.filter(algUnlocked);
     var watch=list.filter(function(it){return P(it.id).watch;});
     var lockedN=elig.length-unlocked.length;
-    var html=topBar('⚠️ Allergens — Block '+b+' (last topic)');
-    html+='<div class="mCard"><p>Allergen questions unlock <b>one dish at a time</b>, once that dish\'s description is Solid — ingredients first, allergens after. Right now <b>'+unlocked.length+' of '+elig.length+'</b> dishes in this block are unlocked'+(lockedN?' ('+lockedN+' still locked — keep sprinting descriptions)':'')+'.</p>'+
+    var html=topBar('⚠️ Allergens (last topic)');
+    html+='<div class="mCard"><p>Allergen questions unlock <b>one dish at a time</b>, once that dish\'s description is Solid — ingredients first, allergens after. Right now <b>'+unlocked.length+' of '+elig.length+'</b> dishes are unlocked'+(lockedN?' ('+lockedN+' still locked — keep serving and quizzing descriptions)':'')+'.</p>'+
       '<p>Allergen rounds are <b>multi-select</b> (“select ALL allergens for this dish”), with <b>no timer and no speed bonus</b>. Watchlist items ('+watch.length+') drill first.</p>'+
       '<div class="mRow"><button class="mBtn" id="mAlgRound" '+(unlocked.length?'':'disabled')+'>▶ Allergen round'+(unlocked.length?' ('+Math.min(10,unlocked.length)+' questions)':'')+'</button>'+
       '<button class="mBtn ghost" id="mGateGo">🏁 Allergen gate</button></div>'+
       '<p class="mRule">Floor rule, always: <b>never answer a guest\'s allergy question from memory — check the chart</b> and tell a manager. This quiz builds the knowledge; the chart stays the authority.</p></div>'+
-      '<div class="mRow"><button class="mBtn ghost" id="mAlgBack">← All blocks</button></div>';
+      '<div class="mRow"><button class="mBtn ghost" id="mAlgBack">← Session home</button></div>';
     root.innerHTML=html; bindHub();
     document.getElementById('mAlgBack').addEventListener('click',renderHome);
     var rb=document.getElementById('mAlgRound'); if(rb) rb.addEventListener('click',function(){ startAlgRound(b,false); });
@@ -2233,8 +2316,8 @@ var MenuModule=(function(){
   function renderGateIntro(b){
     var list=itemsInBlock(b), elig=list.filter(algEligible), unlocked=list.filter(algUnlocked);
     var ready = unlocked.length===elig.length && elig.length>0;
-    root.innerHTML=topBar('🏁 Allergen gate — Block '+b)+
-      '<div class="mCard"><p>The gate is the <b>last step</b> before the test: every allergen-eligible dish in the block, answered in one round, and it only passes at <b>100% clean</b> — one miss and the gate stays open.</p>'+
+    root.innerHTML=topBar('🏁 Allergen gate')+
+      '<div class="mCard"><p>The gate is the <b>last step</b> before the test: every allergen-eligible dish on the menu, answered in one round, and it only passes at <b>100% clean</b> — one miss and the gate stays open.</p>'+
       '<p>Unlocked: <b>'+unlocked.length+' / '+elig.length+'</b>'+(ready?' — gate is ready.':elig.length===unlocked.length?'':' — the remaining dishes unlock as their descriptions turn Solid.')+'</p>'+
       (store.gates[b]?'<p>✅ <b>This gate has been passed.</b> You can still re-run it for a final check.</p>':'')+
       '<div class="mRow"><button class="mBtn" id="mGateStart" '+(ready?'':'disabled')+'>Start gate ('+elig.length+' dishes)</button><button class="mBtn ghost" id="mGateBack">Back</button></div>'+
@@ -2264,7 +2347,7 @@ var MenuModule=(function(){
     var codes=['F','S','D','E','W','Y','N','P','X'];
     var chips=codes.map(function(c){ return '<button class="mChip" data-c="'+c+'" aria-pressed="false">'+esc(ALG[c])+'</button>'; }).join('')+
       '<button class="mChip" data-c="NONE" aria-pressed="false">No major allergens listed</button>';
-    root.innerHTML=topBar((A.gate?'🏁 Allergen gate':'⚠️ Allergen round')+' — Block '+A.block)+
+    root.innerHTML=topBar(A.gate?'🏁 Allergen gate':'⚠️ Allergen round')+
       '<p class="mMeta">Dish '+(A.idx+1)+' of '+A.queue.length+' · No timer — accuracy only</p>'+
       '<div class="mCard"><div class="mQ">From the allergen chart, “'+esc(it.name)+'” contains…</div>'+
       '<p class="mQSub">Select <b>all</b> that apply. Most allergens are invisible in the dish — this is chart recall, not looking.</p>'+chips+
@@ -2317,10 +2400,10 @@ var MenuModule=(function(){
     if(passed){ store.gates[A.block]=true; save(); }
     root.innerHTML=topBar(A.gate?'🏁 Gate result':'Allergen round complete')+
       '<div class="mCard"><div class="mBig">'+A.correct+' / '+total+'</div>'+
-      (A.gate ? (passed?'<p>✅ <b>Gate passed — 100% clean.</b> Block '+A.block+' allergens are done. This was the last step before the test.</p>':'<p>Gate not passed yet — it needs a fully clean run. Missed dishes are on the Watchlist and will drill first in the next allergen round.</p>')
+      (A.gate ? (passed?'<p>✅ <b>Gate passed — 100% clean.</b> Menu allergens are done. This was the last step before the test.</p>':'<p>Gate not passed yet — it needs a fully clean run. Missed dishes are on the Watchlist and will drill first in the next allergen round.</p>')
               : '<p>'+(A.clean?'A fully clean allergen round — nice.':'Misses went to the Watchlist and drill first next time.')+'</p>')+
       (A.missedItems.length? '<p><b>Watchlist additions:</b> '+A.missedItems.map(function(it){return esc(it.name);}).join(', ')+'</p>':'')+
-      '<div class="mRow"><button class="mBtn" id="mAlgAgain">↻ Allergen round again</button><button class="mBtn ghost" id="mAlgHome2">All blocks</button></div>'+
+      '<div class="mRow"><button class="mBtn" id="mAlgAgain">↻ Allergen round again</button><button class="mBtn ghost" id="mAlgHome2">Session home</button></div>'+
       '<p class="mRule">Never answer a guest from memory — check the chart.</p></div>';
     bindHub();
     document.getElementById('mAlgHome2').addEventListener('click',renderHome);
@@ -2334,7 +2417,7 @@ var MenuModule=(function(){
     if(target&&(trayOnPass||carrying)) return; // a tray is already in play
     var dishes=nextDishesForTray(menuCurrentBlock);
     if(!dishes.length){
-      setMsg('📋 <b>No dishes available for this block right now</b> — open <b>Blocks</b> to pick another.','');
+      setMsg('📋 <b>No dishes available right now.</b>','');
       updateHUD(); return;
     }
     menuTrayDishes=dishes;
@@ -2374,7 +2457,7 @@ var MenuModule=(function(){
         '<p class="mMeta">'+(p.solid?'⭐ <b>Solid</b> — already correct in 2 different rounds.':'Served ✓ — answer it correctly in <b>2 different rounds</b> to make it Solid.')+'</p></div>';
     });
     var poolN=quizPool(menuCurrentBlock).length;
-    html+='<p class="mMeta">Block '+menuCurrentBlock+': <b>'+servedN+' of '+blockTotal+'</b> dishes served · <b>'+poolN+'</b> ready to quiz.</p>'+
+    html+='<p class="mMeta">Session: <b>'+servedN+' of '+blockTotal+'</b> dishes served · <b>'+poolN+'</b> ready to quiz.</p>'+
       '<div class="mRow"><button class="mBtn" id="mInfoDone">↩ Back to the expo →</button></div>'+
       '<p class="mMeta">Dismissing returns you to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on your served dishes is up next.':'')+'</p>';
     root.innerHTML=html;
@@ -2408,15 +2491,22 @@ var MenuModule=(function(){
     if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
     menuQuizOpen=true; menuDeliveriesSinceQuiz=0;
     document.getElementById('menuOverlay').style.display='block';
-    startSprint(pool,'Block '+b+' quiz — dishes you\'ve served',null,b);
+    startSprint(pool,'Quiz — dishes you\'ve served',null,b);
     updateMenuWorldButtons();
     return true;
   }
 
   return {
+    // Entry: the explainer pop-up (Menu Training explains itself here).
     open:function(){
       root=document.getElementById('menuRoot');
       load(); store.visits++; save();
+      renderIntro();
+    },
+    // Session home: unified progress / allergens / mock / reset.
+    openHome:function(){
+      root=document.getElementById('menuRoot');
+      if(!store) load();
       renderHome();
     },
     handleNewTicket:handleNewTicket,
@@ -2451,9 +2541,6 @@ document.getElementById('exitBtn').addEventListener('click',function(){
 document.getElementById('menuQuizBtn').addEventListener('click',function(){
   if(mode==='menu'&&menuWorldActive&&typeof MenuModule!=='undefined'&&MenuModule.startWorldQuiz) MenuModule.startWorldQuiz();
 });
-document.getElementById('menuBlocksBtn').addEventListener('click',function(){
-  if(mode==='menu'&&menuWorldActive) returnToMenuBlocks();
-});
 // (Menu Training has its own in-module "Back to hub" control, wired by MenuModule.)
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
@@ -2474,8 +2561,10 @@ function showBookPage(n){
   document.getElementById('bookBack').disabled = bookIdx===0;
   var last = bookIdx===bookPageEls.length-1;
   document.getElementById('bookNext').style.display = last?'none':'';
+  // One-tap skippable: Start shift is in the nav on EVERY page, not just
+  // the last — tap it anytime to skip the booklet and get on the floor.
   var sb=document.getElementById('startBtn');
-  sb.style.display = last?'':'none';
+  sb.style.display = '';
   sb.textContent = started ? '✓ Back to the floor' : '▶ Start shift';
 }
 document.getElementById('bookBack').addEventListener('click',function(){ showBookPage(bookIdx-1); });
@@ -2547,6 +2636,226 @@ function drawDemo(now){
     c.fillStyle='rgba(43,33,24,.8)'; c.font='700 11px system-ui';
     c.fillText('You\'re in!',ringX+ringR+16,ringY+6);
   }
+  c.textBaseline='alphabetic';
+}
+// ---------- Little demo scenes (bite-size instruction cards) ----------
+// Same treatment as drawDemo above: drawn live from the game's own artwork
+// (kitchen/dining floors, expo pass, tray + plates, the server, tables, the
+// coral exit ring) — no images, no assets. Each Menu Training intro card
+// gets one looping scene; the booklet controls page gets its own below.
+// Canvas space for the menu cards is 264×198, displayed at half size, so
+// in-scene type is drawn big (18px+ reads as ~9px on screen).
+function miniRR(c,x,y,w,h,r){ c.beginPath(); if(c.roundRect) c.roundRect(x,y,w,h,r); else c.rect(x,y,w,h); }
+function miniFloor(c,Wd,Hd,kitchenH){
+  c.fillStyle='#3d3a38'; c.fillRect(0,0,Wd,kitchenH);
+  c.fillStyle='#c99a5b'; c.fillRect(0,kitchenH,Wd,Hd-kitchenH);
+  c.strokeStyle='rgba(120,72,20,.18)'; c.lineWidth=2;
+  for(var gy=kitchenH+28;gy<Hd;gy+=28){ c.beginPath(); c.moveTo(0,gy); c.lineTo(Wd,gy); c.stroke(); }
+  c.fillStyle='#7a4a21'; c.fillRect(0,kitchenH-8,Wd,16);
+  c.fillStyle='#a9743a'; c.fillRect(0,kitchenH-8,Wd,5);
+}
+function miniServer(c,x,y,walking,now,carrying){
+  var step=walking?Math.sin(now/90)*4:0;
+  c.save();
+  c.fillStyle='rgba(0,0,0,.3)'; c.beginPath(); c.ellipse(x,y+17,13,5.5,0,0,Math.PI*2); c.fill();
+  c.fillStyle='#22252b'; c.fillRect(x-10,y+5+Math.abs(step),6,11); c.fillRect(x+4,y+5-Math.abs(step),6,11);
+  c.fillStyle='#f7f3ea'; miniRR(c,x-12,y-10,24,18,6); c.fill();
+  c.fillStyle='#20242c'; miniRR(c,x-12,y+1,24,10,4); c.fill();
+  c.fillStyle='#e8b48c'; c.beginPath(); c.arc(x,y-17,9,0,Math.PI*2); c.fill();
+  c.fillStyle='#3a2a1c'; c.beginPath(); c.arc(x,y-20,9,Math.PI,Math.PI*2); c.fill();
+  if(carrying){
+    c.fillStyle='#d9d4cc'; miniRR(c,x+7,y-12,42,22,5); c.fill(); c.strokeStyle='#9a958e'; c.lineWidth=1.5; c.stroke();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(x+22,y-1,7.5,0,Math.PI*2); c.fill(); c.strokeStyle='#c9c2b8'; c.lineWidth=1; c.stroke();
+    c.fillStyle='#d96f32'; c.beginPath(); c.arc(x+22,y-1,4,0,Math.PI*2); c.fill();
+    c.fillStyle='#b3541e'; miniRR(c,x+32,y-1,15,13,3); c.fill();
+  }
+  c.restore();
+}
+function miniTray(c,x,y,bob){
+  c.save(); c.translate(0,bob||0);
+  c.fillStyle='rgba(0,0,0,.28)'; c.beginPath(); c.ellipse(x,y+8,42,7,0,0,Math.PI*2); c.fill();
+  c.fillStyle='#e8e4de'; miniRR(c,x-42,y-13,84,26,8); c.fill(); c.strokeStyle='#9a958e'; c.lineWidth=2; c.stroke();
+  [-20,10].forEach(function(off){
+    c.fillStyle='#fff'; c.beginPath(); c.arc(x+off,y,10,0,Math.PI*2); c.fill(); c.strokeStyle='#c9c2b8'; c.lineWidth=1.5; c.stroke();
+    c.fillStyle='#d96f32'; c.beginPath(); c.arc(x+off,y,5.5,0,Math.PI*2); c.fill();
+  });
+  c.fillStyle='#b3541e'; miniRR(c,x+24,y-20,27,16,4); c.fill();
+  c.fillStyle='#fff'; c.font='800 12px system-ui'; c.textAlign='center'; c.textBaseline='middle'; c.fillText('401',x+37.5,y-11.5);
+  c.restore(); c.textBaseline='alphabetic';
+}
+function miniTable(c,x,y,label,glow){
+  c.save();
+  c.fillStyle='rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(x,y+24,36,7,0,0,Math.PI*2); c.fill();
+  if(glow){ c.strokeStyle='rgba(255,196,0,.9)'; c.lineWidth=5; miniRR(c,x-36,y-24,72,48,8); c.stroke(); }
+  c.fillStyle='#f3e7d3'; miniRR(c,x-33,y-21,66,42,7); c.fill(); c.strokeStyle='#a68b64'; c.lineWidth=2; c.stroke();
+  c.fillStyle='#4a3826'; c.font='800 19px system-ui'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(label,x,y+1);
+  c.restore(); c.textBaseline='alphabetic';
+}
+function drawMiniScene(cv,scene,now){
+  var c=cv.getContext('2d'); if(!c) return;
+  var Wd=cv.width, Hd=cv.height, cx=Wd/2;
+  var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=reduced?1900:(now%4200);
+  c.clearRect(0,0,Wd,Hd);
+  if(scene==='bell'){
+    miniFloor(c,Wd,Hd,86);
+    c.fillStyle='#7a4a21'; miniRR(c,cx-62,26,124,44,6); c.fill(); c.fillStyle='#a9743a'; miniRR(c,cx-62,26,124,13,6); c.fill();
+    c.fillStyle='#ffe9a8'; c.font='800 15px system-ui'; c.textAlign='center'; c.fillText('EXPO PASS',cx,20);
+    miniTray(c,cx,52,Math.sin(now/300)*2.5);
+    var ring=t<600?0:(t<1500?1:0.55+0.45*Math.sin(now/220));
+    c.globalAlpha=ring; c.font='30px system-ui'; c.textAlign='center'; c.fillText('🔔',cx+86,42); c.globalAlpha=1;
+    // Top-left dish panel — where the names live
+    c.fillStyle='rgba(20,15,11,.94)'; miniRR(c,10,96,118,62,8); c.fill(); c.strokeStyle='rgba(255,255,255,.35)'; c.lineWidth=1.5; c.stroke();
+    c.fillStyle='#ffd76a'; c.font='800 14px system-ui'; c.textAlign='left'; c.fillText('TABLE 401',20,116);
+    c.fillStyle='#fff'; miniRR(c,20,126,88,9,4); c.fill(); c.fillStyle='rgba(255,255,255,.55)'; miniRR(c,20,141,64,9,4); c.fill();
+    miniServer(c,196,128,false,now,false);
+  } else if(scene==='deliver'){
+    miniFloor(c,Wd,Hd,44);
+    c.fillStyle='#ffe9a8'; c.font='800 15px system-ui'; c.textAlign='center'; c.fillText('⬆ IN',52,32);
+    var f=t<2400? (t/2400) : 1; f=1-Math.pow(1-f,2);
+    var sx=44+(168-44)*f, sy=118;
+    c.strokeStyle='rgba(255,255,255,.4)'; c.lineWidth=3; c.setLineDash([7,7]); c.beginPath(); c.moveTo(44,sy); c.lineTo(168,sy); c.stroke(); c.setLineDash([]);
+    miniTable(c,208,118,'401',t>=2400);
+    miniServer(c,sx,sy,t<2400,now,true);
+    if(t>=2500){ c.fillStyle='#2e7d32'; c.font='800 34px system-ui'; c.textAlign='center'; c.fillText('✓',208,62); }
+  } else if(scene==='info'){
+    c.fillStyle='#c99a5b'; c.fillRect(0,0,Wd,Hd);
+    c.fillStyle='#fff8ec'; miniRR(c,34,18,196,162,12); c.fill(); c.strokeStyle='#d8c9b4'; c.lineWidth=2; c.stroke();
+    c.fillStyle='#e8e4de'; miniRR(c,52,36,64,64,8); c.fill();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(84,68,22,0,Math.PI*2); c.fill(); c.strokeStyle='#c9c2b8'; c.lineWidth=2; c.stroke();
+    c.fillStyle='#d96f32'; c.beginPath(); c.arc(84,68,12,0,Math.PI*2); c.fill();
+    c.fillStyle='#2b2118'; miniRR(c,128,42,84,15,7); c.fill(); c.fillStyle='rgba(43,33,24,.45)'; miniRR(c,128,66,60,11,5); c.fill();
+    for(var li=0;li<3;li++){
+      if(t>500+li*550){ c.fillStyle='rgba(91,74,56,.75)'; miniRR(c,52,118+li*20,164-li*34,11,5); c.fill(); }
+    }
+    c.font='24px system-ui'; c.textAlign='center'; c.fillText('📖',224,44);
+  } else if(scene==='quiz'){
+    c.fillStyle='#241d18'; c.fillRect(0,0,Wd,Hd);
+    c.fillStyle='#e07a5f'; c.beginPath(); c.arc(52,46,21,0,Math.PI*2); c.fill();
+    c.fillStyle='#fff'; c.font='800 28px system-ui'; c.textAlign='center'; c.textBaseline='middle'; c.fillText('?',52,47); c.textBaseline='alphabetic';
+    c.fillStyle='rgba(245,234,217,.9)'; miniRR(c,86,34,150,13,6); c.fill(); c.fillStyle='rgba(245,234,217,.45)'; miniRR(c,86,54,104,11,5); c.fill();
+    for(var oi=0;oi<3;oi++){
+      var oy=88+oi*36, right=(oi===1&&t>1900);
+      c.fillStyle=right?'rgba(127,176,105,.35)':'#2e251f'; miniRR(c,34,oy,196,28,9); c.fill();
+      c.strokeStyle=right?'#7fb069':'#4a3b2f'; c.lineWidth=2; c.stroke();
+      c.fillStyle=right?'#dff0d8':'rgba(245,234,217,.55)'; miniRR(c,48,oy+9,110-oi*22,10,5); c.fill();
+      if(right){ c.fillStyle='#bfe3ae'; c.font='800 21px system-ui'; c.textAlign='center'; c.fillText('✓',212,oy+21); }
+    }
+  } else if(scene==='refire'){
+    miniFloor(c,Wd,Hd,86);
+    c.fillStyle='#7a4a21'; miniRR(c,cx-62,26,124,44,6); c.fill(); c.fillStyle='#a9743a'; miniRR(c,cx-62,26,124,13,6); c.fill();
+    miniTray(c,cx-38,52,0);
+    var fl=1+0.16*Math.sin(now/130);
+    c.save(); c.translate(cx+16,34); c.scale(fl,fl); c.font='27px system-ui'; c.textAlign='center'; c.fillText('🔥',0,0); c.restore();
+    c.strokeStyle='#e07a5f'; c.lineWidth=4; c.setLineDash([9,7]); c.beginPath(); c.arc(cx,128,86,Math.PI*1.08,Math.PI*1.92); c.stroke(); c.setLineDash([]);
+    var aa=Math.PI*(1.08+0.84*((t%2100)/2100));
+    var ax=cx+Math.cos(aa)*86, ay=128+Math.sin(aa)*86;
+    c.fillStyle='#e07a5f'; c.beginPath(); c.arc(ax,ay,8,0,Math.PI*2); c.fill();
+    c.fillStyle='#fff'; c.font='800 15px system-ui'; c.textAlign='center'; c.fillText('↺',ax,ay+5.5);
+    miniServer(c,52,140,false,now,false);
+  } else if(scene==='solid'){
+    c.fillStyle='#c99a5b'; c.fillRect(0,0,Wd,Hd);
+    [72,192].forEach(function(sx2,i){
+      var on=t>700+i*1000;
+      c.fillStyle=on?'#ffc400':'rgba(255,248,236,.85)'; c.beginPath(); c.arc(sx2,72,34,0,Math.PI*2); c.fill();
+      c.strokeStyle=on?'#b3541e':'#a68b64'; c.lineWidth=3; c.stroke();
+      c.font='36px system-ui'; c.textAlign='center'; c.fillText('⭐',sx2,84);
+      c.fillStyle='#2b2118'; c.font='800 16px system-ui'; c.fillText('Round '+(i+1),sx2,128);
+    });
+    if(t>2400){
+      c.fillStyle='#241d18'; miniRR(c,44,146,176,34,17); c.fill();
+      c.fillStyle='#f5ead9'; c.font='800 16px system-ui'; c.textAlign='center'; c.fillText('⚠ Allergens ✓',cx,168);
+    } else {
+      c.fillStyle='rgba(43,33,24,.55)'; c.font='700 16px system-ui'; c.textAlign='center'; c.fillText('Allergens locked…',cx,168);
+    }
+  } else { // exit
+    miniFloor(c,Wd,Hd,40);
+    var ringX=cx, ringY=116;
+    var walking=t<1100, fill=t<1100?0:(t<3100?(t-1100)/2000:1);
+    var py2=walking? (182-(182-ringY)*(1-Math.pow(1-t/1100,2))) : ringY;
+    c.save();
+    c.strokeStyle=fill>=1?'#ff8a70':'rgba(255,122,92,.95)'; c.lineWidth=3; c.setLineDash([8,6]);
+    c.beginPath(); c.arc(ringX,ringY,38,0,Math.PI*2); c.stroke(); c.setLineDash([]);
+    if(fill>0){ c.strokeStyle='#ff8a70'; c.lineWidth=6; c.beginPath(); c.arc(ringX,ringY,38,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,fill)); c.stroke(); }
+    c.restore();
+    c.fillStyle='rgba(43,26,20,.9)'; miniRR(c,ringX-30,ringY+44,60,20,6); c.fill();
+    c.fillStyle='#ffb4a2'; c.font='800 14px system-ui'; c.textAlign='center'; c.fillText('EXIT',ringX,ringY+58.5);
+    miniServer(c,ringX,py2,walking,now,false);
+    if(fill>=1){ c.fillStyle='#2e7d32'; c.font='800 30px system-ui'; c.textAlign='center'; c.fillText('✓',ringX+56,ringY-22); }
+  }
+  c.textBaseline='alphabetic';
+}
+function drawMenuIntroDemos(now){
+  if(!menuIntroCanvases.length) return;
+  var ov=document.getElementById('menuOverlay');
+  if(!ov||ov.style.display==='none') return;
+  for(var i=0;i<menuIntroCanvases.length;i++){
+    var cv=menuIntroCanvases[i];
+    if(cv.isConnected) drawMiniScene(cv,cv.getAttribute('data-scene'),now);
+  }
+}
+// Booklet controls page demo: movement + a delivery, same game art — the
+// server picks the tray up at the expo (top), carries it across the dining
+// floor into table 401, and the delivery check pops.
+function drawControlsDemo(now){
+  var dc=document.getElementById('controlsCanvas'); if(!dc) return;
+  if(window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect){
+    CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){ this.rect(x,y,w,h); return this; };
+  }
+  if(bookIdx!==2) return;
+  var c=dc.getContext('2d'); if(!c) return;
+  var Wd=dc.width, Hd=dc.height;
+  var reduced=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=reduced?2500:(now%4200);
+  c.fillStyle='#3d3a38'; c.fillRect(0,0,Wd,40);
+  c.fillStyle='#c99a5b'; c.fillRect(0,40,Wd,Hd-40);
+  c.strokeStyle='rgba(120,72,20,.18)'; c.lineWidth=1;
+  for(var gy=66;gy<Hd;gy+=26){ c.beginPath(); c.moveTo(0,gy); c.lineTo(Wd,gy); c.stroke(); }
+  c.fillStyle='#7a4a21'; c.fillRect(0,40,Wd,14); c.fillStyle='#a9743a'; c.fillRect(0,40,Wd,4);
+  c.fillStyle='#ffe9a8'; c.font='800 10px system-ui'; c.textAlign='center'; c.textBaseline='middle';
+  c.fillText('EXPO PASS',86,26); c.fillText('⬆ IN',196,47);
+  // Tray waiting on the pass
+  if(t<700){
+    c.fillStyle='#e8e4de'; c.beginPath(); c.roundRect(52,8,68,20,6); c.fill();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(72,18,6,0,Math.PI*2); c.fill();
+    c.fillStyle='#d96f32'; c.beginPath(); c.arc(72,18,3.2,0,Math.PI*2); c.fill();
+    c.fillStyle='#ffe9a8'; c.font='13px system-ui'; c.fillText('🔔',132,19);
+  }
+  // Destination table
+  var glow=t>=2500;
+  c.save();
+  if(glow){ c.strokeStyle='rgba(255,196,0,.9)'; c.lineWidth=4; c.beginPath(); c.roundRect(330,84,74,48,7); c.stroke(); }
+  c.fillStyle='#f3e7d3'; c.beginPath(); c.roundRect(334,88,66,40,6); c.fill(); c.strokeStyle='#a68b64'; c.lineWidth=1.5; c.stroke();
+  c.fillStyle='#4a3826'; c.font='800 14px system-ui'; c.textAlign='center'; c.fillText('401',367,109);
+  c.restore();
+  // Dashed path + server carrying the tray across
+  var f=t<700?0:(t<2500?(t-700)/1800:1); f=1-Math.pow(1-f,2);
+  var sx=86+(348-86)*f, sy=104+(108-104)*f;
+  c.strokeStyle='rgba(255,255,255,.45)'; c.lineWidth=2; c.setLineDash([6,6]); c.beginPath(); c.moveTo(86,104); c.lineTo(348,108); c.stroke(); c.setLineDash([]);
+  var walking=t>=700&&t<2500;
+  // Server (same drawing as drawDemo / the in-game player), tray from pickup on
+  var step=walking?Math.sin(now/90)*3:0;
+  c.save();
+  c.fillStyle='rgba(0,0,0,.3)'; c.beginPath(); c.ellipse(sx,sy+14,11,4.5,0,0,Math.PI*2); c.fill();
+  c.fillStyle='#22252b'; c.fillRect(sx-8,sy+4+Math.abs(step),5,9); c.fillRect(sx+3,sy+4-Math.abs(step),5,9);
+  c.fillStyle='#f7f3ea'; c.beginPath(); c.roundRect(sx-10,sy-8,20,15,5); c.fill();
+  c.fillStyle='#20242c'; c.beginPath(); c.roundRect(sx-10,sy-1,20,8,3); c.fill();
+  c.fillStyle='#e8b48c'; c.beginPath(); c.arc(sx,sy-14,7.5,0,Math.PI*2); c.fill();
+  c.fillStyle='#3a2a1c'; c.beginPath(); c.arc(sx,sy-16.5,7.5,Math.PI,Math.PI*2); c.fill();
+  if(t>=700){
+    c.fillStyle='#d9d4cc'; c.beginPath(); c.roundRect(sx+5,sy-12,36,18,4); c.fill(); c.strokeStyle='#9a958e'; c.lineWidth=1; c.stroke();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(sx+17,sy-3,5,0,Math.PI*2); c.fill();
+    c.fillStyle='#d96f32'; c.beginPath(); c.arc(sx+17,sy-3,2.7,0,Math.PI*2); c.fill();
+    c.fillStyle='#b3541e'; c.beginPath(); c.roundRect(sx+24,sy-9,15,11,2); c.fill();
+    c.fillStyle='#fff'; c.font='800 8px system-ui'; c.textAlign='center'; c.fillText('401',sx+31.5,sy-3.5);
+  }
+  c.restore();
+  // Joystick hint, bottom-left, knob pushed in the walk direction
+  c.save(); c.globalAlpha=.9;
+  c.fillStyle='rgba(18,14,11,.5)'; c.beginPath(); c.arc(38,146,24,0,Math.PI*2); c.fill(); c.strokeStyle='rgba(255,255,255,.4)'; c.lineWidth=2; c.stroke();
+  c.fillStyle='#fff8ec'; c.beginPath(); c.arc(38+(walking?9:0),146,11,0,Math.PI*2); c.fill();
+  c.restore();
+  if(t>=2500){ c.fillStyle='#2e7d32'; c.font='800 22px system-ui'; c.textAlign='center'; c.fillText('✓',367,72); }
   c.textBaseline='alphabetic';
 }
 showBookPage(0);
