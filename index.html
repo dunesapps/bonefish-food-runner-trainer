@@ -302,7 +302,7 @@
             <h2>Before you start</h2>
             <div class="bSteps">
               <div class="bStep"><div class="bIco" aria-hidden="true">💡</div><div class="bStepBody"><b>Hint</b><span>Top bar — makes your target table glow and puts the number labels back on every table while you learn.</span></div></div>
-              <div class="bStep"><div class="bIco" aria-hidden="true">🔔</div><div class="bStepBody"><b>Sound &amp; Music</b><span>Top bar toggles — mute the lounge music anytime.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🔔</div><div class="bStepBody"><b>Sound &amp; Music</b><span>The lounge music plays everywhere — lobby, floor, and pop-ups. Top bar toggles — mute it anytime.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">💾</div><div class="bStepBody"><b>Progress saves</b><span>Automatically, on this device. Close and pick up where you left off.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">📖</div><div class="bStepBody"><b>This booklet</b><span>Reopen it anytime with <b>Guide</b> in the top bar.</span></div></div>
             </div>
@@ -594,14 +594,20 @@ function thud(){
 // ---------- Background music: soft synth lounge, generated live ----------
 // No audio file at all — the whole loop is synthesized with Web Audio
 // (oscillators through a lowpass filter plus a simple feedback delay for
-// space), so it costs zero download and streams nothing. One engine runs
-// for the whole game (hub, Table Training, Menu Training); switching modes
-// never touches it, so the loop never restarts or stutters. The pad sits
-// well under the game sounds — the bell always cuts through.
+// space), so it costs zero download and streams nothing. ONE engine runs
+// the music for the WHOLE game, everywhere: the lobby booklet, the hub
+// before any training track is picked, Table Training, Menu Training,
+// and every overlay on top of them (booklet, entry pop-up, info cards,
+// quizzes). It starts on the player's first tap or keypress — browsers
+// block all audio before the first interaction — and from then on it
+// never stops or restarts between areas. The Music toggle in the top
+// bar is the only off switch. The pad sits well under the game sounds —
+// the bell always cuts through.
 var MUSIC_KEY='bfg-music-v1';
 var musicOn=true; // defaults on; the saved choice (below) wins when present
 try{ var savedMusic=localStorage.getItem(MUSIC_KEY); if(savedMusic!==null) musicOn=(savedMusic==='1'); }catch(e){}
 var musicNodes=null, musicTimer=null, musicChordIdx=0, nextChordAt=0;
+var musicStarted=false; // true once the scheduler is running; startMusic() is idempotent after that
 var CHORD_DUR=3.64; // one bar at about 66 BPM — slow lounge feel
 var MUSIC_LEVEL=0.9; // master level; per-note gains below keep the pad quiet
 // Jazzy loop: Cmaj7 → Am7 → Dm7 → G7 (a I–vi–ii–V feel). pad = warm low
@@ -670,6 +676,11 @@ function scheduleChord(idx,t){
 }
 function musicTick(){
   if(!AC||!musicNodes) return;
+  // Self-heal: browsers suspend or interrupt the audio context when the
+  // tab/app loses focus or a system alert barges in. While Music is on,
+  // keep nudging it awake so the lounge loop never sits silent in any
+  // area — lobby, floor, or overlay.
+  if(musicOn && AC.state!=='running'){ try{ AC.resume(); }catch(e){} }
   while(nextChordAt < AC.currentTime+1.2){
     if(nextChordAt < AC.currentTime-0.1) nextChordAt=AC.currentTime+0.05;
     scheduleChord(musicChordIdx,nextChordAt);
@@ -680,16 +691,32 @@ function startMusic(){
   if(!musicOn) return;
   var ac=audio(); if(!ac) return; // no Web Audio: no music, no errors
   var n=musicGraph(); if(!n) return;
-  // Fade in gently over ~2.5s rather than starting at full level
+  if(musicStarted){
+    // The one engine is already running: crossing between the lobby,
+    // the hub, a training track, or an overlay must NOT restart the
+    // progression or re-run the fade-in. Just make sure the context is
+    // awake and the level is back up (after an interruption, or after
+    // the toggle muted the master while the scheduler kept running).
+    if(ac.state!=='running'){ try{ ac.resume(); }catch(e){} }
+    if(!musicTimer){ nextChordAt=ac.currentTime+0.08; musicTick(); musicTimer=setInterval(musicTick,400); }
+    if(n.master.gain.value < MUSIC_LEVEL*0.9){
+      var t0=ac.currentTime;
+      n.master.gain.cancelScheduledValues(t0);
+      n.master.gain.setValueAtTime(n.master.gain.value,t0);
+      n.master.gain.linearRampToValueAtTime(MUSIC_LEVEL,t0+0.6);
+    }
+    return;
+  }
+  musicStarted=true;
+  // First start only: fade in gently over ~2.5s rather than starting at
+  // full level, and set the chord scheduler running.
   var t=ac.currentTime;
   n.master.gain.cancelScheduledValues(t);
   n.master.gain.setValueAtTime(n.master.gain.value,t);
   n.master.gain.linearRampToValueAtTime(MUSIC_LEVEL,t+2.5);
-  if(!musicTimer){
-    nextChordAt=ac.currentTime+0.08; musicChordIdx=0;
-    musicTick();
-    musicTimer=setInterval(musicTick,400);
-  }
+  nextChordAt=ac.currentTime+0.08; musicChordIdx=0;
+  musicTick();
+  musicTimer=setInterval(musicTick,400);
 }
 function applyMusicBtn(){
   var b=document.getElementById('musicBtn'); if(!b) return;
@@ -734,9 +761,24 @@ function setMusicOn(on){
   }
 }
 applyMusicBtn();
-// Browsers block audio before interaction: start on the first tap/click
-// anywhere (the Start shift tap included), never before.
-document.addEventListener('pointerdown',function(){ if(musicOn) startMusic(); },{passive:true});
+// Browsers block audio before the first interaction, so the lounge loop
+// starts on the FIRST gesture anywhere — flipping a booklet page in the
+// lobby counts, long before Start shift or any training track — and the
+// one engine then runs continuously through the hub, both training
+// tracks, and every overlay. Several gesture types are hooked because
+// phones unlock Web Audio most reliably on click/touchend, not just
+// pointerdown; startMusic() is idempotent, so the extra calls on later
+// gestures never restart or re-fade the loop.
+function musicGesture(){ if(musicOn) startMusic(); }
+document.addEventListener('pointerdown',musicGesture,{passive:true});
+document.addEventListener('touchend',musicGesture,{passive:true});
+document.addEventListener('click',musicGesture,{passive:true});
+document.addEventListener('keydown',musicGesture);
+// Coming back to the tab/app (or refocusing it) wakes a context the
+// browser suspended while the player was away — the music resumes
+// mid-loop wherever the player is, lobby included.
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) musicGesture(); });
+window.addEventListener('focus',musicGesture);
 
 // ---------- Game flow ----------
 // Shuffled-deck ticket system: every table is shuffled into a random order
@@ -1529,6 +1571,7 @@ document.getElementById('handR').addEventListener('click',function(){ setHand('r
 // ---------- Hub / training mode switching ----------
 function enterTableTraining(){
   mode='table';
+  if(musicOn) startMusic(); // lounge loop carries into the track — already running, never restarted
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   exitState.inside=false; exitState.t=0;
   document.getElementById('exitBtn').style.display='';
@@ -1545,6 +1588,7 @@ function exitToHub(placeX){
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
   exitState.inside=false; exitState.t=0;
   mode='hub';
+  if(musicOn) startMusic(); // back in the lobby/hub — the same loop keeps playing
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='none';
   player.x=placeX; player.y=4.2; player.moving=false; // lands just south of the terminal rings, outside their trigger zones, so exiting never instantly re-enters a track
@@ -1555,6 +1599,7 @@ function exitToHub(placeX){
 }
 function enterMenuTraining(){
   mode='menu';
+  if(musicOn) startMusic(); // music plays over the entry pop-up too — same continuous loop
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
@@ -1570,6 +1615,7 @@ function enterMenuTraining(){
 // two-dish ticket ringing in on the usual rhythm. One session only — the
 // deck is the whole food menu shuffled, no blocks, no set order.
 function startMenuWorld(block){
+  if(musicOn) startMusic(); // overlay closes onto the floor — the loop never stopped
   menuCurrentBlock='all'; menuWorldActive=true; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
   menuTrayDishes=[]; target=null; trayOnPass=false; carrying=false;
   exitState.inside=false; exitState.t=0;
@@ -1588,6 +1634,7 @@ function startMenuWorld(block){
 // allergens, etc.): the shift's tray and ticket are cleared, the overlay
 // returns with the unified session home (progress, allergens, mock, reset).
 function returnToMenuHome(){
+  if(musicOn) startMusic(); // session-home overlay — the loop keeps playing underneath
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   target=null; trayOnPass=false; carrying=false; menuTrayDishes=[];
   menuWorldActive=false; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
@@ -2573,6 +2620,7 @@ document.querySelectorAll('.bookDot').forEach(function(d){
   d.addEventListener('click',function(){ showBookPage(parseInt(d.getAttribute('data-book-goto'),10)); });
 });
 function openBooklet(){
+  if(musicOn) startMusic(); // the booklet is a lobby screen — music plays over it too
   bookletOpen=true;
   document.getElementById('startOverlay').style.display='flex';
   showBookPage(0);
@@ -2861,7 +2909,7 @@ function drawControlsDemo(now){
 showBookPage(0);
 document.getElementById('startBtn').addEventListener('click',function(){
   audio(); // unlock audio on user gesture
-  if(musicOn) startMusic(); // background lounge fades in with the shift
+  if(musicOn) startMusic(); // usually already playing from the lobby — this call is idempotent, no restart
   bookletOpen=false;
   document.getElementById('startOverlay').style.display='none';
   if(!started){
