@@ -444,7 +444,12 @@ var wallSegs=[
   {x:patioWallX,y:(DINING_TOP+patioDoor.y1)/2,w:0.14,h:patioDoor.y1-DINING_TOP},
   {x:patioWallX,y:(patioDoor.y2+H)/2,w:0.14,h:H-patioDoor.y2},
   // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2): no path between those rows;
-  // you go around its top end (below the pass) or its bottom end (above 406/407)
+  // you go around its top end (below the pass) or its bottom end (above 406/407).
+  // INVARIANT (scrubbed 2026-11-17): this segment — x 7.1, centre y 9.25, height 8.7, spanning
+  // y 4.9–13.6 — is the ONLY half wall in the game. This one wallSegs array feeds both the draw
+  // loop and collision for every mode (hub, Table Training, Menu Training); there is no per-mode
+  // copy. A stretched variant reaching the counter (spanning y 3.0–14.3) shipped in error once —
+  // never re-add it or any second half-wall segment anywhere.
   {x:7.1,y:9.25,w:0.14,h:8.7}
 ];
 // Bottom wall of the building (collision only; the wall itself is stroked in draw()):
