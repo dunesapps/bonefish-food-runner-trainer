@@ -443,15 +443,9 @@ var patioWallX=15.65, patioDoor={y1:3.6,y2:4.8};
 var wallSegs=[
   {x:patioWallX,y:(DINING_TOP+patioDoor.y1)/2,w:0.14,h:patioDoor.y1-DINING_TOP},
   {x:patioWallX,y:(patioDoor.y2+H)/2,w:0.14,h:H-patioDoor.y2},
-  // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2):
-  // it now runs from the kitchen counter (DINING_TOP, y 3.0) down past the
-  // last booth row (306's bottom edge is y 13.8) to y 14.3, so there is NO
-  // dining-floor crossing between the 300s and the 400s at all — not along
-  // its length and not across the old open strip below the counter. The
-  // only way between the two sections is around its bottom end, on the
-  // open floor south of 306/405 and above the 406/407 row (or through the
-  // kitchen via the IN/OUT doors).
-  {x:7.1,y:8.65,w:0.14,h:11.3}
+  // Half wall between the 301–306 row (x 6.0) and the 401–405 row (x 8.2): no path between those rows;
+  // you go around its top end (below the pass) or its bottom end (above 406/407)
+  {x:7.1,y:9.25,w:0.14,h:8.7}
 ];
 // Bottom wall of the building (collision only; the wall itself is stroked in draw()):
 // solid except the front-door gap (x 4.15–5.45), which is a real passable opening.
@@ -1294,7 +1288,7 @@ function draw(now){
   ctx.font='700 9px system-ui'; ctx.fillStyle='rgba(43,33,24,.75)';
   ctx.fillText('PATIO DOOR',X(patioWallX+0.85),Y((patioDoor.y1+patioDoor.y2)/2));
   // Half-wall label (the wall itself is drawn by the wallSegs loop above)
-  ctx.save(); ctx.translate(X(7.1)-9,Y(8.65)); ctx.rotate(-Math.PI/2); ctx.fillStyle='rgba(255,243,223,.85)'; ctx.font='700 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.save(); ctx.translate(X(7.1)-9,Y(9.25)); ctx.rotate(-Math.PI/2); ctx.fillStyle='rgba(255,243,223,.85)'; ctx.font='700 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('H A L F   W A L L',0,0); ctx.restore();
   ctx.restore();
   // Expo counter
