@@ -25,6 +25,8 @@
   .wrap{max-width:1180px;margin:0 auto;height:100%;display:flex;flex-direction:column}
   .wordmark{font-size:15px;font-weight:700;white-space:nowrap;line-height:1.1;padding-right:2px}
   .wordmark span{color:var(--accent)}
+  .buildTag{font-family:system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);white-space:nowrap;opacity:.85;padding-left:2px}
+  body.mobile .buildTag{font-size:9.5px;padding-left:1px}
   .hud{order:1;flex:0 0 auto;display:flex;flex-wrap:nowrap;gap:4px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 8px;overflow-x:auto;scrollbar-width:none}
   .hud::-webkit-scrollbar{display:none}
   .stat{background:none;border:none;border-left:1px solid var(--line);border-radius:0;padding:0 4px 0 9px;min-width:0;display:flex;align-items:baseline;gap:5px;white-space:nowrap}
@@ -259,6 +261,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.1</span>
     </div>
   </div>
 
@@ -347,6 +350,9 @@
 <script>
 (function(){
 "use strict";
+// Build number: starts at 300.1, bump the decimal by 0.1 on every shipped edit (300.1, 300.2, 300.3...). Displayed in the header as "Build N".
+var BUILD_NUMBER = 300.1;
+(function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER.toFixed(1); })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
 // Table y values below are chart coordinates (0..13.4); T() shifts them down by KITCHEN_H.
