@@ -103,6 +103,29 @@
   #bookNext{margin-left:auto}
   #startBtn{margin-top:0;margin-left:auto}
   @media(max-width:640px){ .bookPages{min-height:228px} }
+  /* Patch notes overlay: same warm card as the guide booklet, full log, newest first, scrollable */
+  #patchOverlay{position:absolute;inset:0;background:rgba(12,9,7,.88);display:none;align-items:center;justify-content:center;padding:10px;z-index:6;overflow:hidden}
+  #patchOverlay.open{display:flex}
+  @media(max-width:640px){ #patchOverlay{position:fixed;padding:8px} }
+  #patchOverlay .card{background:#fff8ec;color:#2b2118;border-radius:16px;max-width:480px;width:100%;padding:18px;text-align:left;box-shadow:0 18px 50px rgba(0,0,0,.5);max-height:calc(100dvh - 20px);display:flex;flex-direction:column}
+  @media(max-width:640px){ #patchOverlay .card{max-height:calc(100dvh - 16px);padding:14px} }
+  .patchLog{overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;overscroll-behavior:contain;padding-right:2px;margin-top:2px}
+  #patchOverlay h2{margin:0 0 4px;font-size:23px;text-align:center}
+  #patchOverlay p{font-family:system-ui,sans-serif;font-size:13.5px;line-height:1.5;color:#5b4a38;margin:6px 0}
+  #patchOverlay p b{color:#2b2118}
+  .patchKicker{text-align:center;font-family:system-ui,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#b3541e;margin:0}
+  .patchEntry{background:#fffdf7;border:1px solid #e2d3b8;border-radius:11px;padding:12px 13px;margin:8px 0}
+  .patchEntry:first-child{margin-top:6px}
+  .patchEntry:last-child{margin-bottom:2px}
+  .patchEntryHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .patchEntryHead b{font-family:system-ui,sans-serif;font-size:15px;color:#2b2118}
+  .patchEntryHead span{font-family:system-ui,sans-serif;font-size:12px;color:#8a7458;white-space:nowrap}
+  .patchEntry ul{font-family:system-ui,sans-serif;font-size:13.5px;line-height:1.5;color:#5b4a38;margin:6px 0 2px 16px;padding:0}
+  .patchEntry li{margin:3px 0}
+  .patchEntry li b{color:#2b2118}
+  .patchFoot{display:flex;justify-content:center;margin-top:12px;border-top:1px solid #e8dcc6;padding-top:11px}
+  #patchClose{background:#b3541e;color:#fff;border:none;border-radius:999px;padding:11px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:system-ui,sans-serif;min-height:44px}
+  #patchClose:active{transform:scale(.98)}
   /* Menu Training module (Flash Sprint+) */
   #menuOverlay{position:fixed;inset:0;background:var(--bg);display:none;z-index:20;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #menuOverlay .mwrap{max-width:640px;margin:0 auto;padding:14px 14px 40px;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
@@ -258,10 +281,11 @@
       <button class="toggle" id="soundBtn" aria-pressed="true" aria-label="Sound effects toggle">🔔 Sound: On</button>
       <button class="toggle" id="musicBtn" aria-pressed="true" aria-label="Music toggle">🎵 Music: On</button>
       <button class="toggle" id="guideBtn" aria-label="Open the guide booklet">📖 Guide</button>
+      <button class="toggle" id="patchBtn" aria-label="Open patch notes, full update history">📋 Patch notes</button>
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.1</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.2</span>
     </div>
   </div>
 
@@ -287,7 +311,7 @@
             <canvas id="demoCanvas" width="440" height="220" aria-label="Animated demo: the server walks up to a terminal ring and the ring fills as he stands in it"></canvas>
             <p class="demoCaption">Walk up to a ring and stay put for a sec. When it fills up, you're in.</p>
             <div class="bSteps">
-              <div class="bStep"><div class="bIco" aria-hidden="true">🖥️</div><div class="bStepBody"><b>Stand in the ring for 2 seconds</b><span>The PCs are up top on the left, between the bar and the kitchen door. Step in and the ring turns gold. Step out and it starts over.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🖥️</div><div class="bStepBody"><b>Stand in the ring for 2 seconds</b><span>The PCs are down in the lower-left corner, against the bottom wall just left of the front door. Step in and the ring turns gold. Step out and it starts over.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">🎫</div><div class="bStepBody"><b>Table Training</b><span>You'll run trays and learn the floor as you go, table numbers and all.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Menu Training</b><span>Same idea, but you're learning the food while you run trays. Once you're in, a pop-up walks you through the rest.</span></div></div>
             </div>
@@ -314,8 +338,9 @@
               <div class="bStep"><div class="bIco" aria-hidden="true">🔔</div><div class="bStepBody"><b>Sound &amp; Music</b><span>The music plays the whole time, in the lobby, on the floor, even over pop-ups. You can turn it off anytime up top.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">💾</div><div class="bStepBody"><b>Progress saves</b><span>It saves by itself, right on this device. Close it and come back later, you'll pick up right where you left off.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">📖</div><div class="bStepBody"><b>This booklet</b><span>Need to check something again? Tap <b>Guide</b> up top and it'll open right back up.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">📋</div><div class="bStepBody"><b>What's new</b><span>Tap <b>Patch notes</b> up top anytime to see everything that's changed, newest first.</span></div></div>
             </div>
-            <p>Ready? Head in the front door and pick a track at the PCs. You got this.</p>
+            <p>Ready? Head in the front door — the PCs are right there on your left, in the lower-left corner. You got this.</p>
           </section>
         </div>
         <div class="bookNav">
@@ -329,6 +354,28 @@
           <button class="bookNavBtn" id="bookNext">Next →</button>
           <button id="startBtn" style="display:none">▶ Start shift</button>
         </div>
+      </div>
+    </div>
+    <div id="patchOverlay">
+      <div class="card" role="dialog" aria-label="Patch notes, full update history">
+        <div style="text-align:center;font-size:29px;line-height:1.1" aria-hidden="true">📋</div>
+        <div class="patchKicker">What's new</div>
+        <h2>Patch notes</h2>
+        <p style="text-align:center">Here's everything that's changed in the trainer, newest first. Scroll through to see the older updates too.</p>
+        <div class="patchLog" tabindex="0" aria-label="Patch notes">
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.2 — Prod</b><span>Nov 20, 2026</span></div>
+            <ul>
+              <li>Added a drinks deck: martinis, cocktails, wines, beers. Drinks deliver to the barstools.</li>
+              <li>Training terminals moved to the lower left corner by the front door. Smaller, rings at the desks. Exit ring unchanged.</li>
+              <li>Most description questions replaced with ingredient list questions. Wrong lists have one or two ingredients swapped.</li>
+              <li>Added weight questions for dishes with a stated weight.</li>
+              <li>Quiz rotation reworked: dishes you know return less often, in different forms. Dishes you miss appear more.</li>
+              <li>Added a Patch notes view in the game.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="patchFoot"><button id="patchClose">✓ Got it</button></div>
       </div>
     </div>
     <div id="menuOverlay" role="dialog" aria-label="Menu Training">
@@ -350,8 +397,11 @@
 <script>
 (function(){
 "use strict";
-// Build number: starts at 300.1, bump the decimal by 0.1 on every shipped edit (300.1, 300.2, 300.3...). Displayed in the header as "Build N".
-var BUILD_NUMBER = 300.1;
+// Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
+// Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
+// only when Ryan signs off on a GitHub push; internal work stays in the 200s.
+// This build is Prod 300.2 (drinks deck, training terminals in the lower-left corner by the front door, harder ingredient-list questions with one or two swapped ingredients, new stated-weight questions, and spaced-repetition rotation in both decks: Solid dishes recur rarely and with a different question kind than last time, while missed, un-Solid and never-quizzed dishes dominate every round). Displayed in the header as "Build N".
+var BUILD_NUMBER = 300.2;
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER.toFixed(1); })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -476,30 +526,40 @@ var outerWallSegs=[
 // ---------- State ----------
 var started=false, carrying=false, target=null, trayOnPass=false, lastTable=null;
 var bookletOpen=true; // the guide booklet overlays the stage at load; movement waits while it is open
+var patchOpen=false; // patch notes overlay; movement waits while it is open, same as the booklet
 var deliveries=0, streak=0, hint=false, soundOn=true, nextTimer=null;
 var spawnX=4.8, spawnY=H+1.15; // outside the restaurant, just below the front door (bottom wall, below the 241/306 area)
 var player={x:spawnX,y:spawnY,r:0.21,face:1,walk:0,moving:false}; // deliveries in Table Training teleport back to the expo pass (passX, passY)
 // Hub mode state machine: 'hub' (free walk, table labels ON) → 'table' (the runner game, labels off) / 'menu' (placeholder)
 var mode='hub';
-// PC training terminals: wall props on the counter line (the top wall of the dining room),
-// pushed LEFT into the stretch between the bar (stools end at x≈1.5) and the kitchen
-// OUT door (gap at 5.245–6.455), clear of both one-way kitchen doors (gaps at
-// 5.245–6.455 and 8.295–9.505) and off the walk route to them. No collision of their own, the counter
-// already blocks there; activation zones are floor spots in front. They are
-// HUB-ONLY access points: they render and activate only in the hub.
+// PC training terminals: desks against the BOTTOM wall in the lower-left
+// corner, just LEFT of the front door (door gap at x 4.15–5.45). Shifted a
+// bit further west in 200.5 and shrunk 20% (desk half-width now 0.465):
+// the Menu Training desk (x 2.6, desk spans 2.14–3.06) ends 1.09 west of
+// the door gap, and the Table Training desk (x 1.2, spans 0.74–1.66) sits
+// west of it, both clear of table 241 (bottom edge y 13.11) and of the bar
+// tail / stools 113–114 to the west (the Table ring's west edge, x 0.88,
+// still clears stool 114's east edge, x 0.28). No collision of their own;
+// activation zones are floor rings in front (north) of them at termZoneY.
+// In 200.6 the rings moved much closer to the terminals: at termZoneY
+// 14.85 with r 0.32 they span y 14.53–15.17, so each ring's bottom edge
+// just touches the top edge of its label pill (y 15.17), and the ring
+// tops still clear table 241 by a wide margin. They are HUB-ONLY access
+// points: they render and activate only in the hub.
 var terminals=[
-  {x:2.1, mode:'table', label:'TABLE TRAINING', name:'Table Training'},
-  {x:3.5, mode:'menu', label:'MENU TRAINING', name:'Menu Training'}
+  {x:1.2, mode:'table', label:'TABLE TRAINING', name:'Table Training'},
+  {x:2.6, mode:'menu', label:'MENU TRAINING', name:'Menu Training'}
 ];
-var termZoneY=3.62, termState={zone:null,t:0};
+var termZoneY=14.85, termState={zone:null,t:0};
 // Exit spot: the ONLY access point inside Table Training and Menu Training
 // shifts (the terminals are not shown there), and it does not exist in the hub
 // at all, no ring or label is drawn there and standing on the spot does
 // nothing. It lives ON THE DINING FLOOR, just below the kitchen wall (counter
 // bottom at y 3.0), at the spot Ryan picked in his screenshot: x 2.9, between
 // the bar stools (x 1.15) and the 201 high top (x 3.55), a good bit left of
-// the OUT door (gap centre 5.85). Same size as the terminal selection rings:
-// ring r 0.40, trigger 0.42, so it spans x 2.5–3.3, y 3.05–3.85, fully south
+// the OUT door (gap centre 5.85). The exit ring keeps its original size
+// (ring r 0.40, trigger 0.42; the terminal selection rings shrank to r 0.32
+// in 200.5, the exit did not), so it spans x 2.5–3.3, y 3.05–3.85, fully south
 // of the counter, clear of stool 101 (1.15, 3.9) and of every table. No
 // collision of its own; the 2-second stand means walking past (e.g. along
 // the wall toward the bar stools) never triggers it.
@@ -516,6 +576,15 @@ var exitState={inside:false,t:0};
 // lives in the Menu Training store (same localStorage key as always),
 // see MenuModule below.
 var menuWorldActive=false, menuCurrentBlock=null, menuTrayDishes=[], menuInfoOpen=false, menuQuizOpen=false, menuDeliveriesSinceQuiz=0;
+// Menu Training now has TWO decks behind the one terminal: 'food' (the
+// 76-dish deck, MenuModule) and 'drinks' (the Beta public-menu deck,
+// DrinksModule). menuDeck says which one is live; each module keeps its
+// own store, served pool and refire queue, so neither touches the other.
+var menuDeck=null;
+function activeMenuModule(){
+  if(menuDeck==='drinks' && typeof DrinksModule!=='undefined') return DrinksModule;
+  return (typeof MenuModule!=='undefined') ? MenuModule : null;
+}
 var menuIntroCanvases=[]; // Menu Training intro demo canvases (set by renderIntro)
 var menuPhotoImgs={}; // canvas thumbnail cache for tray slips (id -> Image)
 function menuFloorLive(){ return mode==='menu' && menuWorldActive && !menuInfoOpen && !menuQuizOpen; }
@@ -531,7 +600,7 @@ function updateMenuTrayPanel(){
     var head='🎫 Table '+target.n+', '+(carrying?'carrying':'on the pass');
     var html='<div class="mtpHead">'+escHtml(head)+'</div>';
     menuTrayDishes.forEach(function(it){
-      var src=(typeof MENU_PHOTOS!=='undefined'&&MENU_PHOTOS[it.id])?MENU_PHOTOS[it.id]:null;
+      var src=(menuDeck!=='drinks'&&typeof MENU_PHOTOS!=='undefined'&&MENU_PHOTOS[it.id])?MENU_PHOTOS[it.id]:null;
       html+='<div class="mtpDish">'+(src?'<img src="'+escHtml(src)+'" alt="" onerror="this.style.display=\'none\'"/>':'')+'<div><div class="mtpName">'+escHtml(it.name)+'</div><div class="mtpSec">'+escHtml(it.section)+'</div></div></div>';
     });
     panel.innerHTML=html; panel.style.display='block';
@@ -542,7 +611,7 @@ function updateMenuWorldButtons(){
   var show = (mode==='menu' && menuWorldActive);
   if(qb) qb.style.display=show?'':'none';
   if(qb && show){
-    var n=0; try{ if(typeof MenuModule!=='undefined' && MenuModule.quizPoolCount) n=MenuModule.quizPoolCount(menuCurrentBlock); }catch(e){}
+    var n=0; try{ var am=activeMenuModule(); if(am && am.quizPoolCount) n=am.quizPoolCount(menuCurrentBlock); }catch(e){}
     qb.textContent = document.body.classList.contains('mobile')
       ? (n>0 ? ('❓ Quiz '+n) : '❓ Quiz')
       : (n>0 ? ('❓ Quiz me ('+n+' ready)') : '❓ Quiz me');
@@ -751,6 +820,8 @@ function refreshBarLabels(){
   if(pb) pb.textContent = mob ? (paused?'▶':'⏸') : (paused?'▶ Resume':'⏸ Pause');
   var gb=document.getElementById('guideBtn');
   if(gb) gb.textContent = mob ? '📖' : '📖 Guide';
+  var pnb=document.getElementById('patchBtn');
+  if(pnb) pnb.textContent = mob ? '📋' : '📋 Patch notes';
   var eb=document.getElementById('exitBtn');
   if(eb) eb.textContent = mob ? '🚪' : '🚪 Exit';
   applyMusicBtn();
@@ -816,7 +887,7 @@ function newTicket(){
   if(mode==='menu'){
     // Menu Training shift: the module deals a two-dish tray (refires first,
     // then the block's shuffled dish deck) to a table from the same deck.
-    if(menuWorldActive && typeof MenuModule!=='undefined' && MenuModule.handleNewTicket) MenuModule.handleNewTicket();
+    var am2=activeMenuModule(); if(menuWorldActive && am2 && am2.handleNewTicket) am2.handleNewTicket();
     return;
   }
   if(mode!=='table') return; // hub never deals tickets (also guards a timer racing an exit)
@@ -835,7 +906,7 @@ function deliver(){
   if(mode==='menu'){
     // Menu delivery: dishes are marked served, any refire clears, and the
     // info card for both dishes opens (the module owns that flow).
-    if(typeof MenuModule!=='undefined' && MenuModule.handleMenuDeliver) MenuModule.handleMenuDeliver();
+    var am3=activeMenuModule(); if(am3 && am3.handleMenuDeliver) am3.handleMenuDeliver();
     return;
   }
   var deliveredTo=target.n;
@@ -1023,12 +1094,19 @@ function drawSeats(tb,bx,by,bw,bh,hl){
   ctx.restore();
 }
 
-// PC training terminals: a monitor on a small desk sitting on the counter line in the
-// left stretch between the bar and the kitchen door. HUB ONLY, in Table Training
+// PC training terminals: a monitor on a small desk against the bottom wall in
+// the lower-left corner, just left of the front door. HUB ONLY, in Table Training
 // the terminals are not shown at all (the only access point there is the small exit ring
 // on the dining floor just below the kitchen wall). In hub mode each also gets a dashed activation ring on
-// the dining floor in front of it; standing in the ring fills a gold progress arc
+// the floor in front of it (north of the desk); standing in the ring fills a gold progress arc
 // over 2 seconds (drawn here, timed in the main loop).
+// Prop layout, north → south (all dimensions 20% smaller since 200.5, the
+// stack compressed toward the bottom wall so the desk stays flush with it):
+// activation ring at termZoneY (14.85 since 200.6, r 0.32, so it spans
+// y 14.53–15.17 and its bottom edge just touches the label pill's top
+// edge), label pill y 15.17–15.46, monitor y 15.52–15.94, desk
+// y 16.00–16.27, its south edge flush with the bottom wall's top edge
+// (16.27).
 function drawTerminals(now){
   if(mode!=='hub') return;
   terminals.forEach(function(tm){
@@ -1038,27 +1116,27 @@ function drawTerminals(now){
       ctx.save();
       ctx.strokeStyle= active ? '#ffc400' : 'rgba(255,255,255,.55)';
       ctx.lineWidth=2; ctx.setLineDash([6,5]);
-      ctx.beginPath(); ctx.arc(cx,Y(termZoneY),D(0.40),0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,Y(termZoneY),D(0.32),0,Math.PI*2); ctx.stroke();
       ctx.setLineDash([]);
       if(active && termState.t>0){
         ctx.strokeStyle='#ffc400'; ctx.lineWidth=5;
-        ctx.beginPath(); ctx.arc(cx,Y(termZoneY),D(0.40),-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,termState.t/2000)); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx,Y(termZoneY),D(0.32),-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,termState.t/2000)); ctx.stroke();
       }
       ctx.restore();
     }
     ctx.save();
-    // Label pill above the screen (slightly narrower than before, so the two
-    // pills sit side by side without touching now the terminals are closer)
-    ctx.fillStyle='#1d2733'; rr(cx-D(0.725),Y(1.6),D(1.45),D(0.36),7); ctx.fill();
+    // Label pill above the screen (20% narrower with the rest of the
+    // terminal, so the two pills sit side by side without touching)
+    ctx.fillStyle='#1d2733'; rr(cx-D(0.58),Y(15.17),D(1.16),D(0.29),6); ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1; ctx.stroke();
-    ctx.fillStyle='#eaf6ff'; ctx.font='800 8px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(tm.label,cx,Y(1.79));
-    // Monitor + stand + desk on the counter
-    ctx.fillStyle='#141a21'; rr(cx-D(0.44),Y(1.98),D(0.88),D(0.52),3); ctx.fill();
-    ctx.fillStyle='#79d2f2'; rr(cx-D(0.38),Y(2.03),D(0.76),D(0.42),2); ctx.fill();
-    ctx.fillStyle='#141a21'; ctx.fillRect(cx-D(0.05),Y(2.5),D(0.1),D(0.1));
-    ctx.fillStyle='#3a3f47'; rr(cx-D(0.58),Y(2.58),D(1.16),D(0.4),3); ctx.fill();
-    ctx.fillStyle='#22262c'; rr(cx-D(0.4),Y(2.68),D(0.8),D(0.2),2); ctx.fill();
+    ctx.fillStyle='#eaf6ff'; ctx.font='800 6.5px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(tm.label,cx,Y(15.32));
+    // Monitor + stand + desk against the bottom wall
+    ctx.fillStyle='#141a21'; rr(cx-D(0.35),Y(15.52),D(0.70),D(0.42),2); ctx.fill();
+    ctx.fillStyle='#79d2f2'; rr(cx-D(0.305),Y(15.56),D(0.61),D(0.34),2); ctx.fill();
+    ctx.fillStyle='#141a21'; ctx.fillRect(cx-D(0.04),Y(15.94),D(0.08),D(0.08));
+    ctx.fillStyle='#3a3f47'; rr(cx-D(0.465),Y(16.00),D(0.93),D(0.27),2); ctx.fill();
+    ctx.fillStyle='#22262c'; rr(cx-D(0.32),Y(16.07),D(0.64),D(0.16),2); ctx.fill();
     ctx.textBaseline='alphabetic';
     ctx.restore();
   });
@@ -1067,7 +1145,7 @@ function drawTerminals(now){
 // Exit spot: TABLE TRAINING + MENU TRAINING SHIFTS ONLY, in the hub nothing of it is drawn (no ring,
 // no floor label) and the spot does nothing. NOT a third computer: a small
 // coral floor ring on the dining floor just below the kitchen wall, left of
-// the OUT door, exactly the terminal selection rings' size (r 0.40, dashed)
+// the OUT door, at its original size (r 0.40, dashed; unchanged in 200.5)
 // with one small EXIT pill below it and no wall sign. Standing in the ring
 // fills a coral progress arc over 2 seconds (timed in the main loop), then
 // exits to the hub.
@@ -1315,7 +1393,7 @@ function draw(now){
   });
   // Heat lamps
   ctx.fillStyle='#ffd76a';
-  for(var lx=1.2;lx<19.4;lx+=1.7){ if(gaps.some(function(g){return lx>g[0]-0.4&&lx<g[1]+0.4;})) continue; if(terminals.some(function(tm){return Math.abs(lx-tm.x)<0.75;})) continue; if(Math.abs(lx-exitSpot.x)<0.75) continue; ctx.beginPath(); ctx.arc(X(lx),Y(counterY+0.1),4,0,Math.PI*2); ctx.fill(); }
+  for(var lx=1.2;lx<19.4;lx+=1.7){ if(gaps.some(function(g){return lx>g[0]-0.4&&lx<g[1]+0.4;})) continue; if(Math.abs(lx-exitSpot.x)<0.75) continue; ctx.beginPath(); ctx.arc(X(lx),Y(counterY+0.1),4,0,Math.PI*2); ctx.fill(); }
   gaps.forEach(function(g,i){ ctx.fillStyle='#ffe9a8'; ctx.font='800 12px system-ui'; ctx.textAlign='center'; ctx.fillText(i===0?'⬇ OUT':'⬆ IN',X((g[0]+g[1])/2),Y(counterY+0.37)); });
   // Expo pass shelf INSIDE the kitchen, the tray is collected in here, not from the dining side
   ctx.fillStyle='#7a4a21'; rr(X(passX-1.1),Y(passY-0.44),D(2.2),D(0.88),6); ctx.fill();
@@ -1427,7 +1505,7 @@ var lastT=0;
 function loop(t){
   requestAnimationFrame(loop);
   var dt=Math.min(50,t-lastT||16); lastT=t;
-  if(started && !paused && !bookletOpen && (mode!=='menu' || menuFloorLive())){
+  if(started && !paused && !bookletOpen && !patchOpen && (mode!=='menu' || menuFloorLive())){
     var sp=3.4*dt/1000; // units per frame-step, ample, unhurried pace
     var dx=0,dy=0;
     if(keys.left||pad.left)dx-=1; if(keys.right||pad.right)dx+=1;
@@ -1470,7 +1548,7 @@ function loop(t){
     // terminal's training. Stepping out resets the timer (and the progress ring).
     if(mode==='hub'){
       var zone=null;
-      for(var ti=0;ti<terminals.length;ti++){ if(Math.hypot(player.x-terminals[ti].x,player.y-termZoneY)<0.42){ zone=terminals[ti]; break; } }
+      for(var ti=0;ti<terminals.length;ti++){ if(Math.hypot(player.x-terminals[ti].x,player.y-termZoneY)<0.34){ zone=terminals[ti]; break; } }
       if(zone){
         if(termState.zone!==zone){ termState.zone=zone; termState.t=0; setMsg('⏳ Hold still, loading <b>'+zone.name+'</b>…',''); }
         termState.t+=dt;
@@ -1581,7 +1659,7 @@ document.getElementById('handR').addEventListener('click',function(){ setHand('r
 
 // ---------- Hub / training mode switching ----------
 function enterTableTraining(){
-  mode='table';
+  mode='table'; menuDeck=null;
   if(musicOn) startMusic(); // lounge loop carries into the track, already running, never restarted
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   exitState.inside=false; exitState.t=0;
@@ -1596,17 +1674,41 @@ function enterTableTraining(){
 function exitToHub(placeX){
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   target=null; trayOnPass=false; carrying=false;
-  menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0;
+  menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0; menuDeck=null;
   exitState.inside=false; exitState.t=0;
   mode='hub';
   if(musicOn) startMusic(); // back in the lobby/hub, the same loop keeps playing
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='none';
-  player.x=placeX; player.y=4.2; player.moving=false; // lands just south of the terminal rings, outside their trigger zones, so exiting never instantly re-enters a track
+  player.x=placeX; player.y=termZoneY-0.85; player.moving=false; // lands just north of the terminal rings by the front door, outside their trigger zones, so exiting never instantly re-enters a track
   joyReset();
   camGlideUntil=performance.now()+400;
   setMsg('🖥️ <b>Pick your training track</b> at the PC terminals.','');
   updateHUD();
+}
+// Deck chooser: the one Menu Training terminal now offers both decks.
+// Food is the original 76-dish session; Drinks is the Beta deck built
+// from the public menu. Each deck keeps its own progress, served pool
+// and refire queue, and picking one never touches the other.
+function showDeckChooser(){
+  menuDeck=null; menuWorldActive=false; menuInfoOpen=false; menuQuizOpen=false;
+  hideMenuWorldChrome();
+  document.getElementById('menuOverlay').style.display='block';
+  var rootEl=document.getElementById('menuRoot');
+  var foodN=(typeof MENU_ITEMS!=='undefined')?MENU_ITEMS.length:76;
+  var drinkN=(typeof DRINK_ITEMS!=='undefined')?DRINK_ITEMS.length:57;
+  rootEl.innerHTML='<div class="mTopBar"><button class="mBtn ghost small" id="mChooserHub">← Back to hub</button><div class="mTitle">🍽️ Menu Training</div></div>'+
+    '<p><b>Pick a deck.</b> Same bell, tray and quiz system either way. Each deck keeps its <b>own progress</b>, so training one never touches the other.</p>'+
+    '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍽️ Food Training</div><div class="mMeta">'+foodN+' dishes</div></div>'+
+    '<p>The whole food menu in one shuffled session, straight from the study guide. Trays of two dishes to the tables, one dish to a barstool.</p>'+
+    '<div class="mRow"><button class="mBtn" id="mPickFood">▶ Food deck</button></div></div>'+
+    '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍸 Drinks Training <span class="mMeta">Beta</span></div><div class="mMeta">'+drinkN+' drinks</div></div>'+
+    '<p>Martinis, cocktails, wine and beer, built from <b>Bonefish\u2019s publicly available menu</b> while the study guide drinks pages are still at the restaurant. <b>Provisional:</b> when the guide is back in hand, this deck gets checked against it and corrected. Drinks run <b>one at a time to the barstools (101\u2013114)</b>.</p>'+
+    '<div class="mRow"><button class="mBtn" id="mPickDrinks">▶ Drinks deck (Beta)</button></div></div>';
+  document.getElementById('mChooserHub').addEventListener('click',function(){ exitToHub(terminals[1].x); });
+  document.getElementById('mPickFood').addEventListener('click',function(){ menuDeck='food'; MenuModule.open(); });
+  document.getElementById('mPickDrinks').addEventListener('click',function(){ menuDeck='drinks'; DrinksModule.open(); });
+  document.getElementById('menuOverlay').scrollTop=0;
 }
 function enterMenuTraining(){
   mode='menu';
@@ -1614,11 +1716,10 @@ function enterMenuTraining(){
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  // Menu Training explains itself here: the entry pop-up (rendered by
-  // MenuModule.open) covers how the one session works; its Start button
-  // begins the session on the floor.
-  MenuModule.open();
-  setMsg('🍽️ <b>Menu Training.</b> One session, the whole food menu. Give the pop-up a quick read, then start the session.','');
+  // The terminal offers both decks first; the picked deck's own entry
+  // pop-up then explains its session.
+  showDeckChooser();
+  setMsg('🍽️ <b>Menu Training.</b> Pick a deck, food or drinks, then start the session.','');
   updateHUD();
 }
 // Starting the session (from the entry pop-up / session home) puts you on
@@ -1636,7 +1737,11 @@ function startMenuWorld(block){
   // Entry teleport: straight to the kitchen pass for the first dish, same
   // as Table Training, no walk in through the IN door first.
   player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
-  setMsg('🍽️ <b>Menu Training, one session.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>two dishes</b> and a table, or just <b>one dish</b> if it is going to a barstool. Deliver it and you\'ll get to read the dish cards. After a few runs you\'ll get a quiz on dishes you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  if(menuDeck==='drinks'){
+    setMsg('🍸 <b>Drinks Training (Beta), one session.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with <b>one drink</b> at a time, always for a <b>barstool (101\u2013114)</b>. Deliver it and you\'ll get to read the drink card. After a few runs you\'ll get a quiz on drinks you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  } else {
+    setMsg('🍽️ <b>Menu Training, one session.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>two dishes</b> and a table, or just <b>one dish</b> if it is going to a barstool. Deliver it and you\'ll get to read the dish cards. After a few runs you\'ll get a quiz on dishes you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  }
   updateHUD();
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   nextTimer=setTimeout(newTicket,1200);
@@ -1653,7 +1758,7 @@ function returnToMenuHome(){
   exitState.inside=false; exitState.t=0;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  MenuModule.openHome();
+  if(menuDeck==='drinks' && typeof DrinksModule!=='undefined') DrinksModule.openHome(); else MenuModule.openHome();
   setMsg('🍽️ <b>Menu Training</b>, session home. Start the session to get back out on the floor.','');
   updateHUD();
 }
@@ -1760,6 +1865,99 @@ var MENU_RAW=[
 ];
 var MENU_ITEMS=MENU_RAW.map(function(r,i){return {id:i,name:r[0],section:r[1],block:r[2],desc:r[3],alg:r[4]==='X'?null:r[4].split('').filter(function(c){return c!==' ';})};});
 var STEAK_TEMPS=[["Rare","Cool, red center"],["Medium Rare","Warm, red center"],["Medium","Bright pink, touch of red in the middle"],["Medium Well","Warm brown, pink center"],["Well Done","Hot brown center, no pink"]];
+// ---------- Ingredient & weight extraction from the guide descriptions ----------
+// The harder "what's in it" questions (Build 200.8) need each dish's
+// ingredient list. The guide only publishes prose descriptions, so the
+// lists are extracted by matching a curated ingredient vocabulary against
+// the description text: longest phrases first, every matched span claimed
+// so a shorter term can't re-match inside it, results ordered as they
+// appear in the guide. Guest-choice add-ons ("Recommended with shrimp,
+// can get chicken or salmon", "Guest choice of...") are options, not
+// ingredients, and are cut before matching. A dish needs 3+ extracted
+// ingredients to get an ingredient-list question; thinner descriptions
+// fall back to the older question kinds.
+var ING_TERMS=[
+'white wine lobster cream sauce','white wine lemon butter sauce','white wine butter sauce',
+'white cheddar cheese sauce','cheddar cheese sauce','soy mustard glaze','soy ginger vinaigrette',
+'citrus herb vinaigrette','maple balsamic vinaigrette','mushroom marsala wine sauce',
+'cilantro lime crema','kung pao sauce','creamy spicy sauce','bang bang sauce','pan-asian glaze',
+'lemon caper butter','garlic lemon butter','pesto butter crostini','pesto crostini',
+'lobster butter','chimichurri sauce','enchilada sauce','sashimi sauce','asian bang sauce',
+'asian sauce','tartar sauce','wasabi cream sauce','creamy wasabi sauce','thai chili glaze',
+'sweet thai chili','bourbon glaze','bourbon sauce','myers rum sauce','balsamic glaze',
+'truffle aioli','truffle salt','veggie butter','garlic oil','olive oil','malt vinegar',
+'tangy mustard','goat cheese','fontina cheese','mozzarella cheese','cheddar cheese',
+'parmesan cheese','grated cheese','caesar dressing','macadamia nuts','hearts of palm','artichoke hearts',
+'brussels sprouts','crispy onions','pickled vegetables','eggroll crisps','tortilla chips',
+'garlic croutons','garlic breadcrumbs','tempura flakes','pepita seeds','kalamata olives',
+'green onions','red peppers','red pepper','red onion','diced tomatoes','diced tomato',
+'black beans','blackened chicken','blackened fish','bang bang shrimp','lump crab',
+'ahi tuna','unicorn fish','rainbow trout','chicken breast','chicken bites',
+'cavatappi pasta','jasmine rice','spring mix','shredded lettuce','ciabatta bread',
+'graham cracker crust','vanilla ice cream','whipped cream','lime zest','lemon juice',
+'lemon wedge','lemon butter','mango salsa','lobster tail','smoked bacon','roasted garlic','fresh garlic',
+'fresh basil','sweet heat seasoning','crushed red pepper','french fries','soy sauce','sriracha',
+'shrimp','scallops','calamari','oysters','lobster','salmon','tuna','cod','filet','burger',
+'pork chop','ravioli','linguine','brownie','coconut pie','edamame','romaine','lettuce',
+'spinach','mushrooms','broccoli','asparagus','cauliflower','cabbage','avocado','tomatoes',
+'tomato','onions','onion','pickles','bacon','garlic','basil','cilantro','parsley','oregano',
+'ginger','capers','vinegar','mango','coleslaw','ketchup','pesto','truffles','feta','pepitas',
+'potatoes','vegetables','breadcrumbs','buttermilk','seasoned flour','jalapeno','mint',
+'pecan','lemon','soy','chicken','rice','fries','wasabi'
+];
+var ING_PATTERNS=null, ING_CACHE={};
+function ingPatterns(){
+  if(ING_PATTERNS) return ING_PATTERNS;
+  var pats=[];
+  ING_TERMS.forEach(function(t){
+    pats.push({p:t.toLowerCase(),disp:t});
+    if(/s$/.test(t)) pats.push({p:t.toLowerCase().slice(0,-1),disp:t});
+  });
+  pats.sort(function(a,b){return b.p.length-a.p.length;});
+  ING_PATTERNS=pats; return pats;
+}
+function dishIngredients(it){
+  if(ING_CACHE[it.id]) return ING_CACHE[it.id];
+  var text=' '+it.desc.toLowerCase()+' ';
+  ['recommended with','guest choice','side salad option'].forEach(function(cut){
+    var ci=text.indexOf(cut); if(ci>=0) text=text.slice(0,ci);
+  });
+  var claimed=[], found=[];
+  ingPatterns().forEach(function(pt){
+    var needle=pt.p, from=0, added=false;
+    while(from<text.length){
+      var i=text.indexOf(needle,from); if(i<0) break;
+      var before=text.charAt(i-1), after=text.charAt(i+needle.length);
+      if(/[a-z]/.test(before)){ from=i+1; continue; }
+      var end=i+needle.length;
+      if(after==='s'&&!/[a-z]/.test(text.charAt(end+1))) end++; // plural s is a valid word ending
+      else if(/[a-z]/.test(after)){ from=i+1; continue; }
+      var overlap=claimed.some(function(c){return i<c[1]&&end>c[0];});
+      claimed.push([i,end]); // claim every occurrence so shorter terms can't re-match inside it
+      if(!overlap&&!added){ found.push({disp:pt.disp,pos:i}); added=true; }
+      from=end;
+    }
+  });
+  found.sort(function(a,b){return a.pos-b.pos;});
+  // Drop a term that is just a shorter echo of another (garlic vs fresh garlic)
+  var out=found.filter(function(f,idx){
+    return !found.some(function(g,j){ return j!==idx&&g.disp!==f.disp&&g.disp.indexOf(f.disp)>=0; });
+  }).map(function(f){return f.disp;});
+  ING_CACHE[it.id]=out;
+  return out;
+}
+// The weight the guide states for a dish, if any: a single oz value, an oz
+// range (the Simply Grilled trout, 9-11 oz), or the half-pound burger.
+function fmtOz(v){ return (Math.round(v*10)/10).toString().replace(/\.0$/,'')+' oz'; }
+function dishWeight(it){
+  var d=it.desc, m;
+  m=d.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*oz/i);
+  if(m) return {label:m[1]+'–'+m[2]+' oz',range:true,lo:+m[1],hi:+m[2]};
+  m=d.match(/(\d+(?:\.\d+)?)\s*oz/i);
+  if(m) return {label:fmtOz(+m[1]),val:+m[1]};
+  if(/half[-\s]pound/i.test(d)) return {label:'Half pound',half:true};
+  return null;
+}
 // Note: each MENU_RAW row still carries the study guide's page-group number
 // (the old 1/2/3 split) as an internal field, it is only used to pick
 // nearby quiz distractors. The session itself has NO blocks and NO
@@ -2070,7 +2268,7 @@ var MenuModule=(function(){
     }
     var html=topBar('🍽️ Menu Training')+
       '<div class="mCard"><div class="mCardTitle" style="font-size:20px">The whole menu, one session</div>'+
-      '<div class="mIntroChips"><span>'+list.length+' dishes</span><span>One shuffled deck</span><span>Food only, no drinks yet</span></div>'+
+      '<div class="mIntroChips"><span>'+list.length+' dishes</span><span>One shuffled deck</span><span>Food deck</span></div>'+
       '<div class="mRow"><button class="mBtn" id="mIntroStartTop">▶ Start the session, skip the tour</button></div>'+
       '<div class="mSteps">'+
       step('bell','🔔','Bell rings','Your tray is waiting on the <b>pass</b>. <b>2 dishes, 1 table</b>, or just <b>1 dish</b> if it is headed to a <b>barstool</b>. The names are up in the <b>panel on the top left</b>.','Demo: a tray appears on the expo pass as the bell rings, with the dish panel at the top-left')+
@@ -2099,14 +2297,14 @@ var MenuModule=(function(){
     var gate=store.gates.all;
     var servedN=servedList('all').length, refN=refireCount('all');
     var html=topBar('🍽️ Menu Training, session home')+
-      '<p><b>One session, the whole food menu.</b> You run trays, read the cards, then get quizzed on what you\'ve served. Miss one and it <b>refires</b> and comes back out. Food only for now, no drinks yet.</p>';
+      '<p><b>One session, the whole food menu.</b> You run trays, read the cards, then get quizzed on what you\'ve served. Miss one and it <b>refires</b> and comes back out.</p>';
     html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">The session, all '+list.length+' dishes</div></div>'+
       '<div class="mProg"><i style="width:'+Math.round(100*sc/list.length)+'%"></i></div>'+
       '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Descriptions Solid: <b>'+sc+' / '+list.length+'</b> · Allergens unlocked: '+unlocked+' / '+elig.length+(gate?' · ✅ <b>Allergen gate passed</b>':' · Allergen gate: not yet passed')+'</div>'+
       '<div class="mRow"><button class="mBtn" data-act="shift">▶ Start session, back on the floor</button>'+
       '<button class="mBtn ghost" data-act="alg">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
       '<button class="mBtn ghost" data-act="morning">☀️ Test morning</button></div>'+
-      '<div class="mRow"><button class="mBtn ghost small" data-act="browse">Sections &amp; progress</button></div></div>';
+      '<div class="mRow"><button class="mBtn ghost small" data-act="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-act="switch">Switch deck (Food / Drinks)</button></div></div>';
     var wc=watchCount();
     html+='<div class="mCard"><div class="mCardTitle">Cumulative mock, all '+list.length+' items</div><p>Text only, and you won\'t see any feedback until the very end, just like the real written final.</p><div class="mRow"><button class="mBtn ghost" data-act="cum">Start cumulative mock</button></div></div>'+
       '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' item'+(wc===1?'':'s')+'</b> waiting for a clean re-check. Refires waiting: <b>'+store.refire.length+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
@@ -2114,7 +2312,7 @@ var MenuModule=(function(){
     root.innerHTML=html; bindHub();
     root.querySelectorAll('[data-act]').forEach(function(btn){ btn.addEventListener('click',function(){
       var act=btn.getAttribute('data-act');
-      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBlock('all'); else if(act==='alg') renderAlgHome('all'); else if(act==='morning') startMorning('all'); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock, all '+list.length+' items',null);
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBlock('all'); else if(act==='alg') renderAlgHome('all'); else if(act==='morning') startMorning('all'); else if(act==='switch') showDeckChooser(); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock, all '+list.length+' items',null);
     });});
     var rs=document.getElementById('mReset');
     rs.addEventListener('click',function(){
@@ -2220,33 +2418,116 @@ var MenuModule=(function(){
     opts.push({id:it.id,text:it.name});
     return shuffle(opts);
   }
+  function ingListText(list){ var t=list.join(', '); return t.charAt(0).toUpperCase()+t.slice(1); }
+  // Distractor ingredients for a dish: what other dishes have that this one
+  // doesn't, same-section dishes first so the swaps stay plausible.
+  function ingPoolFor(it){
+    var mine={}; dishIngredients(it).forEach(function(g){mine[g]=1;});
+    var near=[], far=[];
+    MENU_ITEMS.forEach(function(x){
+      if(x.id===it.id) return;
+      dishIngredients(x).forEach(function(g){
+        if(mine[g]) return;
+        var arr=(x.section===it.section)?near:far;
+        if(arr.indexOf(g)<0) arr.push(g);
+      });
+    });
+    return shuffle(near).concat(shuffle(far));
+  }
+  // The harder "what's in it" question: four ingredient lists, three of
+  // them with one or two ingredients swapped for ingredients the dish
+  // does NOT have. Recognizing the guide's paragraph no longer helps;
+  // you have to know what's actually on the plate.
+  function makeIngQ(it){
+    var ings=dishIngredients(it), pool=ingPoolFor(it);
+    function mutated(swaps){
+      var list=ings.slice(), usedIdx={}, guard=0;
+      var n=Math.min(swaps,list.length-1);
+      while(n>0&&pool.length&&guard<40){
+        guard++;
+        var idx=Math.floor(Math.random()*list.length);
+        if(usedIdx[idx]) continue;
+        usedIdx[idx]=1; list[idx]=pool.shift(); n--;
+      }
+      return list;
+    }
+    var opts=[{id:it.id,text:ingListText(ings)},
+      {id:'w1',text:ingListText(mutated(1))},
+      {id:'w2',text:ingListText(mutated(1))},
+      {id:'w3',text:ingListText(mutated(2))}];
+    return {item:it,kind:'ing',prompt:'What\'s in “'+it.name+'”? Pick the ingredient list that matches the guide.',opts:shuffle(opts),ingText:ingListText(ings)};
+  }
+  // Weight question: the weight the guide states, against close wrong
+  // weights (neighbouring oz values, shifted ranges, other pound sizes).
+  function makeWtQ(it){
+    var w=dishWeight(it), opts=[{id:it.id,text:w.label}], wrongs=[];
+    if(w.half){ wrongs=['Quarter pound','Three-quarter pound','One pound']; }
+    else if(w.range){
+      [[-1,-1],[1,1],[-2,-2],[2,2]].forEach(function(d){ wrongs.push((w.lo+d[0])+'–'+(w.hi+d[1])+' oz'); });
+    } else {
+      var cands=[w.val-2,w.val-1.5,w.val-1,w.val-0.5,w.val+0.5,w.val+1,w.val+1.5,w.val+2,4,5,6,7,7.5,8,9,10,12];
+      var seen={};
+      cands=cands.filter(function(v){ if(v<=0||v===w.val||seen[v]) return false; seen[v]=1; return true; });
+      cands.sort(function(a,b){ return Math.abs(a-w.val)-Math.abs(b-w.val); });
+      wrongs=cands.slice(0,3).map(fmtOz);
+    }
+    shuffle(wrongs).slice(0,3).forEach(function(t,i){ opts.push({id:'w'+(i+1),text:t}); });
+    return {item:it,kind:'wt',prompt:'What weight does the guide state for “'+it.name+'”?',opts:shuffle(opts)};
+  }
+  // Weighted pick among a dish's question kinds. Spaced repetition rule:
+  // the kind the dish was asked LAST time (P.lastKind, saved on the dish)
+  // is excluded whenever another kind is available, so when a dish comes
+  // back it is never asked the same way twice in a row.
+  function pickKind(it,cands){
+    var p=P(it.id), last=p.lastKind||null;
+    var pool=cands.filter(function(c){return c.k!==last;});
+    if(!pool.length) pool=cands;
+    var total=0; pool.forEach(function(c){total+=c.w;});
+    var r=Math.random()*total;
+    for(var i=0;i<pool.length;i++){ r-=pool[i].w; if(r<=0){ p.lastKind=pool[i].k; return pool[i].k; } }
+    p.lastKind=pool[pool.length-1].k; return p.lastKind;
+  }
   function makeQ(it){
-    var disc = (it.section==='Simply Grilled'||it.section==='Signature Sauces');
-    var descToName = disc ? (Math.random()<0.7) : (Math.random()<0.5);
-    // Photo question (~1 in 5) only for VERIFIED photos (MENU_PHOTO_QUIZ);
+    var cands=[];
+    if(dishIngredients(it).length>=3) cands.push({k:'ing',w:3});
+    else cands.push({k:'n2d',w:2});
+    if(dishWeight(it)) cands.push({k:'wt',w:3});
+    cands.push({k:'d2n',w:2});
+    // Photo questions only for VERIFIED photos (MENU_PHOTO_QUIZ);
     // APPROXIMATE items keep their photo in previews/feedback but are never
-    // photo-ID questions. Half the photo questions are photo-to-name (same-
-    // section name options), half are name-to-photo grids.
-    if(MENU_PHOTO_QUIZ[it.id] && Math.random()<0.2){
+    // photo-ID questions. Half photo-to-name, half name-to-photo grids.
+    if(MENU_PHOTO_QUIZ[it.id]) cands.push({k:'photo',w:1.2});
+    var kind=pickKind(it,cands);
+    if(kind==='photo'){
       if(Math.random()<0.5) return {item:it,kind:'photo2name',prompt:'Which dish is this?',opts:buildOptions(it,'name')};
       return {item:it,kind:'name2photo',prompt:'Which photo shows “'+it.name+'”?',opts:buildPhotoOptions(it)};
     }
-    if(descToName) return {item:it,kind:'d2n',prompt:'Which dish is this?',desc:it.desc,opts:buildOptions(it,'name')};
+    if(kind==='ing') return makeIngQ(it);
+    if(kind==='wt') return makeWtQ(it);
+    if(kind==='d2n') return {item:it,kind:'d2n',prompt:'Which dish is this?',desc:it.desc,opts:buildOptions(it,'name')};
     return {item:it,kind:'n2d',prompt:'What\'s in “'+it.name+'”? How does the guide describe it?',opts:buildOptions(it,'desc')};
   }
+  // Spaced repetition: a round is mostly the dishes that need work —
+  // missed dishes headline, then never-quizzed, then seen-but-not-Solid.
+  // Solid dishes do NOT leave rotation: they come back rarely (at most 2
+  // a round, stalest first) so they stay fresh without crowding out the
+  // weak ones. There is deliberately no Solid backfill beyond that cap:
+  // if the weak pool can't fill the round, the round is just shorter.
   function buildSprintQueue(scope){
-    var news=shuffle(scope.filter(function(it){return !P(it.id).seen;}));
-    var review=shuffle(scope.filter(function(it){return P(it.id).seen&&!P(it.id).solid;}));
-    review.sort(function(a,b){ return (P(b.id).miss?1:0)-(P(a.id).miss?1:0); });
-    var solid=shuffle(scope.filter(function(it){return P(it.id).solid;}));
+    function lastRound(it){ var r=P(it.id).rounds; return (r&&r.length)?Math.max.apply(null,r):0; }
+    var missed=shuffle(scope.filter(function(it){return P(it.id).miss;}));
+    var news=shuffle(scope.filter(function(it){var p=P(it.id);return !p.seen&&!p.miss;}));
+    var review=shuffle(scope.filter(function(it){var p=P(it.id);return p.seen&&!p.solid&&!p.miss;}));
+    var solid=scope.filter(function(it){var p=P(it.id);return p.solid&&!p.miss;});
+    solid.sort(function(a,b){return lastRound(a)-lastRound(b);});
     var q=[], used={};
     function take(list,n){ for(var i=0;i<list.length&&q.length<12&&n>0;i++){ if(!used[list[i].id]){ used[list[i].id]=1; q.push(list[i]); n--; } } }
-    take(news,6); take(review,4); take(solid,2);
-    if(q.length<12) take(review,12); if(q.length<12) take(news,12); if(q.length<12) take(solid,12);
+    take(missed,4); take(news,5); take(review,5); take(solid,2);
+    if(q.length<12) take(review,12); if(q.length<12) take(news,12); if(q.length<12) take(missed,12);
     if(q.length===0) q=shuffle(scope).slice(0,Math.min(12,scope.length));
     // Interleave: shuffle but keep missed items early (they headline the round)
-    var missed=q.filter(function(it){return P(it.id).miss;}), rest=shuffle(q.filter(function(it){return !P(it.id).miss;}));
-    return missed.concat(rest).slice(0,12);
+    var missedQ=q.filter(function(it){return P(it.id).miss;}), rest=shuffle(q.filter(function(it){return !P(it.id).miss;}));
+    return missedQ.concat(rest).slice(0,12);
   }
 
   // ----- Quiz engine (sprint / miss-only / mock / temps) -----
@@ -2282,6 +2563,10 @@ var MenuModule=(function(){
       if(q.kind==='photo2name') body='<div class="mQ">'+esc(q.prompt)+'</div>'+photoHTML(q.item);
     } else if(q.kind==='name2photo'){
       body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · tap the matching plate</p>';
+    } else if(q.kind==='ing'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · one list is the guide\'s, the others have an ingredient or two swapped</p>';
+    } else if(q.kind==='wt'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the weight the guide states</p>';
     } else {
       body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the guide description</p>';
     }
@@ -2335,7 +2620,8 @@ var MenuModule=(function(){
       slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct.</b>':'✋ <b>Not quite.</b>')+' <b>'+esc(q.tempItem[0])+'</b> = '+esc(q.tempItem[1])+'.</div><div class="mRow"><button class="mBtn" id="mNext">Next →</button></div>';
     } else {
       slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct!</b>':'✋ <b>Not quite. Here\'s what the guide says:</b>')+
-        '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+photoHTML(it)+
+        '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+
+        (q.kind==='ing'?'<div style="margin-top:6px">What\'s actually in it: <b>'+esc(q.ingText)+'</b></div>':'')+photoHTML(it)+
         (correct&&P(it.id).solid?'<div style="margin-top:6px">⭐ This dish is now <b>Solid</b>, so its allergen questions are unlocked.</div>':'')+
         (!correct?'<div style="margin-top:6px">'+((S.worldBlock||S.refireOnMiss)?'You\'ll see it again in a few questions. After this round it goes back out as a <b>refire</b>, so you\'ll need to deliver it again before you can be quizzed on it.':'You\'ll see it again in a few questions, and it\'ll be right up front in your next round.')+'</div>':'')+
         '</div><div class="mRow"><button class="mBtn" id="mNext">Next →</button></div>';
@@ -2587,8 +2873,10 @@ var MenuModule=(function(){
     player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
     var b=menuCurrentBlock;
     if(b!==null&&b!==undefined&&menuDeliveriesSinceQuiz>=2){
-      var due=quizPool(b).filter(function(it){return !P(it.id).solid;});
-      if(due.length&&startWorldQuiz(true)){ updateHUD(); return; }
+      // Spaced repetition: Solid dishes stay in the quiz pool (the sprint
+      // queue gives them only a small, rare slice), so the on-shift quiz
+      // fires whenever anything served is quiz-ready, Solid or not.
+      if(quizPool(b).length&&startWorldQuiz(true)){ updateHUD(); return; }
     }
     setMsg('↩️ <b>Back at the expo.</b> Next ticket in a few seconds…','');
     if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
@@ -2634,6 +2922,596 @@ var MenuModule=(function(){
   };
 })();
 
+// ---------- Drinks Training data (Beta, public menu only) ----------
+// Source: Bonefish Grill's official published Pennsylvania menu
+// (T12-M7-PA_0425, April 2025), compiled in
+// ~/workspace/bonefish/drinks-public-menu.md. ONLY the PA set: the
+// regional variants (Lemon Drop, Tropic Heat) and the FL-only cocktails
+// (Jefferson's Ocean Old Fashioned, Contemporary Cosmo, Mimosa, Bacon
+// Bloody Mary) are deliberately excluded. Descriptions are the published
+// ones with calorie counts stripped (no calories anywhere in this game).
+// No proportions, pours or glassware: public sources do not state them,
+// and nothing is invented to fill the gap. PROVISIONAL: the study
+// guide's drinks pages are the final authority and this deck gets
+// diffed against them when they are back in hand.
+// facts: detail spot-checks, ONLY where the public text states the
+// detail (colossal cube, oak smoke, blue cheese olives, jalapeño-sugar
+// rim, butterfly tea, cold foam, brownie bite, house infusion).
+// conf: the confusable partner that always appears among the options.
+var DRINK_ITEMS=[
+  {name:'Bonefish Pomegranate Martini',section:'Martinis',desc:'Frïs vodka with house-infused mango and pomegranate flavors',details:['House-infused vodka: mango & pomegranate'],facts:[{tag:'infusion',q:'Which martini is made with vodka house-infused with mango and pomegranate flavors?'}]},
+  {name:'Heatwave Martini',section:'Martinis',desc:'Casamigos Blanco tequila, mango, fresh citrus juices, with a burst of habanero and a sweet & spicy jalapeño sugar rim',details:['Sweet & spicy jalapeño-sugar rim','Burst of habanero'],facts:[{tag:'rim',q:'Which martini comes with a sweet & spicy jalapeño-sugar rim?'}]},
+  {name:'Crushed Pineapple Martini',section:'Martinis',desc:'Malibu rum, St~Germain Elderflower liqueur, fresh pineapple, lemon and simple syrup',details:[],facts:[]},
+  {name:'Key Lime Martini',section:'Martinis',desc:'Malibu Coconut rum, Stoli Vanilla vodka, lime and coconut topped with a sweet cold foam',details:['Sweet cold foam top'],facts:[{tag:'foam',q:'Which martini is topped with a sweet cold foam?'}]},
+  {name:'Strawberry Rose Sidecar Martini',section:'Martinis',desc:'Rémy Martin VSOP, Cointreau, fresh sour and strawberry flavors topped with sparkling wine',details:['Topped with sparkling wine'],facts:[]},
+  {name:'"1901" Dirty Martini',section:'Martinis',desc:'Absolut vodka or Bombay Sapphire gin, shaken and served straight up with blue cheese olives',details:['Blue cheese olives','Served straight up'],facts:[{tag:'olives',q:'Which martini is served with blue cheese olives?'},{tag:'straightup',q:'Which martini is shaken and served straight up?'}]},
+  {name:'Espresso Martini',section:'Martinis',desc:'Stoli Vanilla vodka, Kahlúa, Crème de Cacao and freshly brewed espresso',details:[],facts:[],conf:'Chocolate Martini'},
+  {name:'Chocolate Martini',section:'Martinis',desc:'Baileys Irish Cream, Stoli Vanilla vodka, Crème de Cacao, chocolate syrup and garnished with a brownie bite',details:['Brownie bite garnish'],facts:[{tag:'brownie',q:'Which martini is garnished with a brownie bite?'}],conf:'Espresso Martini'},
+  {name:'Smoked Old Fashioned',section:'Cocktails',desc:'Woodford Reserve bourbon with Angostura bitters and a Bordeaux cherry, smoked with oak and served over a colossal ice cube',details:['Smoked with oak','Colossal ice cube','Bordeaux cherry'],facts:[{tag:'oak',q:'Which cocktail is smoked with oak?'},{tag:'colossal',q:'Which of these cocktails is served over a colossal ice cube?'}]},
+  {name:'The Mule',section:'Cocktails',desc:'Reyka vodka, fresh lime, simple syrup and ginger beer',details:[],facts:[]},
+  {name:'French 75',section:'Cocktails',desc:'Bombay Sapphire gin, St~Germain Elderflower liqueur, hint of lemon, topped with sparkling wine, served over a colossal ice cube',details:['Colossal ice cube','Topped with sparkling wine'],facts:[{tag:'colossal',q:'Which of these cocktails is served over a colossal ice cube?'}]},
+  {name:"Parker's Margarita",section:'Cocktails',desc:"founder Chris Parker's favorite finished with OJ and Grand Marnier",details:['Finished with OJ & Grand Marnier'],facts:[],conf:'Dragon Fruit Margarita'},
+  {name:'Dragon Fruit Margarita',section:'Cocktails',desc:'Patron Silver tequila, Cointreau, fresh citrus juices and tropical dragon fruit flavor',details:[],facts:[],conf:"Parker's Margarita"},
+  {name:'Coral Reef Punch',section:'Cocktails',desc:'BACARDÍ Superior rum, Malibu rum, tropical flavors of passion fruit and simple syrup, orange, pineapple juice, and a splash of bitters',details:[],facts:[]},
+  {name:'Indigo Sunset',section:'Cocktails',desc:"Tito's Handmade vodka, passion fruit, mint and Minute Maid Lemonade finished with butterfly color-changing tea",details:['Butterfly color-changing tea finish'],facts:[{tag:'butterfly',q:'Which cocktail is finished with butterfly color-changing tea?'}]},
+  {name:'Signature Sangria',section:'Cocktails',desc:'Blackberry Red or Sparkling Mango White',details:['Two styles: Blackberry Red or Sparkling Mango White'],facts:[]}
+];
+// Ingredient lists for the martinis & cocktails, taken from the published
+// descriptions above (Build 200.8): these feed the harder ingredient-list
+// questions, where three of the four lists have one or two ingredients
+// swapped out. Deliberately absent: the "1901" Dirty Martini and Parker's
+// Margarita (the public text names only two components each) and the
+// Signature Sangria (two styles, not an ingredient list); those keep the
+// description and detail questions.
+var DRINK_ING={
+  'Bonefish Pomegranate Martini':['Frïs vodka','mango','pomegranate'],
+  'Heatwave Martini':['Casamigos Blanco tequila','mango','fresh citrus juices','habanero','jalapeño-sugar rim'],
+  'Crushed Pineapple Martini':['Malibu rum','St-Germain elderflower liqueur','fresh pineapple','lemon','simple syrup'],
+  'Key Lime Martini':['Malibu Coconut rum','Stoli Vanilla vodka','lime','coconut','sweet cold foam'],
+  'Strawberry Rose Sidecar Martini':['Rémy Martin VSOP','Cointreau','fresh sour','strawberry','sparkling wine'],
+  'Espresso Martini':['Stoli Vanilla vodka','Kahlúa','Crème de Cacao','espresso'],
+  'Chocolate Martini':['Baileys Irish Cream','Stoli Vanilla vodka','Crème de Cacao','chocolate syrup','brownie bite'],
+  'Smoked Old Fashioned':['Woodford Reserve bourbon','Angostura bitters','Bordeaux cherry','oak smoke','colossal ice cube'],
+  'The Mule':['Reyka vodka','fresh lime','simple syrup','ginger beer'],
+  'French 75':['Bombay Sapphire gin','St-Germain elderflower liqueur','lemon','sparkling wine','colossal ice cube'],
+  'Dragon Fruit Margarita':['Patron Silver tequila','Cointreau','fresh citrus juices','dragon fruit'],
+  'Coral Reef Punch':['BACARDÍ Superior rum','Malibu rum','passion fruit','simple syrup','orange','pineapple juice','bitters'],
+  'Indigo Sunset':['Tito\'s Handmade vodka','passion fruit','mint','lemonade','butterfly tea']
+};
+DRINK_ITEMS.forEach(function(it){ if(DRINK_ING[it.name]) it.ing=DRINK_ING[it.name]; });
+// Wine by the glass/bottle (PA menu): [name, varietal, region, group, note]
+var DRINK_WINE_RAW=[
+  ['Seven Daughters Moscato','Moscato','Italy','Whites & Rosés',''],
+  ['Beringer White Zinfandel','White Zinfandel','CA','Whites & Rosés',''],
+  ['Chloe Rosé','Rosé','Central Coast, CA','Whites & Rosés',''],
+  ['Washington Hills Late Harvest Riesling','Late Harvest Riesling','WA','Whites & Rosés',''],
+  ['Josh Cellars Seaswept Pinot Grigio & Sauvignon Blanc Blend','Pinot Grigio & Sauvignon Blanc Blend','CA','Whites & Rosés',''],
+  ['Ecco Domani Pinot Grigio','Pinot Grigio','Italy','Whites & Rosés',''],
+  ['Santa Margherita Pinot Grigio','Pinot Grigio','Alto Adige, Italy','Whites & Rosés',''],
+  ['Kim Crawford Sauvignon Blanc','Sauvignon Blanc','Marlborough, New Zealand','Whites & Rosés',''],
+  ['Decoy by Duckhorn Sauvignon Blanc','Sauvignon Blanc','Sonoma County','Whites & Rosés',''],
+  ['Canyon Road Chardonnay','Chardonnay','CA','Whites & Rosés',''],
+  ['William Hill Chardonnay','Chardonnay','North Coast','Whites & Rosés',''],
+  ['Kendall-Jackson V.R. Chardonnay','Chardonnay','CA','Whites & Rosés',''],
+  ['Cakebread Cellars Chardonnay','Chardonnay','Napa Valley','Whites & Rosés','Bottle only'],
+  ['Silver Gate Pinot Noir','Pinot Noir','CA','Reds',''],
+  ['Mark West Pinot Noir','Pinot Noir','CA','Reds',''],
+  ['Meiomi Pinot Noir','Pinot Noir','Monterey-Sonoma-Santa Barbara','Reds',''],
+  ['Böen Pinot Noir','Pinot Noir','Santa Barbara-Monterey-Sonoma Coast','Reds',''],
+  ['Portillo "Estate Bottled" Malbec','Malbec','Argentina','Reds',''],
+  ['Cline Cashmere Red Blend','Red Blend','CA','Reds',''],
+  ['Canyon Road Merlot or Cabernet Sauvignon','Merlot / Cabernet Sauvignon','CA','Reds',''],
+  ['Blackstone Merlot','Merlot','CA','Reds',''],
+  ['Robert Mondavi "Private Select" Cabernet Sauvignon','Cabernet Sauvignon','Sonoma County','Reds',''],
+  ['J. Lohr Seven Oak Cabernet Sauvignon','Cabernet Sauvignon','Paso Robles, CA','Reds',''],
+  ['La Marca Prosecco','Prosecco','Italy','Sparkling','Bottle only'],
+  ['Chandon Brut Sparkling','Brut Sparkling','187ml split','Sparkling',''],
+  ['Chandon Rosé Sparkling','Rosé Sparkling','187ml split','Sparkling',''],
+  ['Veuve Clicquot Yellow Label Brut Champagne','Brut Champagne','France','Sparkling','Bottle only']
+];
+DRINK_WINE_RAW.forEach(function(r){
+  DRINK_ITEMS.push({name:r[0],section:'Wine',sub:r[3],varietal:r[1],region:r[2],desc:r[1]+' · '+r[2]+(r[4]?' · '+r[4]:''),details:[],facts:[]});
+});
+// Beer & Beverages (PA menu): [name, group, description]
+var DRINK_BEER_RAW=[
+  ['Bud Light (Draft)','Draft','On draft'],
+  ['Michelob ULTRA','Draft','On draft'],
+  ['Blue Moon Belgian White','Draft','On draft'],
+  ['Sam Adams Seasonal','Draft','On draft'],
+  ['Bud Light (Bottle)','Domestic Bottle','Domestic bottle'],
+  ['Coors Light','Domestic Bottle','Domestic bottle'],
+  ['Miller Lite','Domestic Bottle','Domestic bottle'],
+  ['Corona Extra','Imports & Seltzers','Import'],
+  ['Modelo Especial','Imports & Seltzers','Import'],
+  ['Stella Artois','Imports & Seltzers','Import'],
+  ['High Noon Pineapple','Imports & Seltzers','Hard seltzer'],
+  ['Dragon Fruit No-Jito','Spirit-Free','dragon fruit, refreshing mint, and Fever-Tree Sparkling Lime Yuzu'],
+  ['Sparkling Blueberry Refresher','Spirit-Free','blueberry purée, lemon-lime soda, and fresh lime garnished with a mint sprig'],
+  ['Seasonal Spirit Free','Spirit-Free','ask your Angler about our seasonal creation']
+];
+DRINK_BEER_RAW.forEach(function(r){
+  DRINK_ITEMS.push({name:r[0],section:'Beer & Beverages',sub:r[1],desc:r[2],details:[],facts:[]});
+});
+DRINK_ITEMS.forEach(function(it,i){ it.id=i; });
+var DRINK_WINE_GROUPS=['Whites & Rosés','Reds','Sparkling'];
+var DRINK_BEER_GROUPS=['Draft','Domestic Bottle','Imports & Seltzers','Spirit-Free'];
+
+// ---------- Drinks Training module (Beta): same machinery, own store ----------
+// Mirrors the food Menu Training flow (bell, tray, deliver, info card,
+// quizzes from the served pool, misses refire after re-delivery, Solid =
+// correct in two different rounds) but is fully separate: its own
+// localStorage key, served pool, refire queue and deck. Drinks deliver
+// ONLY to the barstools (101-114), one drink per tray.
+var DrinksModule=(function(){
+  var root=null, store=null;
+  var KEY='bfg-drinks-v1';
+  function blankProg(){ return {prog:{}, roundSeq:0, refire:[], decks:{}, visits:0}; }
+  function load(){
+    try{ var s=localStorage.getItem(KEY); if(s){ store=JSON.parse(s); if(store&&store.prog){ normalizeStore(); return; } } }catch(e){}
+    store=blankProg();
+  }
+  function normalizeStore(){
+    if(!Array.isArray(store.refire)) store.refire=[];
+    if(!store.decks||typeof store.decks!=='object') store.decks={};
+    store.refire=store.refire.filter(function(id){ return DRINK_ITEMS[id]!==undefined; });
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+  function P(id){ if(!store.prog[id]) store.prog[id]={seen:false,served:false,rounds:[],solid:false,miss:false,watch:false}; return store.prog[id]; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+  function isRefire(id){ return store.refire.indexOf(id)>=0; }
+  function addRefire(id){ if(!isRefire(id)) store.refire.push(id); }
+  function removeRefire(id){ store.refire=store.refire.filter(function(x){return x!==id;}); }
+  function servedList(){ return DRINK_ITEMS.filter(function(it){return P(it.id).served;}); }
+  function quizPool(){ return servedList().filter(function(it){return !isRefire(it.id);}); }
+  function solidCount(list){ return list.filter(function(it){return P(it.id).solid;}).length; }
+  function ensureDeck(){
+    if(!store.decks.all||!Array.isArray(store.decks.all.order)){
+      store.decks.all={order:shuffle(DRINK_ITEMS.map(function(it){return it.id;})), idx:0};
+      save();
+    }
+    return store.decks.all;
+  }
+  // Next drink for a tray: refires first (re-deliver before re-quiz),
+  // then the next unserved drink off the shuffled deck, then a random
+  // served drink once the whole deck has been served. Always ONE drink:
+  // drinks go to barstools, and barstool trays carry one item.
+  function nextDrinkForTray(){
+    for(var i=0;i<store.refire.length;i++){ var r=DRINK_ITEMS[store.refire[i]]; if(r) return r; }
+    var deck=ensureDeck();
+    while(deck.idx<deck.order.length){
+      var it=DRINK_ITEMS[deck.order[deck.idx++]];
+      if(it&&!P(it.id).served){ save(); return it; }
+    }
+    save();
+    var pool=servedList();
+    if(pool.length) return shuffle(pool)[0];
+    return DRINK_ITEMS[0];
+  }
+  // Barstool deck: drinks deliver ONLY to stools 101-114, dealt from
+  // their own shuffled order so the food/table decks are untouched.
+  var stoolDeck=[], stoolIdx=0;
+  function nextStool(){
+    if(stoolIdx>=stoolDeck.length){
+      stoolDeck=shuffle(tables.filter(function(tb){return tb.n>=101&&tb.n<=114;}));
+      if(lastTable!==null&&stoolDeck.length>1&&stoolDeck[0].n===lastTable){ var f=stoolDeck[0]; stoolDeck[0]=stoolDeck[1]; stoolDeck[1]=f; }
+      stoolIdx=0;
+    }
+    return stoolDeck[stoolIdx++];
+  }
+  function topBar(title){
+    return '<div class="mTopBar"><button class="mBtn ghost small" id="mHubBtn">← Back to hub</button><div class="mTitle">'+esc(title)+'</div></div>';
+  }
+  function bindHub(){ var b=document.getElementById('mHubBtn'); if(b) b.addEventListener('click',function(){ save(); exitToHub(terminals[1].x); }); }
+  function detailTags(it){
+    if(!it.details||!it.details.length) return '';
+    return '<div class="mIcons">'+it.details.map(function(d){return '<span class="tag">'+esc(d)+'</span>';}).join('')+'</div>';
+  }
+  function betaNote(){
+    return '<p class="mRule">Beta deck, built from Bonefish\u2019s <b>publicly available menu</b> (Pennsylvania menu). Provisional: the study guide drinks pages win when they\u2019re back in hand. No pours or proportions are quizzed, public sources don\u2019t publish them.</p>';
+  }
+
+  // ----- Entry pop-up -----
+  function renderIntro(){
+    var servedN=servedList().length, refN=store.refire.length;
+    var html=topBar('🍸 Drinks Training (Beta)')+
+      '<div class="mCard"><div class="mCardTitle" style="font-size:20px">The drinks deck, one session</div>'+
+      '<div class="mIntroChips"><span>'+DRINK_ITEMS.length+' drinks</span><span>Martinis · Cocktails · Wine · Beer</span><span>Beta: public menu</span></div>'+
+      '<div class="mRow"><button class="mBtn" id="mDIntroStartTop">▶ Start the session, skip the tour</button></div>'+
+      '<div class="mSteps">'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">🔔 Bell rings, one drink</div><div class="mStepText">Every tray carries <b>one drink</b>, always headed to a <b>barstool (101\u2013114)</b>. The drink is named in the <b>panel on the top left</b>.</div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">🍸 Pick up &amp; deliver</div><div class="mStepText">Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the barstool</b>.</div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">📖 Read the card</div><div class="mStepText">When you deliver, the <b>drink card</b> pops open with the published description and any stated details. <b>That\u2019s what the quiz asks about.</b></div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">❓ Quiz pops up</div><div class="mStepText">After a few runs you\u2019ll get quizzed, <b>only on drinks you\u2019ve served</b>. Martinis and cocktails quiz on ingredient lists, descriptions and stated details; wine and beer quiz on names, groups and varietals. Tap <b>Quiz me</b> anytime for one sooner.</div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">🔥 Miss one? It refires</div><div class="mStepText">That drink <b>comes back out</b> on another tray later. Deliver it again and re-read the card first.</div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">⭐ Get it Solid</div><div class="mStepText">Get it right in <b>2 different rounds</b> and it turns <b>Solid</b>.</div></div></div>'+
+      '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">🚪 Leaving</div><div class="mStepText">Stand in the small <b>coral EXIT ring</b> by the OUT door for <b>2 seconds</b>. Tapping <b>Exit</b> or hitting <b>Esc</b> works too.</div></div></div>'+
+      '</div>'+
+      (servedN?'<p class="mMeta">Picking up where you left off: <b>'+servedN+' of '+DRINK_ITEMS.length+'</b> drinks served'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+'. Progress saves on this device, separate from your food progress.</p>':'<p class="mMeta">Progress saves on this device, separate from your food progress.</p>')+
+      betaNote()+
+      '<div class="mRow"><button class="mBtn" id="mDIntroStart">▶ Start the session</button></div></div>';
+    root.innerHTML=html; bindHub();
+    function go(){ startMenuWorld('all'); }
+    document.getElementById('mDIntroStart').addEventListener('click',go);
+    document.getElementById('mDIntroStartTop').addEventListener('click',go);
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- Session home -----
+  function renderHome(){
+    var list=DRINK_ITEMS, sc=solidCount(list);
+    var servedN=servedList().length, refN=store.refire.length;
+    var html=topBar('🍸 Drinks Training, session home')+
+      '<p><b>One session, the whole drinks deck (Beta).</b> You run drinks to the barstools, read the cards, then get quizzed on what you\u2019ve served. Miss one and it <b>refires</b> and comes back out. Your food progress is separate and untouched.</p>';
+    html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">The session, all '+list.length+' drinks</div></div>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*sc/list.length)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Solid: <b>'+sc+' / '+list.length+'</b></div>'+
+      '<div class="mRow"><button class="mBtn" data-dact="shift">▶ Start session, back on the floor</button>'+
+      '<button class="mBtn ghost" data-dact="sprint">⚡ Sprint served drinks</button></div>'+
+      '<div class="mRow"><button class="mBtn ghost small" data-dact="browse">Study cards &amp; sections</button><button class="mBtn ghost small" data-dact="switch">Switch deck (Food / Drinks)</button></div></div>'+
+      '<div class="mCard"><div class="mCardTitle">Reset</div><p>Drinks progress only. Your food deck is not touched.</p>'+
+      '<div class="mRow"><button class="mBtn ghost small" id="mDReset">Reset drinks progress</button></div><div id="mDResetMsg"></div></div>'+
+      betaNote();
+    root.innerHTML=html; bindHub();
+    root.querySelectorAll('[data-dact]').forEach(function(btn){ btn.addEventListener('click',function(){
+      var act=btn.getAttribute('data-dact');
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderStudy(); else if(act==='sprint') startServedSprint(); else if(act==='switch') showDeckChooser();
+    });});
+    var rs=document.getElementById('mDReset');
+    rs.addEventListener('click',function(){
+      if(rs.getAttribute('data-arm')){ store=blankProg(); save(); renderHome(); }
+      else { rs.setAttribute('data-arm','1'); rs.textContent='Tap again to confirm reset'; document.getElementById('mDResetMsg').innerHTML='<p>This clears every drinks Solid, served drink and refire on this device. Food progress stays.</p>'; }
+    });
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- Study cards: sections and progress (reference read) -----
+  function renderStudy(){
+    var html=topBar('🍸 Drinks, study cards')+'<p>Reference only: reading these cards does <b>not</b> put a drink in your quiz pool. <b>Delivering</b> it on the floor does, same as the food. Sprints here only quiz <b>drinks you\u2019ve served</b>.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mDStudyShift">▶ Start session</button><button class="mBtn ghost" id="mDStudySprint">⚡ Sprint served drinks (up to 12)</button><button class="mBtn ghost" id="mDStudyHome">← Session home</button></div>';
+    function sectionCard(title,items,lineFn){
+      var sc=solidCount(items);
+      var sv=items.filter(function(it){return P(it.id).served;}).length;
+      var h='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">'+esc(title)+'</div><div class="mMeta">'+sv+' / '+items.length+' served · '+sc+' / '+items.length+' Solid</div></div>'+
+        '<div class="mProg"><i style="width:'+(items.length?Math.round(100*sc/items.length):0)+'%"></i></div>';
+      items.forEach(function(it){
+        h+='<div style="border-top:1px dashed var(--line);padding:8px 0 2px"><b>'+esc(it.name)+'</b>'+(P(it.id).solid?' ⭐':'')+(P(it.id).served?' <span class="mMeta">served ✓</span>':'')+'<div class="mMeta" style="font-size:13.5px;color:var(--ink)">'+esc(lineFn(it))+'</div>'+detailTags(it)+'</div>';
+      });
+      return h+'</div>';
+    }
+    html+=sectionCard('🍸 Martinis',DRINK_ITEMS.filter(function(it){return it.section==='Martinis';}),function(it){return it.desc;});
+    html+=sectionCard('🥃 Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Cocktails';}),function(it){return it.desc;});
+    DRINK_WINE_GROUPS.forEach(function(g){
+      html+=sectionCard('🍷 Wine: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Wine'&&it.sub===g;}),function(it){return it.desc;});
+    });
+    DRINK_BEER_GROUPS.forEach(function(g){
+      html+=sectionCard('🍺 Beer & Beverages: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Beer & Beverages'&&it.sub===g;}),function(it){return it.desc;});
+    });
+    html+=betaNote();
+    root.innerHTML=html; bindHub();
+    document.getElementById('mDStudyHome').addEventListener('click',renderHome);
+    document.getElementById('mDStudyShift').addEventListener('click',function(){ startMenuWorld('all'); });
+    document.getElementById('mDStudySprint').addEventListener('click',function(){ startServedSprint(); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- Question building -----
+  function drinkByName(n){ for(var i=0;i<DRINK_ITEMS.length;i++){ if(DRINK_ITEMS[i].name===n) return DRINK_ITEMS[i]; } return null; }
+  function buildNameDescOptions(it,field){
+    var pool=DRINK_ITEMS.filter(function(x){return (x.section==='Martinis'||x.section==='Cocktails')&&x.section===it.section&&x.id!==it.id;});
+    var fill=DRINK_ITEMS.filter(function(x){return (x.section==='Martinis'||x.section==='Cocktails')&&x.section!==it.section;});
+    var picks=[];
+    if(it.conf){ var partner=drinkByName(it.conf); if(partner) picks.push(partner); }
+    picks=picks.concat(shuffle(pool).filter(function(x){return picks.indexOf(x)<0;}));
+    if(picks.length<3) picks=picks.concat(shuffle(fill).filter(function(x){return picks.indexOf(x)<0;}));
+    picks=picks.slice(0,3);
+    var opts=picks.map(function(x){return {id:x.id,text:field==='desc'?x.desc:x.name};});
+    opts.push({id:it.id,text:field==='desc'?it.desc:it.name});
+    return shuffle(opts);
+  }
+  function ingListTextD(list){ var t=list.join(', '); return t.charAt(0).toUpperCase()+t.slice(1); }
+  // Same harder question as the food deck: four ingredient lists, three
+  // with one or two ingredients swapped for ones the drink doesn't have.
+  function makeIngQ(it){
+    var mine={}; it.ing.forEach(function(g){mine[g]=1;});
+    var pool=[];
+    DRINK_ITEMS.forEach(function(x){ (x.ing||[]).forEach(function(g){ if(!mine[g]&&pool.indexOf(g)<0) pool.push(g); }); });
+    pool=shuffle(pool);
+    function mutated(swaps){
+      var list=it.ing.slice(), usedIdx={}, guard=0;
+      var n=Math.min(swaps,list.length-1);
+      while(n>0&&pool.length&&guard<40){
+        guard++;
+        var idx=Math.floor(Math.random()*list.length);
+        if(usedIdx[idx]) continue;
+        usedIdx[idx]=1; list[idx]=pool.shift(); n--;
+      }
+      return list;
+    }
+    var opts=[{id:it.id,text:ingListTextD(it.ing)},
+      {id:'w1',text:ingListTextD(mutated(1))},
+      {id:'w2',text:ingListTextD(mutated(1))},
+      {id:'w3',text:ingListTextD(mutated(2))}];
+    return {item:it,kind:'ing',prompt:'What\u2019s in \u201c'+it.name+'\u201d? Pick the ingredient list that matches the menu.',opts:shuffle(opts),ingText:ingListTextD(it.ing)};
+  }
+  // Weighted pick among a drink's question kinds, with the same spaced
+  // repetition rule as the food deck: the kind asked last time (saved on
+  // the drink as P.lastKind) is skipped whenever another kind is available.
+  function pickKindD(it,cands){
+    var p=P(it.id), last=p.lastKind||null;
+    var pool=cands.filter(function(c){return c.k!==last;});
+    if(!pool.length) pool=cands;
+    var total=0; pool.forEach(function(c){total+=c.w;});
+    var r=Math.random()*total;
+    for(var i=0;i<pool.length;i++){ r-=pool[i].w; if(r<=0){ p.lastKind=pool[i].k; return pool[i].k; } }
+    p.lastKind=pool[pool.length-1].k; return p.lastKind;
+  }
+  function makeQ(it){
+    if(it.section==='Wine'){
+      var wk=pickKindD(it,[{k:'cat',w:1},{k:'varietal',w:1}]);
+      if(wk==='cat'){
+        return {item:it,kind:'cat',prompt:'Which wine group is \u201c'+it.name+'\u201d in?',opts:shuffle(DRINK_WINE_GROUPS.map(function(g){return {id:g,text:g};}))};
+      }
+      var vars=[]; DRINK_ITEMS.forEach(function(x){ if(x.section==='Wine'&&vars.indexOf(x.varietal)<0) vars.push(x.varietal); });
+      var picks=shuffle(vars.filter(function(v){return v!==it.varietal;})).slice(0,3);
+      var vopts=picks.map(function(v){return {id:v,text:v};}); vopts.push({id:it.varietal,text:it.varietal});
+      return {item:it,kind:'varietal',prompt:'What\u2019s the varietal in \u201c'+it.name+'\u201d?',opts:shuffle(vopts)};
+    }
+    if(it.section==='Beer & Beverages'){
+      P(it.id).lastKind='group';
+      return {item:it,kind:'group',prompt:'\u201c'+it.name+'\u201d is which kind of drink?',opts:shuffle(DRINK_BEER_GROUPS.map(function(g){return {id:g,text:g};}))};
+    }
+    // Martinis & cocktails: detail spot-checks where the public text
+    // states a detail, ingredient lists with swaps where the published
+    // description names the components, otherwise name <-> description.
+    var cands=[];
+    if(it.facts&&it.facts.length) cands.push({k:'detail',w:1.5});
+    if(it.ing&&it.ing.length>=3) cands.push({k:'ing',w:3});
+    else cands.push({k:'n2d',w:2});
+    cands.push({k:'d2n',w:2});
+    var kind=pickKindD(it,cands);
+    if(kind==='detail'){
+      var f=it.facts[Math.floor(Math.random()*it.facts.length)];
+      var pool=DRINK_ITEMS.filter(function(x){
+        if((x.section!=='Martinis'&&x.section!=='Cocktails')||x.id===it.id) return false;
+        return !(x.facts||[]).some(function(f2){return f2.tag===f.tag;});
+      });
+      var dpicks=shuffle(pool).slice(0,3);
+      var dopts=dpicks.map(function(x){return {id:x.id,text:x.name};});
+      dopts.push({id:it.id,text:it.name});
+      return {item:it,kind:'detail',prompt:f.q,opts:shuffle(dopts)};
+    }
+    if(kind==='ing') return makeIngQ(it);
+    if(kind==='d2n') return {item:it,kind:'d2n',prompt:'Which drink is this?',desc:it.desc,opts:buildNameDescOptions(it,'name')};
+    return {item:it,kind:'n2d',prompt:'What\u2019s in \u201c'+it.name+'\u201d? How does the menu describe it?',opts:buildNameDescOptions(it,'desc')};
+  }
+  // Spaced repetition, same rules as the food deck: missed drinks
+  // headline, then never-quizzed, then seen-but-not-Solid. Solid drinks
+  // stay in rotation but recur rarely (at most 2 a round, stalest
+  // first), and there is no Solid backfill beyond that cap.
+  function buildSprintQueue(scope){
+    function lastRound(it){ var r=P(it.id).rounds; return (r&&r.length)?Math.max.apply(null,r):0; }
+    var missed=shuffle(scope.filter(function(it){return P(it.id).miss;}));
+    var news=shuffle(scope.filter(function(it){var p=P(it.id);return !p.seen&&!p.miss;}));
+    var review=shuffle(scope.filter(function(it){var p=P(it.id);return p.seen&&!p.solid&&!p.miss;}));
+    var solid=scope.filter(function(it){var p=P(it.id);return p.solid&&!p.miss;});
+    solid.sort(function(a,b){return lastRound(a)-lastRound(b);});
+    var q=[], used={};
+    function take(list,n){ for(var i=0;i<list.length&&q.length<12&&n>0;i++){ if(!used[list[i].id]){ used[list[i].id]=1; q.push(list[i]); n--; } } }
+    take(missed,4); take(news,5); take(review,5); take(solid,2);
+    if(q.length<12) take(review,12); if(q.length<12) take(news,12); if(q.length<12) take(missed,12);
+    if(q.length===0) q=shuffle(scope).slice(0,Math.min(12,scope.length));
+    var missedQ=q.filter(function(it){return P(it.id).miss;}), rest=shuffle(q.filter(function(it){return !P(it.id).miss;}));
+    return missedQ.concat(rest).slice(0,12);
+  }
+
+  // ----- Quiz engine (sprint-style, same rules as food) -----
+  var DS=null;
+  function newSession(title,queue,onDone,worldBlock,refireOnMiss){
+    store.roundSeq++; save();
+    DS={title:title,queue:queue,idx:0,score:0,combo:0,correct:0,answered:0,requeued:{},misses:[],onDone:onDone||null,worldBlock:worldBlock||null,refireOnMiss:!!refireOnMiss,refiresApplied:false};
+    renderDQ();
+  }
+  function startSprint(scope,title,onDone,worldBlock,refireOnMiss){ newSession(title,buildSprintQueue(scope).map(makeQ),onDone,worldBlock,refireOnMiss); }
+  function startServedSprint(){
+    var pool=quizPool();
+    if(!pool.length){
+      root.innerHTML=topBar('🍸 Nothing to quiz yet')+
+        '<div class="mCard"><p>Quizzes only cover drinks you\u2019ve <b>served</b> in the session. And if a drink is waiting on a <b>refire</b>, you have to deliver it again before it can be quizzed. Run a drink or two to the bar first and you\u2019ll be set.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mDNoticeShift">▶ Start session</button><button class="mBtn ghost" id="mDNoticeBack">← Session home</button></div></div>';
+      bindHub();
+      document.getElementById('mDNoticeBack').addEventListener('click',renderHome);
+      document.getElementById('mDNoticeShift').addEventListener('click',function(){ startMenuWorld('all'); });
+      document.getElementById('menuOverlay').scrollTop=0;
+      return;
+    }
+    startSprint(pool,'Sprint, served drinks',null,null,true);
+  }
+  function renderDQ(){
+    if(DS.idx>=DS.queue.length){ renderDResults(); return; }
+    var q=DS.queue[DS.idx];
+    var head=topBar(esc(DS.title))+
+      '<p class="mMeta">Question '+(DS.idx+1)+' of '+DS.queue.length+' · Score '+DS.score+' · Combo ×'+(1+Math.min(DS.combo*5,20)/100).toFixed(2)+'</p>';
+    var body='';
+    if(q.kind==='d2n'){ body='<div class="mQ">'+esc(q.prompt)+'</div><div class="mDescBox">\u201c'+esc(q.item.desc)+'\u201d</div>'; }
+    else if(q.kind==='n2d'){ body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the published description</p>'; }
+    else if(q.kind==='ing'){ body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · one list is the menu\u2019s, the others have an ingredient or two swapped</p>'; }
+    else if(q.kind==='detail'){ body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Detail check, only what the public menu states</p>'; }
+    else if(q.kind==='cat'){ body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Wine · '+esc(q.item.varietal)+' · '+esc(q.item.region)+'</p>'; }
+    else if(q.kind==='varietal'){ body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Wine · '+esc(q.item.region)+' · '+esc(q.item.sub)+'</p>'; }
+    else { body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Beer &amp; Beverages · name to group</p>'; }
+    var optsHTML=q.opts.map(function(o,i){ return '<button class="mOpt" data-i="'+i+'">'+esc(o.text)+'</button>'; }).join('');
+    root.innerHTML=head+'<div class="mCard">'+body+optsHTML+'<div id="mFbSlot"></div></div>';
+    bindHub();
+    root.querySelectorAll('.mOpt').forEach(function(btn){ btn.addEventListener('click',function(){ answerDQ(q,parseInt(btn.getAttribute('data-i'),10),btn); }); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function rightOptId(q){
+    if(q.kind==='cat') return q.item.sub;
+    if(q.kind==='varietal') return q.item.varietal;
+    if(q.kind==='group') return q.item.sub;
+    return q.item.id;
+  }
+  function answerDQ(q,pickIdx,btn){
+    var rightId=rightOptId(q);
+    var picked=q.opts[pickIdx];
+    var correct=(picked.id===rightId);
+    root.querySelectorAll('.mOpt').forEach(function(b2,i){ b2.disabled=true; if(q.opts[i].id===rightId)b2.classList.add('right'); else if(b2===btn)b2.classList.add('wrong'); });
+    DS.answered++;
+    var it=q.item;
+    if(correct){
+      DS.correct++;
+      var p=P(it.id), wasSolid=p.solid;
+      if(p.rounds.indexOf(store.roundSeq)<0) p.rounds.push(store.roundSeq);
+      p.seen=true; p.miss=false;
+      if(!wasSolid&&p.rounds.length>=2){ p.solid=true; DS.newSolids=DS.newSolids||[]; DS.newSolids.push(it.name); }
+      var pts=DS.requeued['rq'+it.id]?50:100;
+      DS.combo++; DS.score+=pts+Math.min((DS.combo-1)*5,20);
+    } else {
+      DS.combo=0;
+      var p2=P(it.id); p2.seen=true; p2.miss=true;
+      if(DS.misses.indexOf(it)<0) DS.misses.push(it);
+      if(!DS.requeued['rq'+it.id]){
+        DS.requeued['rq'+it.id]=1;
+        var pos=Math.min(DS.queue.length, DS.idx+3+Math.floor(Math.random()*3));
+        DS.queue.splice(pos,0,makeQ(it));
+      }
+    }
+    save();
+    var slot=document.getElementById('mFbSlot');
+    slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct!</b>':'✋ <b>Not quite. Here\u2019s what the menu says:</b>')+
+      '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+detailTags(it)+
+      (q.kind==='ing'?'<div style="margin-top:6px">What\u2019s actually in it: <b>'+esc(q.ingText)+'</b></div>':'')+
+      (correct&&P(it.id).solid?'<div style="margin-top:6px">⭐ This drink is now <b>Solid</b>.</div>':'')+
+      (!correct?'<div style="margin-top:6px">You\u2019ll see it again in a few questions. After this round it goes back out as a <b>refire</b>, so you\u2019ll need to deliver it again before you can be quizzed on it.</div>':'')+
+      '</div><div class="mRow"><button class="mBtn" id="mDNext">Next →</button></div>';
+    document.getElementById('mDNext').addEventListener('click',function(){ DS.idx++; renderDQ(); });
+  }
+  function renderDResults(){
+    var isWorld=!!(DS&&DS.worldBlock);
+    if((isWorld||DS.refireOnMiss)&&!DS.refiresApplied){
+      DS.refiresApplied=true;
+      DS.misses.forEach(function(it){ addRefire(it.id); });
+      save();
+    }
+    var acc=DS.answered?Math.round(100*DS.correct/DS.answered):0;
+    var missList=DS.misses.length? '<p><b>You missed these, so they go back out as refires. Deliver them again and re-read their cards before they can be quizzed:</b></p><ul class="mList">'+DS.misses.map(function(it){return '<li><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</li>';}).join('')+'</ul>' : '<p>🎉 <b>Clean round, nothing missed. Nice work.</b></p>';
+    var solidNote=(DS.newSolids&&DS.newSolids.length)? '<p>⭐ Newly Solid: <b>'+DS.newSolids.map(esc).join(', ')+'</b>.</p>':'';
+    if(isWorld){
+      root.innerHTML=topBar('Round complete')+
+        '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+DS.correct+' of '+DS.answered+' correct · Score <b>'+DS.score+'</b></p>'+solidNote+missList+
+        '<div class="mRow"><button class="mBtn" id="mDFloorBtn">▶ Back to the floor</button></div></div>';
+      bindHub();
+      document.getElementById('mDFloorBtn').addEventListener('click',function(){ returnToFloorFromMenuQuiz(); });
+      document.getElementById('menuOverlay').scrollTop=0;
+      return;
+    }
+    root.innerHTML=topBar('Round complete')+
+      '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+DS.correct+' of '+DS.answered+' correct · Score <b>'+DS.score+'</b></p>'+solidNote+missList+
+      '<div class="mRow"><button class="mBtn" id="mDAgain">↻ Another round</button><button class="mBtn ghost" id="mDHome2">Session home</button></div></div>';
+    bindHub();
+    document.getElementById('mDHome2').addEventListener('click',renderHome);
+    document.getElementById('mDAgain').addEventListener('click',function(){ renderHome(); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- In-world shift: tickets, deliveries, info cards, on-shift quizzes -----
+  function handleNewTicket(){
+    if(!menuWorldActive||menuCurrentBlock===null||menuCurrentBlock===undefined) return;
+    if(target&&(trayOnPass||carrying)) return;
+    target=nextStool();
+    var drink=nextDrinkForTray();
+    menuTrayDishes=[drink];
+    trayOnPass=true; carrying=false;
+    bell();
+    setMsg('🔔 <b>Order up!</b> One drink for <b>barstool '+target.n+'</b>, waiting on the pass inside the kitchen. It is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(isRefire(drink.id)?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
+    updateHUD(); updateMenuWorldButtons();
+  }
+  function handleMenuDeliver(){
+    var drinks=menuTrayDishes.slice();
+    var tableN=target?target.n:null;
+    if(!drinks.length){ target=null; trayOnPass=false; carrying=false; updateHUD(); return; }
+    var info=drinks.map(function(it){ return {it:it, wasRefire:isRefire(it.id)}; });
+    deliveries++; streak++; if(tableN!==null) lastTable=tableN;
+    chime();
+    drinks.forEach(function(it){ var p=P(it.id); p.served=true; p.seen=true; removeRefire(it.id); });
+    save();
+    menuDeliveriesSinceQuiz++;
+    target=null; trayOnPass=false; carrying=false; menuTrayDishes=[];
+    updateHUD(); updateMenuWorldButtons();
+    showInfoCard(info,tableN);
+  }
+  function showInfoCard(info,tableN){
+    menuInfoOpen=true;
+    document.getElementById('menuOverlay').style.display='block';
+    var servedN=servedList().length;
+    var html='<div class="mTopBar"><div class="mTitle">🍸 Delivered'+(tableN!==null?' to barstool '+tableN:'')+'</div></div>'+
+      '<p>This drink counts as <b>served</b> now, so it\u2019s in your quiz pool. Give the card a good read. This description is exactly what the quiz will ask you about.</p>';
+    info.forEach(function(en){
+      var it=en.it, p=P(it.id);
+      html+='<div class="mCard mDishInfo"><div class="mCardTop"><div class="mCardTitle" style="font-size:20px">'+esc(it.name)+'</div><div class="mMeta">'+esc(it.section)+(it.sub?' · '+esc(it.sub):'')+'</div></div>'+
+        (en.wasRefire?'<p class="mMeta">🔥 <b>Refire re-delivered.</b> This drink is back in your quiz pool.</p>':'')+
+        '<div class="mDescBox">'+esc(it.desc)+'</div>'+detailTags(it)+
+        '<p class="mMeta">'+(p.solid?'⭐ <b>Solid.</b> You already got this one right in 2 different rounds.':'Served ✓. Get it right in <b>2 different rounds</b> and it turns Solid.')+'</p></div>';
+    });
+    var poolN=quizPool().length;
+    html+='<p class="mMeta">Session: <b>'+servedN+' of '+DRINK_ITEMS.length+'</b> drinks served · <b>'+poolN+'</b> ready to quiz.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mDInfoDone">↩ Back to the expo →</button></div>'+
+      '<p class="mMeta">When you\u2019re done here, you\u2019ll head back to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on your served drinks is up next.':'')+'</p>'+betaNote();
+    root.innerHTML=html;
+    document.getElementById('mDInfoDone').addEventListener('click',dismissInfoCard);
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function dismissInfoCard(){
+    menuInfoOpen=false;
+    document.getElementById('menuOverlay').style.display='none';
+    player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
+    if(menuDeliveriesSinceQuiz>=2){
+      // Spaced repetition: Solid drinks stay in the quiz pool (the sprint
+      // queue gives them only a small, rare slice), so the on-shift quiz
+      // fires whenever anything served is quiz-ready, Solid or not.
+      if(quizPool().length&&startWorldQuiz(true)){ updateHUD(); return; }
+    }
+    setMsg('↩️ <b>Back at the expo.</b> Next ticket in a few seconds…','');
+    if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
+    nextTimer=setTimeout(newTicket,3000+Math.random()*4000);
+    updateHUD(); updateMenuWorldButtons();
+  }
+  function startWorldQuiz(isAuto){
+    var pool=quizPool();
+    if(!pool.length){
+      if(!isAuto) setMsg('🍸 <b>No drinks ready to quiz yet.</b> Deliver a drink first. Quizzes only cover drinks you\u2019ve served, and if a drink is on a refire you have to deliver it again before it counts.','bad');
+      return false;
+    }
+    if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
+    menuQuizOpen=true; menuDeliveriesSinceQuiz=0;
+    document.getElementById('menuOverlay').style.display='block';
+    startSprint(pool,'Quiz, drinks you\u2019ve served',null,'all',false);
+    updateMenuWorldButtons();
+    return true;
+  }
+
+  return {
+    open:function(){
+      root=document.getElementById('menuRoot');
+      load(); store.visits++; save();
+      renderIntro();
+    },
+    openHome:function(){
+      root=document.getElementById('menuRoot');
+      if(!store) load();
+      renderHome();
+    },
+    handleNewTicket:handleNewTicket,
+    handleMenuDeliver:handleMenuDeliver,
+    startWorldQuiz:function(){ return startWorldQuiz(false); },
+    quizPoolCount:function(){
+      if(!store) return 0;
+      try{ return quizPool().length; }catch(e){ return 0; }
+    }
+  };
+})();
+
 // ---------- Controls ----------
 document.getElementById('pauseBtn').addEventListener('click',function(){
   paused=!paused; this.setAttribute('aria-pressed',paused); refreshBarLabels();
@@ -2654,15 +3532,31 @@ document.getElementById('exitBtn').addEventListener('click',function(){
   else if(mode==='menu') exitToHub(terminals[1].x);
 });
 document.getElementById('menuQuizBtn').addEventListener('click',function(){
-  if(mode==='menu'&&menuWorldActive&&typeof MenuModule!=='undefined'&&MenuModule.startWorldQuiz) MenuModule.startWorldQuiz();
+  var am=activeMenuModule();
+  if(mode==='menu'&&menuWorldActive&&am&&am.startWorldQuiz) am.startWorldQuiz();
 });
 // (Menu Training has its own in-module "Back to hub" control, wired by MenuModule.)
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
+    if(patchOpen){ closePatchNotes(); return; }
     if(mode==='table') exitToHub(terminals[0].x);
     else if(mode==='menu') exitToHub(terminals[1].x);
   }
 });
+// ---------- Patch notes: full log in this Spaces (Beta) build, newest first ----------
+// Prod builds show a short summary instead, and that same summary goes in the
+// GitHub PATCH_NOTES file when Ryan signs off on a push.
+function openPatchNotes(){
+  patchOpen=true;
+  document.getElementById('patchOverlay').classList.add('open');
+}
+function closePatchNotes(){
+  patchOpen=false;
+  document.getElementById('patchOverlay').classList.remove('open');
+}
+document.getElementById('patchBtn').addEventListener('click',function(){ openPatchNotes(); });
+document.getElementById('patchClose').addEventListener('click',function(){ closePatchNotes(); });
+document.getElementById('patchOverlay').addEventListener('click',function(e){ if(e.target===this) closePatchNotes(); });
 // ---------- Guide booklet: flip-through pages + animated walk-to-the-ring demo ----------
 // The demo is drawn live on a small canvas with the same server/ring artwork
 // language as the main game, no GIF or any other external asset, keeping the

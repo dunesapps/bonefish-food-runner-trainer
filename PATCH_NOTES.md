@@ -1,8 +1,22 @@
 # Bonefish Food Runner Trainer — Patch Notes
 
 One entry per build. Build channels: Alpha 100s, Beta 200s,
-Prod 300s. Working copy lives here; where it gets published
-(GitHub and/or in the game) is Ryan's call.
+Prod 300s.
+
+## Build 300.2 — Prod — Nov 20, 2026
+
+- Added a drinks deck: martinis, cocktails, wines, beers.
+  Drinks deliver to the barstools.
+- Training terminals moved to the lower left corner by the
+  front door. Smaller, rings at the desks. Exit ring
+  unchanged.
+- Most description questions replaced with ingredient list
+  questions. Wrong lists have one or two ingredients
+  swapped.
+- Added weight questions for dishes with a stated weight.
+- Quiz rotation reworked: dishes you know return less
+  often, in different forms. Dishes you miss appear more.
+- Added a Patch notes view in the game.
 
 ## Build 300.1 — Prod — Nov 19, 2026
 
