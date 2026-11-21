@@ -3,6 +3,12 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.4 — Prod — Nov 21, 2026
+
+- Combined food and drinks into one training pool.
+- Drinks now arrive with table orders instead of going to the bar.
+- Barstool orders are food only.
+
 ## Build 300.3 — Prod — Nov 21, 2026
 
 - Drinks deck corrected against the study guide.

@@ -285,7 +285,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.3</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.4</span>
     </div>
   </div>
 
@@ -363,14 +363,11 @@
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
           <div class="patchEntry">
-            <div class="patchEntryHead"><b>Build 300.3</b></div>
+            <div class="patchEntryHead"><b>Build 300.4</b></div>
             <ul>
-              <li>Drinks deck corrected against the study guide.</li>
-              <li>Added garnishes for all drinks, with garnish questions.</li>
-              <li>Added Social Hour Cocktails, Mimosa, Bloody Mary, and Whistlepig Old Fashioned.</li>
-              <li>Removed Chocolate Martini and Indigo Sunset.</li>
-              <li>Added illustrations for all guide drinks.</li>
-              <li>Fixed seasonal items in the quiz. Added a Seasonal only drill.</li>
+              <li>Combined food and drinks into one training pool.</li>
+              <li>Drinks now arrive with table orders instead of going to the bar.</li>
+              <li>Barstool orders are food only.</li>
             </ul>
           </div>
         </div>
@@ -399,8 +396,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Prod 300.3: drinks deck corrected against the study guide with garnishes and garnish questions, Social Hour Cocktails, Mimosa, Bloody Mary, and Whistlepig Old Fashioned added, Chocolate Martini and Indigo Sunset removed, illustrations for all guide drinks, and seasonal items fixed in the quiz with a Seasonal only drill. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.3';
+// This build is Prod 300.4: food and drinks are one combined training pool, drinks no longer deliver to the barstools. Every dining table order (200s to 800s) carries one drink alongside its food, barstool orders (100s) are food only, and refires follow the same rule. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.4';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -575,13 +572,14 @@ var exitState={inside:false,t:0};
 // lives in the Menu Training store (same localStorage key as always),
 // see MenuModule below.
 var menuWorldActive=false, menuCurrentBlock=null, menuTrayDishes=[], menuInfoOpen=false, menuQuizOpen=false, menuDeliveriesSinceQuiz=0;
-// Menu Training now has TWO decks behind the one terminal: 'food' (the
-// 76-dish deck, MenuModule) and 'drinks' (the Beta public-menu deck,
-// DrinksModule). menuDeck says which one is live; each module keeps its
-// own store, served pool and refire queue, so neither touches the other.
+// Menu Training is ONE combined pool since Build 200.11: food and
+// drinks together in a single session run by CombinedModule. menuDeck
+// is kept only as a legacy marker ('combined' while Menu Training is
+// live); CombinedModule owns the merged store, served pool and refire
+// queues for both item types.
 var menuDeck=null;
 function activeMenuModule(){
-  if(menuDeck==='drinks' && typeof DrinksModule!=='undefined') return DrinksModule;
+  if(typeof CombinedModule!=='undefined') return CombinedModule;
   return (typeof MenuModule!=='undefined') ? MenuModule : null;
 }
 var menuIntroCanvases=[]; // Menu Training intro demo canvases (set by renderIntro)
@@ -599,7 +597,7 @@ function updateMenuTrayPanel(){
     var head='🎫 Table '+target.n+', '+(carrying?'carrying':'on the pass');
     var html='<div class="mtpHead">'+escHtml(head)+'</div>';
     menuTrayDishes.forEach(function(it){
-      var src=null; if(menuDeck==='drinks'){ if(typeof DRINK_PHOTOS!=='undefined'&&DRINK_PHOTOS[it.id]) src=DRINK_PHOTOS[it.id]; } else if(typeof MENU_PHOTOS!=='undefined'&&MENU_PHOTOS[it.id]) src=MENU_PHOTOS[it.id];
+      var src=null; var isDrinkItem=(typeof DRINK_ITEMS!=='undefined'&&DRINK_ITEMS.indexOf(it)>=0); if(isDrinkItem){ if(typeof DRINK_PHOTOS!=='undefined'&&DRINK_PHOTOS[it.id]) src=DRINK_PHOTOS[it.id]; } else if(typeof MENU_PHOTOS!=='undefined'&&MENU_PHOTOS[it.id]) src=MENU_PHOTOS[it.id];
       html+='<div class="mtpDish">'+(src?'<img src="'+escHtml(src)+'" alt="" onerror="this.style.display=\'none\'"/>':'')+'<div><div class="mtpName">'+escHtml(it.name)+'</div><div class="mtpSec">'+escHtml(it.section)+'</div></div></div>';
     });
     panel.innerHTML=html; panel.style.display='block';
@@ -1685,34 +1683,9 @@ function exitToHub(placeX){
   setMsg('🖥️ <b>Pick your training track</b> at the PC terminals.','');
   updateHUD();
 }
-// Deck chooser: the one Menu Training terminal now offers both decks.
-// Food is the original 76-dish session; Drinks is the Beta deck built
-// from the public menu. Each deck keeps its own progress, served pool
-// and refire queue, and picking one never touches the other.
-function showDeckChooser(){
-  menuDeck=null; menuWorldActive=false; menuInfoOpen=false; menuQuizOpen=false;
-  hideMenuWorldChrome();
-  document.getElementById('menuOverlay').style.display='block';
-  var rootEl=document.getElementById('menuRoot');
-  var foodN=(typeof MENU_ITEMS!=='undefined')?MENU_ITEMS.length:76;
-  var drinkN=(typeof DRINK_ITEMS!=='undefined')?DRINK_ITEMS.length:65;
-  rootEl.innerHTML='<div class="mTopBar"><button class="mBtn ghost small" id="mChooserHub">← Back to hub</button><div class="mTitle">🍽️ Menu Training</div></div>'+
-    '<p><b>Pick a deck.</b> Same bell, tray and quiz system either way. Each deck keeps its <b>own progress</b>, so training one never touches the other.</p>'+
-    '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍽️ Food Training</div><div class="mMeta">'+foodN+' dishes</div></div>'+
-    '<p>The whole food menu in one shuffled session, straight from the study guide. Trays of two dishes to the tables, one dish to a barstool.</p>'+
-    '<div class="mRow"><button class="mBtn" id="mPickFood">▶ Food deck</button></div></div>'+
-    '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍸 Drinks Training <span class="mMeta">Beta</span></div><div class="mMeta">'+drinkN+' drinks</div></div>'+
-    '<p>Martinis and cocktails corrected to the <b>study guide</b>, with guide descriptions and garnishes. Wine, beer and remaining beverages stay provisional on the public Pennsylvania menu, name practice only. Drinks run <b>one at a time to the barstools (101\u2013114)</b>.</p>'+
-    '<div class="mRow"><button class="mBtn" id="mPickDrinks">▶ Drinks deck (Beta)</button></div></div>'+
-    '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍂 Seasonal only</div><div class="mMeta">4 items, food &amp; drinks</div></div>'+
-    '<p>Just the seasonal options, listed and drilled on their own: <b>Seasonal Cheesecake</b>, <b>Seasonal Crème Brulee</b>, <b>Seasonal Cocktail</b>, and <b>Spirit Free: Seasonal</b>. The guide gives each one an ask manager or trainer line instead of a description, so every question names the item it means (and shows its picture where it has one) before asking what the guide says.</p>'+
-    '<div class="mRow"><button class="mBtn" id="mPickSeasonal">▶ Seasonal only</button></div></div>';
-  document.getElementById('mChooserHub').addEventListener('click',function(){ exitToHub(terminals[1].x); });
-  document.getElementById('mPickFood').addEventListener('click',function(){ menuDeck='food'; MenuModule.open(); });
-  document.getElementById('mPickDrinks').addEventListener('click',function(){ menuDeck='drinks'; DrinksModule.open(); });
-  document.getElementById('mPickSeasonal').addEventListener('click',function(){ openSeasonalOnly(); });
-  document.getElementById('menuOverlay').scrollTop=0;
-}
+// (Build 200.11: the Food or Drinks deck chooser is gone. The Menu
+// Training terminal opens the one combined session directly, see
+// CombinedModule below. The Seasonal only list and drill stay.)
 // ---------- Seasonal only: list & drill (Build 200.10) ----------
 // The four seasonal ask-manager items across both decks. The guide gives
 // each one an "ask manager or trainer" style line instead of a real
@@ -1775,11 +1748,11 @@ function renderSeasonalList(){
       seasonalPhotoHTMLS(si)+
       '<div class="mDescBox">'+escS(si.desc)+'</div></div>';
   });
-  html+='<div class="mRow"><button class="mBtn" id="mSeasonalDrill">❓ Drill the seasonal items ('+(items.length*2)+' questions)</button><button class="mBtn ghost" id="mSeasonalChooser">← Pick a deck</button></div>'+
-    '<p class="mMeta">Two question kinds, mixed: one names the item and asks what the guide says (the ask line is the answer, the other options are real descriptions from the same section), and a reverse kind where every option is a seasonal item name, so the options list only seasonal options. This drill is separate from the normal rounds and does not change your food or drinks progress.</p>';
+  html+='<div class="mRow"><button class="mBtn" id="mSeasonalDrill">❓ Drill the seasonal items ('+(items.length*2)+' questions)</button><button class="mBtn ghost" id="mSeasonalChooser">← Menu Training home</button></div>'+
+    '<p class="mMeta">Two question kinds, mixed: one names the item and asks what the guide says (the ask line is the answer, the other options are real descriptions from the same section), and a reverse kind where every option is a seasonal item name, so the options list only seasonal options. This drill is separate from the normal rounds and does not change your combined progress.</p>';
   rootEl.innerHTML=html; bindSeasonalHub();
   document.getElementById('mSeasonalDrill').addEventListener('click',startSeasonalDrill);
-  document.getElementById('mSeasonalChooser').addEventListener('click',function(){ showDeckChooser(); });
+  document.getElementById('mSeasonalChooser').addEventListener('click',function(){ CombinedModule.openHome(); });
   document.getElementById('menuOverlay').scrollTop=0;
 }
 var seasonalSess=null;
@@ -1838,23 +1811,23 @@ function renderSeasonalResults(){
   var missList=(S&&S.misses.length)? '<p><b>You missed these seasonal items:</b></p><ul class="mList">'+S.misses.map(function(si){return '<li><b>'+escS(si.name)+'</b> ('+escS(si.deckLabel)+' · '+escS(si.section)+'): '+escS(si.desc)+'</li>';}).join('')+'</ul>' : '<p>🎉 <b>Clean round, nothing missed. Nice work.</b></p>';
   rootEl.innerHTML=seasonalTopBar('🍂 Seasonal only, round complete')+
     '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+(S?S.correct:0)+' of '+(S?S.answered:0)+' correct'+(S?' · Score <b>'+S.score+'</b>':'')+'</p>'+missList+
-    '<div class="mRow"><button class="mBtn" id="mSeasonalAgain">↻ Drill again</button><button class="mBtn ghost" id="mSeasonalList2">Seasonal list</button><button class="mBtn ghost" id="mSeasonalChooser2">Pick a deck</button></div></div>';
+    '<div class="mRow"><button class="mBtn" id="mSeasonalAgain">↻ Drill again</button><button class="mBtn ghost" id="mSeasonalList2">Seasonal list</button><button class="mBtn ghost" id="mSeasonalChooser2">Menu Training home</button></div></div>';
   bindSeasonalHub();
   document.getElementById('mSeasonalAgain').addEventListener('click',startSeasonalDrill);
   document.getElementById('mSeasonalList2').addEventListener('click',renderSeasonalList);
-  document.getElementById('mSeasonalChooser2').addEventListener('click',function(){ showDeckChooser(); });
+  document.getElementById('mSeasonalChooser2').addEventListener('click',function(){ CombinedModule.openHome(); });
   document.getElementById('menuOverlay').scrollTop=0;
 }
 function enterMenuTraining(){
-  mode='menu';
-  if(musicOn) startMusic(); // music plays over the entry pop-up too, same continuous loop
+  mode='menu'; menuDeck='combined';
+  if(musicOn) startMusic();
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  // The terminal offers both decks first; the picked deck's own entry
-  // pop-up then explains its session.
-  showDeckChooser();
-  setMsg('🍽️ <b>Menu Training.</b> Pick a deck, food or drinks, then start the session.','');
+  // Build 200.11: no deck picker. The terminal opens the one combined
+  // session (food and drinks together) and its entry pop-up explains it.
+  CombinedModule.open();
+  setMsg('<b>Menu Training.</b> One combined session, food and drinks together. Start the session to get on the floor.','');
   updateHUD();
 }
 // Starting the session (from the entry pop-up / session home) puts you on
@@ -1872,11 +1845,7 @@ function startMenuWorld(block){
   // Entry teleport: straight to the kitchen pass for the first dish, same
   // as Table Training, no walk in through the IN door first.
   player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
-  if(menuDeck==='drinks'){
-    setMsg('🍸 <b>Drinks Training, one session.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with <b>one drink</b> at a time, always for a <b>barstool (101\u2013114)</b>. Deliver it and you\'ll get to read the drink card. After a few runs you\'ll get a quiz on drinks you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
-  } else {
-    setMsg('🍽️ <b>Menu Training, one session.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>two dishes</b> and a table, or just <b>one dish</b> if it is going to a barstool. Deliver it and you\'ll get to read the dish cards. After a few runs you\'ll get a quiz on dishes you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
-  }
+  setMsg('<b>Menu Training, one session, food and drinks together.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>up to two dishes plus a drink</b> for a table, or <b>one dish</b> for a barstool. Drinks come from the bar, so they only ever ride along to tables, never to the barstools. Deliver it and you\'ll get to read the cards. After a few runs you\'ll get a quiz on everything you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
   updateHUD();
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   nextTimer=setTimeout(newTicket,1200);
@@ -1893,7 +1862,7 @@ function returnToMenuHome(){
   exitState.inside=false; exitState.t=0;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  if(menuDeck==='drinks' && typeof DrinksModule!=='undefined') DrinksModule.openHome(); else MenuModule.openHome();
+  CombinedModule.openHome();
   setMsg('🍽️ <b>Menu Training</b>, session home. Start the session to get back out on the floor.','');
   updateHUD();
 }
@@ -2439,7 +2408,7 @@ var MenuModule=(function(){
       '<div class="mRow"><button class="mBtn" data-act="shift">▶ Start session, back on the floor</button>'+
       '<button class="mBtn ghost" data-act="alg">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
       '<button class="mBtn ghost" data-act="morning">☀️ Test morning</button></div>'+
-      '<div class="mRow"><button class="mBtn ghost small" data-act="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-act="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-act="switch">Switch deck (Food / Drinks)</button></div></div>';
+      '<div class="mRow"><button class="mBtn ghost small" data-act="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-act="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-act="switch">Combined session home</button></div></div>';
     var wc=watchCount();
     html+='<div class="mCard"><div class="mCardTitle">Cumulative mock, all '+list.length+' items</div><p>Text only, and you won\'t see any feedback until the very end, just like the real written final.</p><div class="mRow"><button class="mBtn ghost" data-act="cum">Start cumulative mock</button></div></div>'+
       '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' item'+(wc===1?'':'s')+'</b> waiting for a clean re-check. Refires waiting: <b>'+store.refire.length+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
@@ -2447,7 +2416,7 @@ var MenuModule=(function(){
     root.innerHTML=html; bindHub();
     root.querySelectorAll('[data-act]').forEach(function(btn){ btn.addEventListener('click',function(){
       var act=btn.getAttribute('data-act');
-      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBlock('all'); else if(act==='alg') renderAlgHome('all'); else if(act==='morning') startMorning('all'); else if(act==='seasonal') openSeasonalOnly(); else if(act==='switch') showDeckChooser(); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock, all '+list.length+' items',null);
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBlock('all'); else if(act==='alg') renderAlgHome('all'); else if(act==='morning') startMorning('all'); else if(act==='seasonal') openSeasonalOnly(); else if(act==='switch') CombinedModule.openHome(); else if(act==='cum') startMock(MENU_ITEMS.slice(),'Cumulative mock, all '+list.length+' items',null);
     });});
     var rs=document.getElementById('mReset');
     rs.addEventListener('click',function(){
@@ -3400,14 +3369,14 @@ var DrinksModule=(function(){
       '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Solid: <b>'+sc+' / '+list.length+'</b></div>'+
       '<div class="mRow"><button class="mBtn" data-dact="shift">▶ Start session, back on the floor</button>'+
       '<button class="mBtn ghost" data-dact="sprint">⚡ Sprint served drinks</button></div>'+
-      '<div class="mRow"><button class="mBtn ghost small" data-dact="browse">Study cards &amp; sections</button><button class="mBtn ghost small" data-dact="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-dact="switch">Switch deck (Food / Drinks)</button></div></div>'+
+      '<div class="mRow"><button class="mBtn ghost small" data-dact="browse">Study cards &amp; sections</button><button class="mBtn ghost small" data-dact="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-dact="switch">Combined session home</button></div></div>'+
       '<div class="mCard"><div class="mCardTitle">Reset</div><p>Drinks progress only. Your food deck is not touched.</p>'+
       '<div class="mRow"><button class="mBtn ghost small" id="mDReset">Reset drinks progress</button></div><div id="mDResetMsg"></div></div>'+
       betaNote();
     root.innerHTML=html; bindHub();
     root.querySelectorAll('[data-dact]').forEach(function(btn){ btn.addEventListener('click',function(){
       var act=btn.getAttribute('data-dact');
-      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderStudy(); else if(act==='sprint') startServedSprint(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='switch') showDeckChooser();
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderStudy(); else if(act==='sprint') startServedSprint(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='switch') CombinedModule.openHome();
     });});
     var rs=document.getElementById('mDReset');
     rs.addEventListener('click',function(){
@@ -3808,6 +3777,1050 @@ var DrinksModule=(function(){
     quizPoolCount:function(){
       if(!store) return 0;
       try{ return quizPool().length; }catch(e){ return 0; }
+    }
+  };
+})();
+
+
+
+// ---------- Combined Menu Training module (Build 200.11, routing 300.4) ----------
+// Food and drinks are ONE pool now: a single session over all 76 dishes
+// and all 65 drinks entries. Delivery routing (Build 300.4): drinks
+// come from the bar, not the kitchen, so no drink ever targets the
+// barstools. Every dining table order (200s to 800s) carries one drink
+// alongside its food (up to 2 dishes plus 1 drink on one tray), and
+// barstool orders (100s) are food only, one dish per tray. Refires
+// follow the same rule. Quizzes draw from everything served, food and
+// drinks together, with the same spaced repetition, refire and
+// allergen rules as before. Seasonal items keep their dedicated
+// questions and stay out of the general pools, as in 200.10.
+// Progress: the combined store (bfg-combined-v1) is seeded on first
+// load by merging the saved food progress (bfg-menu-v1) and drinks
+// progress (bfg-drinks-v2), so Solid, weak and served history for both
+// decks survives the merge. Nothing is wiped.
+var CombinedModule=(function(){
+  var root=null, store=null;
+  var KEY='bfg-combined-v1', OLD_FOOD_KEY='bfg-menu-v1', OLD_DRINK_KEY='bfg-drinks-v2';
+  function blankCombined(){ return {foodProg:{},drinkProg:{},foodRefire:[],drinkRefire:[],foodDeck:null,drinkDeck:null,gates:{all:false},roundSeq:0,visits:0,nextType:'food',merged:true}; }
+  function readOld(k){ try{ var s=localStorage.getItem(k); if(s){ var o=JSON.parse(s); if(o&&typeof o==='object') return o; } }catch(e){} return null; }
+  function load(){
+    if(store) return;
+    try{ var s=localStorage.getItem(KEY); if(s){ var o=JSON.parse(s); if(o&&o.foodProg&&o.drinkProg){ store=o; normalizeC(); return; } } }catch(e){}
+    store=blankCombined();
+    var fo=readOld(OLD_FOOD_KEY), dr=readOld(OLD_DRINK_KEY);
+    if(fo){
+      if(fo.prog) store.foodProg=fo.prog;
+      if(Array.isArray(fo.refire)) store.foodRefire=fo.refire.slice();
+      if(fo.decks&&fo.decks.all&&Array.isArray(fo.decks.all.order)) store.foodDeck={order:fo.decks.all.order.slice(),idx:fo.decks.all.idx||0};
+      if(fo.gates) store.gates=fo.gates;
+      if(typeof fo.roundSeq==='number') store.roundSeq=Math.max(store.roundSeq,fo.roundSeq);
+      if(typeof fo.visits==='number') store.visits+=fo.visits;
+    }
+    if(dr){
+      if(dr.prog) store.drinkProg=dr.prog;
+      if(Array.isArray(dr.refire)) store.drinkRefire=dr.refire.slice();
+      if(dr.decks&&dr.decks.all&&Array.isArray(dr.decks.all.order)) store.drinkDeck={order:dr.decks.all.order.slice(),idx:dr.decks.all.idx||0};
+      if(typeof dr.roundSeq==='number') store.roundSeq=Math.max(store.roundSeq,dr.roundSeq);
+      if(typeof dr.visits==='number') store.visits+=dr.visits;
+    }
+    normalizeC(); save();
+  }
+  function normalizeC(){
+    if(!store.foodProg||typeof store.foodProg!=='object') store.foodProg={};
+    if(!store.drinkProg||typeof store.drinkProg!=='object') store.drinkProg={};
+    if(!store.gates||typeof store.gates!=='object') store.gates={all:false};
+    if(store.gates.all===undefined) store.gates.all=false;
+    if(!Array.isArray(store.foodRefire)) store.foodRefire=[];
+    if(!Array.isArray(store.drinkRefire)) store.drinkRefire=[];
+    store.foodRefire=store.foodRefire.filter(function(id){ return MENU_ITEMS[id]!==undefined; });
+    store.drinkRefire=store.drinkRefire.filter(function(id){ return DRINK_ITEMS[id]!==undefined; });
+    Object.keys(store.foodProg).forEach(function(k){ var p=store.foodProg[k]; if(p&&p.served===undefined) p.served=!!p.seen; });
+    if(store.nextType!=='drink') store.nextType='food';
+    if(typeof store.roundSeq!=='number') store.roundSeq=0;
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+  function PF(id){ if(!store.foodProg[id]) store.foodProg[id]={seen:false,served:false,rounds:[],solid:false,miss:false,algRounds:[],algSolid:false,watch:false}; return store.foodProg[id]; }
+  function PD(id){ if(!store.drinkProg[id]) store.drinkProg[id]={seen:false,served:false,rounds:[],solid:false,miss:false,watch:false}; return store.drinkProg[id]; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+  function fEntry(it){ return {type:'food',it:it}; }
+  function dEntry(it){ return {type:'drink',it:it}; }
+  function POf(e){ return e.type==='food'?PF(e.it.id):PD(e.it.id); }
+  function entryKey(e){ return e.type+':'+e.it.id; }
+  function isRefireE(e){ return (e.type==='food'?store.foodRefire:store.drinkRefire).indexOf(e.it.id)>=0; }
+  function addRefireE(e){ var a=(e.type==='food'?store.foodRefire:store.drinkRefire); if(a.indexOf(e.it.id)<0) a.push(e.it.id); }
+  function removeRefireE(e){
+    if(e.type==='food') store.foodRefire=store.foodRefire.filter(function(x){return x!==e.it.id;});
+    else store.drinkRefire=store.drinkRefire.filter(function(x){return x!==e.it.id;});
+  }
+  function foodServed(){ return MENU_ITEMS.filter(function(it){return PF(it.id).served;}); }
+  function drinkServed(){ return DRINK_ITEMS.filter(function(it){return PD(it.id).served;}); }
+  function servedEntries(){ return foodServed().map(fEntry).concat(drinkServed().map(dEntry)); }
+  function quizPoolEntries(){ return servedEntries().filter(function(e){return !isRefireE(e);}); }
+  function foodSolidCount(){ return MENU_ITEMS.filter(function(it){return PF(it.id).solid;}).length; }
+  function drinkSolidCount(){ return DRINK_ITEMS.filter(function(it){return PD(it.id).solid;}).length; }
+  function algEligibleF(it){ return it.alg!==null; }
+  function algUnlockedF(it){ return algEligibleF(it)&&PF(it.id).solid; }
+  function topBar(title){ return '<div class="mTopBar"><button class="mBtn ghost small" id="mHubBtn">← Back to hub</button><div class="mTitle">'+esc(title)+'</div></div>'; }
+  function bindHub(){ var b=document.getElementById('mHubBtn'); if(b) b.addEventListener('click',function(){ save(); exitToHub(terminals[1].x); }); }
+  // ----- Photos and tags (food style and drink style, as before) -----
+  function photoPendingHTMLC(name){ return '<div class="mPhotoPending" role="img" aria-label="Image pending'+(name?' for '+esc(name):'')+'">Image pending</div>'; }
+  var PHOTO_ERR_C="this.style.display='none';var w=this.parentNode;if(w){var t=w.querySelector('.mIllusTag');if(t)t.style.display='none';var p=w.querySelector('.mPhotoPending');if(p)p.style.display='flex';}";
+  function foodPhotoHTMLC(it){
+    var src=MENU_PHOTOS[it.id];
+    if(!src) return photoPendingHTMLC(it.name);
+    var gen=(typeof MENU_GENERATED!=='undefined'&&MENU_GENERATED[it.id]);
+    var alt=(gen?'Illustration of ':'Photo of ')+esc(it.name);
+    return '<div class="mPhotoWrap"><img src="'+esc(src)+'" alt="'+alt+'" style="width:100%;border-radius:10px;margin:6px 0" loading="lazy" onerror="'+PHOTO_ERR_C+'"/>'+(gen?'<span class="mIllusTag">Illustration</span>':'')+'<div class="mPhotoPending" style="display:none" role="img" aria-label="Image pending for '+esc(it.name)+'">Image pending</div></div>';
+  }
+  function gridPhotoHTMLC(it,n){
+    var src=MENU_PHOTOS[it.id];
+    if(!src) return photoPendingHTMLC('');
+    return '<span class="mPhotoWrap" style="display:block;margin:0"><img src="'+esc(src)+'" alt="Dish photo option '+(n+1)+'" loading="lazy" onerror="'+PHOTO_ERR_C+'"/><span class="mPhotoPending" style="display:none" role="img" aria-label="Image pending">Image pending</span></span>';
+  }
+  function drinkPhotoHTMLC(it){
+    var src=(typeof DRINK_PHOTOS!=='undefined')?DRINK_PHOTOS[it.id]:null;
+    if(!src) return photoPendingHTMLC(it.name);
+    var gen=(typeof DRINK_GENERATED!=='undefined'&&DRINK_GENERATED[it.id]);
+    var alt=(gen?'Illustration of ':'Photo of ')+esc(it.name);
+    return '<div class="mPhotoWrap"><img src="'+esc(src)+'" alt="'+alt+'" style="width:100%;border-radius:10px;margin:6px 0" loading="lazy" onerror="'+PHOTO_ERR_C+'"/>'+(gen?'<span class="mIllusTag">Illustration</span>':'')+'<div class="mPhotoPending" style="display:none" role="img" aria-label="Image pending for '+esc(it.name)+'">Image pending</div></div>';
+  }
+  function detailTagsC(it){
+    var tags=[];
+    if(it.garnish) tags.push('Garnish: '+it.garnish);
+    if(it.details) tags=tags.concat(it.details);
+    if(!tags.length) return '';
+    return '<div class="mIcons">'+tags.map(function(d){return '<span class="tag">'+esc(d)+'</span>';}).join('')+'</div>';
+  }
+  function algTagsC(it){
+    if(it.alg===null) return '<span class="tag">⚠️ Allergens: check with trainer</span>';
+    if(it.alg.length===0) return '<span class="tag">No major allergens listed</span>';
+    return it.alg.map(function(c){return '<span class="tag">'+esc(ALG[c])+'</span>';}).join('');
+  }
+  // ----- Decks and tray picking (interleaved food and drink) -----
+  function ensureFoodDeck(){
+    if(!store.foodDeck||!Array.isArray(store.foodDeck.order)){ store.foodDeck={order:shuffle(MENU_ITEMS.map(function(it){return it.id;})),idx:0}; save(); }
+    return store.foodDeck;
+  }
+  function ensureDrinkDeck(){
+    if(!store.drinkDeck||!Array.isArray(store.drinkDeck.order)){ store.drinkDeck={order:shuffle(DRINK_ITEMS.map(function(it){return it.id;})),idx:0}; save(); }
+    return store.drinkDeck;
+  }
+  // Which kind of destination a dish was last delivered to ('bar' for a
+  // barstool, 'table' for a dining table), recorded on every delivery in
+  // handleMenuDeliver. A refiring dish returns to the same kind of
+  // destination (Build 300.4 rule 4); dishes with no record (progress
+  // saved before 300.4) count as table dishes.
+  function foodDestOf(id){ var p=store.foodProg[id]; return (p&&p.lastDest==='bar')?'bar':'table'; }
+  // Destination-aware tray picking: each tray kind draws only its own
+  // refires first, then unserved dishes off the shuffled deck, then any
+  // remaining unserved dishes, then repeats of served dishes (same
+  // destination kind first, and never a dish still waiting on a refire
+  // for the other kind).
+  function pickFoodDishes(maxDishes,destKind){
+    var limit=(maxDishes===1)?1:2;
+    var dishes=[], used={};
+    store.foodRefire.slice().forEach(function(id){
+      var it=MENU_ITEMS[id];
+      if(it&&foodDestOf(id)===destKind&&dishes.length<limit&&!used[it.id]){ dishes.push(it); used[it.id]=1; }
+    });
+    if(dishes.length<limit){
+      var deck=ensureFoodDeck();
+      while(deck.idx<deck.order.length&&dishes.length<limit){
+        var it2=MENU_ITEMS[deck.order[deck.idx++]];
+        if(it2&&!PF(it2.id).served&&!used[it2.id]){ dishes.push(it2); used[it2.id]=1; }
+      }
+      save();
+    }
+    if(dishes.length<limit){
+      MENU_ITEMS.forEach(function(it3){
+        if(dishes.length<limit&&!PF(it3.id).served&&!used[it3.id]){ dishes.push(it3); used[it3.id]=1; }
+      });
+    }
+    if(dishes.length<limit){
+      var pool=foodServed().filter(function(it){ return !used[it.id]&&store.foodRefire.indexOf(it.id)<0; });
+      var same=shuffle(pool.filter(function(it){ return foodDestOf(it.id)===destKind; }));
+      var other=shuffle(pool.filter(function(it){ return foodDestOf(it.id)!==destKind; }));
+      same.concat(other).forEach(function(it4){
+        if(dishes.length<limit&&!used[it4.id]){ dishes.push(it4); used[it4.id]=1; }
+      });
+    }
+    if(!dishes.length){
+      var anyServed=foodServed().filter(function(it){ return !used[it.id]; });
+      if(anyServed.length) dishes=shuffle(anyServed).slice(0,Math.min(limit,anyServed.length));
+    }
+    return dishes;
+  }
+  function pickDrink(){
+    for(var i=0;i<store.drinkRefire.length;i++){ var r=DRINK_ITEMS[store.drinkRefire[i]]; if(r) return r; }
+    var deck=ensureDrinkDeck();
+    while(deck.idx<deck.order.length){
+      var it=DRINK_ITEMS[deck.order[deck.idx++]];
+      if(it&&!PD(it.id).served){ save(); return it; }
+    }
+    save();
+    var pool=drinkServed();
+    if(pool.length) return shuffle(pool)[0];
+    return DRINK_ITEMS[0];
+  }
+  var stoolDeckC=[], stoolIdxC=0;
+  function nextStoolC(){
+    if(stoolIdxC>=stoolDeckC.length){
+      stoolDeckC=shuffle(tables.filter(function(tb){return tb.n>=101&&tb.n<=114;}));
+      if(lastTable!==null&&stoolDeckC.length>1&&stoolDeckC[0].n===lastTable){ var f=stoolDeckC[0]; stoolDeckC[0]=stoolDeckC[1]; stoolDeckC[1]=f; }
+      stoolIdxC=0;
+    }
+    return stoolDeckC[stoolIdxC++];
+  }
+  // Dining tables only (200s to 800s), dealt from their own shuffled
+  // deck: this is where drinks are allowed to go (Build 300.4), so a
+  // tray that must reach a dining table (any tray carrying a drink, and
+  // any table food refire) draws its destination here, never a stool.
+  var diningDeckC=[], diningIdxC=0;
+  function nextDiningTableC(){
+    if(diningIdxC>=diningDeckC.length){
+      diningDeckC=shuffle(tables.filter(function(tb){return tb.n>=200&&tb.n<=899;}));
+      if(lastTable!==null&&diningDeckC.length>1&&diningDeckC[0].n===lastTable){ var f=diningDeckC[0]; diningDeckC[0]=diningDeckC[1]; diningDeckC[1]=f; }
+      diningIdxC=0;
+    }
+    return diningDeckC[diningIdxC++];
+  }
+  // One serve sequence (Build 300.4 routing): refires come first (a
+  // missed item is re-delivered before it is re-quizzed, per item). A
+  // waiting drink refire or table dish refire forces a dining table
+  // tray; a waiting barstool dish refire goes back to a barstool on its
+  // own. With nothing on refire, the destination comes off the shared
+  // table deck as before: a dining table gets food plus a drink, a
+  // barstool gets one dish, food only.
+  // ----- In-world shift -----
+  function handleNewTicket(){
+    if(!menuWorldActive||menuCurrentBlock===null||menuCurrentBlock===undefined) return;
+    if(target&&(trayOnPass||carrying)) return;
+    var drinkRefireWaiting=store.drinkRefire.length>0;
+    var tableFoodRefireWaiting=store.foodRefire.some(function(id){return foodDestOf(id)==='table';});
+    var barFoodRefireWaiting=store.foodRefire.some(function(id){return foodDestOf(id)==='bar';});
+    var targetIsBar;
+    if(drinkRefireWaiting||tableFoodRefireWaiting){
+      // A drink can only ride to a dining table, and a table dish refire
+      // goes back to a table: this tray is a dining table tray.
+      target=nextDiningTableC(); targetIsBar=false;
+    } else if(barFoodRefireWaiting){
+      target=nextStoolC(); targetIsBar=true;
+    } else {
+      target=nextTableFromDeck();
+      targetIsBar=!!(target&&target.n>=101&&target.n<=114);
+    }
+    if(!target){ setMsg('📋 <b>No items available right now.</b>',''); updateHUD(); return; }
+    if(targetIsBar){
+      // Barstool order: one dish, food only, never a drink.
+      var bdishes=pickFoodDishes(1,'bar');
+      if(!bdishes.length){ target=null; setMsg('📋 <b>No items available right now.</b>',''); updateHUD(); return; }
+      menuTrayDishes=bdishes.slice(0,1);
+      trayOnPass=true; carrying=false;
+      bell();
+      setMsg('🔔 <b>Order up!</b> Tray for <b>barstool '+target.n+'</b>, waiting on the pass inside the kitchen. Just <b>one dish</b> for this barstool, food only. It is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(isRefireE(fEntry(menuTrayDishes[0]))?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
+      updateHUD(); updateMenuWorldButtons();
+      return;
+    }
+    // Dining table order: up to 2 food dishes plus 1 drink, together.
+    // pickDrink returns a refiring drink first, so a missed drink comes
+    // back out on a table tray, never to a barstool.
+    var dishes=pickFoodDishes(2,'table');
+    var drink=pickDrink();
+    var tray=dishes.slice();
+    if(drink) tray.push(drink);
+    if(!tray.length){ target=null; setMsg('📋 <b>No items available right now.</b>',''); updateHUD(); return; }
+    menuTrayDishes=tray;
+    trayOnPass=true; carrying=false;
+    bell();
+    var anyRefire=tray.some(function(it){return isRefireE((DRINK_ITEMS.indexOf(it)>=0)?dEntry(it):fEntry(it));});
+    setMsg('🔔 <b>Order up!</b> Tray for <b>table '+target.n+'</b>, waiting on the pass inside the kitchen. '+(dishes.length?('<b>'+dishes.length+' dish'+(dishes.length===1?'':'es')+' plus a drink</b> on this tray. '):'<b>One drink</b> on this tray. ')+'Everything on the tray is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(anyRefire?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
+    updateHUD(); updateMenuWorldButtons();
+  }
+  function handleMenuDeliver(){
+    var items=menuTrayDishes.slice();
+    var tableN=target?target.n:null;
+    if(!items.length){ target=null; trayOnPass=false; carrying=false; updateHUD(); return; }
+    var info=items.map(function(it){
+      var e=(DRINK_ITEMS.indexOf(it)>=0)?dEntry(it):fEntry(it);
+      return {e:e,it:it,wasRefire:isRefireE(e)};
+    });
+    deliveries++; streak++; if(tableN!==null) lastTable=tableN;
+    chime();
+    info.forEach(function(en){ var p=POf(en.e); p.served=true; p.seen=true; p.lastDest=(tableN!==null&&tableN>=101&&tableN<=114)?'bar':'table'; removeRefireE(en.e); });
+    save();
+    menuDeliveriesSinceQuiz++;
+    target=null; trayOnPass=false; carrying=false; menuTrayDishes=[];
+    updateHUD(); updateMenuWorldButtons();
+    showInfoCardC(info,tableN);
+  }
+  function showInfoCardC(info,tableN){
+    menuInfoOpen=true;
+    document.getElementById('menuOverlay').style.display='block';
+    var isBarstoolDest=(tableN!==null&&tableN>=101&&tableN<=114);
+    var servedN=servedEntries().length, totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
+    var html='<div class="mTopBar"><div class="mTitle">🍽️ Delivered'+(tableN!==null?((isBarstoolDest?' to barstool ':' to table ')+tableN):'')+'</div></div>'+
+      '<p>'+(info.length===1?'This one counts as <b>served</b> now, so it is in your quiz pool.':'All '+info.length+' items on this tray count as <b>served</b> now, so they are in your quiz pool.')+' Give the card'+(info.length===1?'':'s')+' a good read. This is exactly what the quiz will ask you about.</p>';
+    info.forEach(function(en){
+      var it=en.it, p=POf(en.e);
+      if(en.e.type==='drink'){
+        html+='<div class="mCard mDishInfo"><div class="mCardTop"><div class="mCardTitle" style="font-size:20px">'+esc(it.name)+'</div><div class="mMeta">'+esc(it.section)+(it.sub?' · '+esc(it.sub):'')+'</div></div>'+
+          (en.wasRefire?'<p class="mMeta">🔥 <b>Refire re-delivered.</b> This drink is back in your quiz pool.</p>':'')+
+          (isGuideDrink(it)?drinkPhotoHTMLC(it):'')+'<div class="mDescBox">'+esc(it.desc)+'</div>'+detailTagsC(it)+
+          '<p class="mMeta">'+(p.solid?'⭐ <b>Solid.</b> You already got this one right in 2 different rounds.':'Served ✓. Get it right in <b>2 different rounds</b> and it turns Solid.')+'</p></div>';
+      } else {
+        html+='<div class="mCard mDishInfo"><div class="mCardTop"><div class="mCardTitle" style="font-size:20px">'+esc(it.name)+'</div><div class="mMeta">'+esc(it.section)+'</div></div>'+
+          (en.wasRefire?'<p class="mMeta">🔥 <b>Refire re-delivered.</b> This dish is back in your quiz pool.</p>':'')+
+          foodPhotoHTMLC(it)+
+          '<div class="mDescBox">'+esc(it.desc)+'</div>'+
+          '<p class="mMeta">'+(p.solid?'⭐ <b>Solid.</b> You already got this one right in 2 different rounds.':'Served ✓. Get it right in <b>2 different rounds</b> and it turns Solid.')+'</p></div>';
+      }
+    });
+    var poolN=quizPoolEntries().length;
+    html+='<p class="mMeta">Session: <b>'+servedN+' of '+totalN+'</b> items served · <b>'+poolN+'</b> ready to quiz.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mCInfoDone">↩ Back to the expo →</button></div>'+
+      '<p class="mMeta">When you are done here, you will head back to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on everything you have served, food and drinks together, is up next.':'')+'</p>';
+    root.innerHTML=html;
+    document.getElementById('mCInfoDone').addEventListener('click',dismissInfoCardC);
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function dismissInfoCardC(){
+    menuInfoOpen=false;
+    document.getElementById('menuOverlay').style.display='none';
+    player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
+    if(menuDeliveriesSinceQuiz>=2){
+      if(quizPoolEntries().length&&startWorldQuizC(true)){ updateHUD(); return; }
+    }
+    setMsg('↩️ <b>Back at the expo.</b> Next ticket in a few seconds…','');
+    if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
+    nextTimer=setTimeout(newTicket,3000+Math.random()*4000);
+    updateHUD(); updateMenuWorldButtons();
+  }
+  function startWorldQuizC(isAuto){
+    var pool=quizPoolEntries();
+    if(!pool.length){
+      if(!isAuto) setMsg('🍽️ <b>Nothing ready to quiz yet.</b> Deliver something first. Quizzes only cover items you have served, food and drinks together, and if an item is on a refire you have to deliver it again before it counts.','bad');
+      return false;
+    }
+    if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
+    menuQuizOpen=true; menuDeliveriesSinceQuiz=0;
+    document.getElementById('menuOverlay').style.display='block';
+    startSprintC(pool,'Quiz, everything you have served',null,'all',false);
+    updateMenuWorldButtons();
+    return true;
+  }
+
+  // ----- Question building: food -----
+  var SEASONAL_FOOD_NAMES_C=['Seasonal Cheesecake','Seasonal Crème Brulee'];
+  function isSeasonalFoodC(it){ return SEASONAL_FOOD_NAMES_C.indexOf(it.name)>=0; }
+  function isAskTextC(t){ return SEASONAL_ASK_TEXTS.indexOf(t)>=0; }
+  function buildOptionsFoodC(it,field){
+    var pool=MENU_ITEMS.filter(function(x){return x.section===it.section&&x.id!==it.id&&!isSeasonalFoodC(x)&&!isAskTextC(x.desc);});
+    var fill=MENU_ITEMS.filter(function(x){return x.block===it.block&&x.section!==it.section&&!isSeasonalFoodC(x)&&!isAskTextC(x.desc);});
+    var picks=shuffle(pool).slice(0,3);
+    if(picks.length<3) picks=picks.concat(shuffle(fill).slice(0,3-picks.length));
+    var opts=picks.map(function(x){return {id:x.id,text:field==='desc'?x.desc:x.name};});
+    opts.push({id:it.id,text:field==='desc'?it.desc:it.name});
+    return shuffle(opts);
+  }
+  function buildPhotoOptionsFoodC(it){
+    var pool=MENU_ITEMS.filter(function(x){return x.section===it.section&&x.id!==it.id&&MENU_PHOTO_QUIZ[x.id]&&!isSeasonalFoodC(x);});
+    var fill=MENU_ITEMS.filter(function(x){return x.block===it.block&&x.section!==it.section&&MENU_PHOTO_QUIZ[x.id]&&!isSeasonalFoodC(x);});
+    var any=MENU_ITEMS.filter(function(x){return x.block!==it.block&&MENU_PHOTO_QUIZ[x.id]&&!isSeasonalFoodC(x);});
+    var picks=shuffle(pool).slice(0,3);
+    if(picks.length<3) picks=picks.concat(shuffle(fill).slice(0,3-picks.length));
+    if(picks.length<3) picks=picks.concat(shuffle(any).slice(0,3-picks.length));
+    var opts=picks.map(function(x){return {id:x.id,text:x.name};});
+    opts.push({id:it.id,text:it.name});
+    return shuffle(opts);
+  }
+  function ingListTextC(list){ var t=list.join(', '); return t.charAt(0).toUpperCase()+t.slice(1); }
+  function ingPoolForFoodC(it){
+    var mine={}; dishIngredients(it).forEach(function(g){mine[g]=1;});
+    var near=[], far=[];
+    MENU_ITEMS.forEach(function(x){
+      if(x.id===it.id||isSeasonalFoodC(x)) return;
+      dishIngredients(x).forEach(function(g){
+        if(mine[g]) return;
+        var arr=(x.section===it.section)?near:far;
+        if(arr.indexOf(g)<0) arr.push(g);
+      });
+    });
+    return shuffle(near).concat(shuffle(far));
+  }
+  function makeIngQFoodC(it){
+    var ings=dishIngredients(it), pool=ingPoolForFoodC(it);
+    function mutated(swaps){
+      var list=ings.slice(), usedIdx={}, guard=0;
+      var n=Math.min(swaps,list.length-1);
+      while(n>0&&pool.length&&guard<40){
+        guard++;
+        var idx=Math.floor(Math.random()*list.length);
+        if(usedIdx[idx]) continue;
+        usedIdx[idx]=1; list[idx]=pool.shift(); n--;
+      }
+      return list;
+    }
+    var opts=[{id:it.id,text:ingListTextC(ings)},
+      {id:'w1',text:ingListTextC(mutated(1))},
+      {id:'w2',text:ingListTextC(mutated(1))},
+      {id:'w3',text:ingListTextC(mutated(2))}];
+    return {item:it,kind:'ing',prompt:'What\u2019s in \u201c'+it.name+'\u201d? Pick the ingredient list that matches the guide.',opts:shuffle(opts),ingText:ingListTextC(ings)};
+  }
+  function makeWtQFoodC(it){
+    var w=dishWeight(it), opts=[{id:it.id,text:w.label}], wrongs=[];
+    if(w.half){ wrongs=['Quarter pound','Three-quarter pound','One pound']; }
+    else if(w.range){
+      [[-1,-1],[1,1],[-2,-2],[2,2]].forEach(function(d){ wrongs.push((w.lo+d[0])+'\u2013'+(w.hi+d[1])+' oz'); });
+    } else {
+      var cands=[w.val-2,w.val-1.5,w.val-1,w.val-0.5,w.val+0.5,w.val+1,w.val+1.5,w.val+2,4,5,6,7,7.5,8,9,10,12];
+      var seen={};
+      cands=cands.filter(function(v){ if(v<=0||v===w.val||seen[v]) return false; seen[v]=1; return true; });
+      cands.sort(function(a,b){ return Math.abs(a-w.val)-Math.abs(b-w.val); });
+      wrongs=cands.slice(0,3).map(fmtOz);
+    }
+    shuffle(wrongs).slice(0,3).forEach(function(t,i){ opts.push({id:'w'+(i+1),text:t}); });
+    return {item:it,kind:'wt',prompt:'What weight does the guide state for \u201c'+it.name+'\u201d?',opts:shuffle(opts)};
+  }
+  function pickKindFoodC(it,cands){
+    var p=PF(it.id), last=p.lastKind||null;
+    var pool=cands.filter(function(c){return c.k!==last;});
+    if(!pool.length) pool=cands;
+    var total=0; pool.forEach(function(c){total+=c.w;});
+    var r=Math.random()*total;
+    for(var i=0;i<pool.length;i++){ r-=pool[i].w; if(r<=0){ p.lastKind=pool[i].k; return pool[i].k; } }
+    p.lastKind=pool[pool.length-1].k; return p.lastKind;
+  }
+  function makeSeasonalQFoodC(it){
+    var pool=MENU_ITEMS.filter(function(x){return x.section===it.section&&x.id!==it.id&&!isSeasonalFoodC(x)&&!isAskTextC(x.desc);});
+    var wrongs=shuffle(pool).slice(0,3);
+    var opts=wrongs.map(function(x){return {id:x.id,text:x.desc};});
+    opts.push({id:it.id,text:it.desc});
+    return {item:it,kind:'seasonal',prompt:'\u201c'+it.name+'\u201d: what does the guide say about it?',opts:shuffle(opts)};
+  }
+  function makeSeasonalRevQFoodC(it){
+    var opts=SEASONAL_NAMES_ALL.map(function(n){return {id:'seasonal-name:'+n,text:n};});
+    return {item:it,kind:'seasonalRev',prompt:'Which seasonal item is this?',answerId:'seasonal-name:'+it.name,opts:shuffle(opts)};
+  }
+  function makeFoodQC(it){
+    if(isSeasonalFoodC(it)){
+      var sk=pickKindFoodC(it,[{k:'seasonal',w:1},{k:'seasonalRev',w:1}]);
+      if(sk==='seasonalRev') return makeSeasonalRevQFoodC(it);
+      return makeSeasonalQFoodC(it);
+    }
+    var cands=[];
+    if(dishIngredients(it).length>=3) cands.push({k:'ing',w:3});
+    else cands.push({k:'n2d',w:2});
+    if(dishWeight(it)) cands.push({k:'wt',w:3});
+    cands.push({k:'d2n',w:2});
+    if(MENU_PHOTO_QUIZ[it.id]) cands.push({k:'photo',w:1.2});
+    var kind=pickKindFoodC(it,cands);
+    if(kind==='photo'){
+      if(Math.random()<0.5) return {item:it,kind:'photo2name',prompt:'Which dish is this?',opts:buildOptionsFoodC(it,'name')};
+      return {item:it,kind:'name2photo',prompt:'Which photo shows \u201c'+it.name+'\u201d?',opts:buildPhotoOptionsFoodC(it)};
+    }
+    if(kind==='ing') return makeIngQFoodC(it);
+    if(kind==='wt') return makeWtQFoodC(it);
+    if(kind==='d2n') return {item:it,kind:'d2n',prompt:'Which dish is this?',desc:it.desc,opts:buildOptionsFoodC(it,'name')};
+    return {item:it,kind:'n2d',prompt:'What\u2019s in \u201c'+it.name+'\u201d? How does the guide describe it?',opts:buildOptionsFoodC(it,'desc')};
+  }
+  // ----- Question building: drinks -----
+  function drinkByNameC(n){ for(var i=0;i<DRINK_ITEMS.length;i++){ if(DRINK_ITEMS[i].name===n) return DRINK_ITEMS[i]; } return null; }
+  function buildNameDescOptionsDrinkC(it,field){
+    var pool=DRINK_ITEMS.filter(function(x){return isGuideDrink(x)&&!x.seasonal&&!isAskTextC(x.desc)&&x.section===it.section&&x.id!==it.id;});
+    var fill=DRINK_ITEMS.filter(function(x){return isGuideDrink(x)&&!x.seasonal&&!isAskTextC(x.desc)&&x.section!==it.section;});
+    var picks=[];
+    if(it.conf){ var partner=drinkByNameC(it.conf); if(partner&&!partner.seasonal) picks.push(partner); }
+    picks=picks.concat(shuffle(pool).filter(function(x){return picks.indexOf(x)<0;}));
+    if(picks.length<3) picks=picks.concat(shuffle(fill).filter(function(x){return picks.indexOf(x)<0;}));
+    picks=picks.slice(0,3);
+    var opts=picks.map(function(x){return {id:x.id,text:field==='desc'?x.desc:x.name};});
+    opts.push({id:it.id,text:field==='desc'?it.desc:it.name});
+    return shuffle(opts);
+  }
+  function buildGarnishOptionsDrinkC(it){
+    var pool=DRINK_ITEMS.filter(function(x){return isGuideDrink(x)&&!x.seasonal&&x.garnish&&x.id!==it.id&&x.garnish!==it.garnish;});
+    var same=shuffle(pool.filter(function(x){return x.section===it.section;}));
+    var rest=shuffle(pool.filter(function(x){return x.section!==it.section;}));
+    var picks=same.concat(rest).slice(0,3);
+    var opts=picks.map(function(x){return {id:x.id,text:x.garnish};});
+    opts.push({id:it.id,text:it.garnish});
+    return shuffle(opts);
+  }
+  function makeGarnishQDrinkC(it){
+    return {item:it,kind:'garnish',prompt:'What is the garnish for \u201c'+it.name+'\u201d?',opts:buildGarnishOptionsDrinkC(it)};
+  }
+  function makeIngQDrinkC(it){
+    var mine={}; it.ing.forEach(function(g){mine[g]=1;});
+    var pool=[];
+    DRINK_ITEMS.forEach(function(x){ if(x.seasonal) return; (x.ing||[]).forEach(function(g){ if(!mine[g]&&pool.indexOf(g)<0) pool.push(g); }); });
+    pool=shuffle(pool);
+    function mutated(swaps){
+      var list=it.ing.slice(), usedIdx={}, guard=0;
+      var n=Math.min(swaps,list.length-1);
+      while(n>0&&pool.length&&guard<40){
+        guard++;
+        var idx=Math.floor(Math.random()*list.length);
+        if(usedIdx[idx]) continue;
+        usedIdx[idx]=1; list[idx]=pool.shift(); n--;
+      }
+      return list;
+    }
+    var opts=[{id:it.id,text:ingListTextC(it.ing)},
+      {id:'w1',text:ingListTextC(mutated(1))},
+      {id:'w2',text:ingListTextC(mutated(1))},
+      {id:'w3',text:ingListTextC(mutated(2))}];
+    return {item:it,kind:'ing',prompt:'What\u2019s in \u201c'+it.name+'\u201d? Pick the ingredient list that matches the menu.',opts:shuffle(opts),ingText:ingListTextC(it.ing)};
+  }
+  function pickKindDrinkC(it,cands){
+    var p=PD(it.id), last=p.lastKind||null;
+    var pool=cands.filter(function(c){return c.k!==last;});
+    if(!pool.length) pool=cands;
+    var total=0; pool.forEach(function(c){total+=c.w;});
+    var r=Math.random()*total;
+    for(var i=0;i<pool.length;i++){ r-=pool[i].w; if(r<=0){ p.lastKind=pool[i].k; return pool[i].k; } }
+    p.lastKind=pool[pool.length-1].k; return p.lastKind;
+  }
+  function makeSeasonalQDrinkC(it){
+    var pool=DRINK_ITEMS.filter(function(x){return isGuideDrink(x)&&!x.seasonal&&!isAskTextC(x.desc)&&x.section===it.section&&x.id!==it.id;});
+    var fill=DRINK_ITEMS.filter(function(x){return isGuideDrink(x)&&!x.seasonal&&!isAskTextC(x.desc)&&x.section!==it.section;});
+    var wrongs=shuffle(pool).slice(0,3);
+    if(wrongs.length<3) wrongs=wrongs.concat(shuffle(fill).filter(function(x){return wrongs.indexOf(x)<0;}).slice(0,3-wrongs.length));
+    var opts=wrongs.map(function(x){return {id:x.id,text:x.desc};});
+    opts.push({id:it.id,text:it.desc});
+    return {item:it,kind:'seasonal',prompt:'\u201c'+it.name+'\u201d: what does the guide say?',opts:shuffle(opts)};
+  }
+  function makeSeasonalRevQDrinkC(it){
+    var opts=SEASONAL_NAMES_ALL.map(function(n){return {id:'seasonal-name:'+n,text:n};});
+    return {item:it,kind:'seasonalRev',prompt:'Which seasonal item does the guide say this about?',answerId:'seasonal-name:'+it.name,opts:shuffle(opts)};
+  }
+  function makeDrinkQC(it){
+    if(it.section==='Wine'){
+      var wk=pickKindDrinkC(it,[{k:'cat',w:1},{k:'varietal',w:1}]);
+      if(wk==='cat'){
+        return {item:it,kind:'cat',prompt:'Which wine group is \u201c'+it.name+'\u201d in?',opts:shuffle(DRINK_WINE_GROUPS.map(function(g){return {id:g,text:g};}))};
+      }
+      var vars=[]; DRINK_ITEMS.forEach(function(x){ if(x.section==='Wine'&&vars.indexOf(x.varietal)<0) vars.push(x.varietal); });
+      var picks=shuffle(vars.filter(function(v){return v!==it.varietal;})).slice(0,3);
+      var vopts=picks.map(function(v){return {id:v,text:v};}); vopts.push({id:it.varietal,text:it.varietal});
+      return {item:it,kind:'varietal',prompt:'What\u2019s the varietal in \u201c'+it.name+'\u201d?',opts:shuffle(vopts)};
+    }
+    if(it.section==='Beer & Beverages'){
+      PD(it.id).lastKind='group';
+      return {item:it,kind:'group',prompt:'\u201c'+it.name+'\u201d is which kind of drink?',opts:shuffle(DRINK_BEER_GROUPS.map(function(g){return {id:g,text:g};}))};
+    }
+    if(it.seasonal){
+      var skD=pickKindDrinkC(it,[{k:'seasonal',w:1},{k:'seasonalRev',w:1}]);
+      if(skD==='seasonalRev') return makeSeasonalRevQDrinkC(it);
+      return makeSeasonalQDrinkC(it);
+    }
+    var cands=[];
+    if(it.garnish) cands.push({k:'garnish',w:3});
+    if(it.facts&&it.facts.length) cands.push({k:'detail',w:1});
+    if(it.ing&&it.ing.length>=3) cands.push({k:'ing',w:3});
+    else cands.push({k:'n2d',w:2});
+    cands.push({k:'d2n',w:2});
+    var kind=pickKindDrinkC(it,cands);
+    if(kind==='garnish') return makeGarnishQDrinkC(it);
+    if(kind==='detail'){
+      var f=it.facts[Math.floor(Math.random()*it.facts.length)];
+      var pool=DRINK_ITEMS.filter(function(x){
+        if(!isGuideDrink(x)||x.seasonal||x.id===it.id) return false;
+        return !(x.facts||[]).some(function(f2){return f2.tag===f.tag;});
+      });
+      var dpicks=shuffle(pool).slice(0,3);
+      var dopts=dpicks.map(function(x){return {id:x.id,text:x.name};});
+      dopts.push({id:it.id,text:it.name});
+      return {item:it,kind:'detail',prompt:f.q,opts:shuffle(dopts)};
+    }
+    if(kind==='ing') return makeIngQDrinkC(it);
+    if(kind==='d2n') return {item:it,kind:'d2n',prompt:'Which drink is this?',desc:it.desc,opts:buildNameDescOptionsDrinkC(it,'name')};
+    return {item:it,kind:'n2d',prompt:'What\u2019s in \u201c'+it.name+'\u201d? How does the menu describe it?',opts:buildNameDescOptionsDrinkC(it,'desc')};
+  }
+  function makeQCombined(entry){
+    var q=(entry.type==='food')?makeFoodQC(entry.it):makeDrinkQC(entry.it);
+    q.entry=entry; q.rtype=entry.type;
+    return q;
+  }
+  // Spaced repetition across the combined pool: missed items headline,
+  // then never-quizzed, then seen but not Solid. Solid items return
+  // rarely (at most 2 a round, stalest first) and always in a different
+  // question form than last time. No Solid backfill beyond that cap.
+  function buildCombinedQueue(scope){
+    function lastRoundE(e){ var r=POf(e).rounds; return (r&&r.length)?Math.max.apply(null,r):0; }
+    var missed=shuffle(scope.filter(function(e){return POf(e).miss;}));
+    var news=shuffle(scope.filter(function(e){var p=POf(e);return !p.seen&&!p.miss;}));
+    var review=shuffle(scope.filter(function(e){var p=POf(e);return p.seen&&!p.solid&&!p.miss;}));
+    var solid=scope.filter(function(e){var p=POf(e);return p.solid&&!p.miss;});
+    solid.sort(function(a,b){return lastRoundE(a)-lastRoundE(b);});
+    var q=[], used={};
+    function take(list,n){ for(var i=0;i<list.length&&q.length<12&&n>0;i++){ if(!used[entryKey(list[i])]){ used[entryKey(list[i])]=1; q.push(list[i]); n--; } } }
+    take(missed,4); take(news,5); take(review,5); take(solid,2);
+    if(q.length<12) take(review,12); if(q.length<12) take(news,12); if(q.length<12) take(missed,12);
+    if(q.length===0) q=shuffle(scope).slice(0,Math.min(12,scope.length));
+    var missedQ=q.filter(function(e){return POf(e).miss;}), rest=shuffle(q.filter(function(e){return !POf(e).miss;}));
+    return missedQ.concat(rest).slice(0,12);
+  }
+  // ----- Quiz engine (combined sprint / miss-only / mock / temps) -----
+  var CS=null;
+  function newSessionC(kind,title,queue,onDone,worldBlock,refireOnMiss){
+    store.roundSeq++; save();
+    CS={kind:kind,title:title,queue:queue,idx:0,score:0,combo:0,correct:0,answered:0,requeued:{},misses:[],onDone:onDone||null,worldBlock:worldBlock||null,refireOnMiss:!!refireOnMiss,refiresApplied:false,newSolids:[]};
+    renderQC();
+  }
+  function startSprintC(scope,title,onDone,worldBlock,refireOnMiss){ newSessionC('sprint',title,buildCombinedQueue(scope).map(makeQCombined),onDone,worldBlock,refireOnMiss); }
+  function startMockC(entries,title,onDone){ newSessionC('mock',title,shuffle(entries).map(makeQCombined),onDone,null,false); }
+  function startTempSprintC(){
+    var qs=shuffle(STEAK_TEMPS).map(function(t){
+      var opts=shuffle(STEAK_TEMPS.filter(function(x){return x!==t;}).slice(0,3).map(function(x){return {temp:x[0],text:x[1]};}));
+      opts.push({temp:t[0],text:t[1]}); return {tempItem:t,kind:'temp',prompt:'Steak temperature: \u201c'+t[0]+'\u201d means\u2026',opts:shuffle(opts)};
+    });
+    newSessionC('temp','Steak temperatures',qs,null,null,false);
+  }
+  function startServedSprintC(){
+    var pool=quizPoolEntries();
+    if(!pool.length){
+      root.innerHTML=topBar('🍽️ Nothing to quiz yet')+
+        '<div class="mCard"><p>Quizzes only cover items you have <b>served</b> in the session, food and drinks together. And if an item is waiting on a <b>refire</b>, you have to deliver it again before it can be quizzed. Run a tray or two first and you will be set.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mCNoticeShift">▶ Start session</button><button class="mBtn ghost" id="mCNoticeBack">← Session home</button></div></div>';
+      bindHub();
+      document.getElementById('mCNoticeBack').addEventListener('click',renderHomeC);
+      document.getElementById('mCNoticeShift').addEventListener('click',function(){ startMenuWorld('all'); });
+      document.getElementById('menuOverlay').scrollTop=0;
+      return;
+    }
+    startSprintC(pool,'Sprint, everything you have served',null,null,true);
+  }
+  function startScopedSprintC(entries,title){
+    var pool=entries.filter(function(e){ return POf(e).served&&!isRefireE(e); });
+    if(!pool.length){
+      root.innerHTML=topBar('🍽️ Nothing to quiz yet')+
+        '<div class="mCard"><p>Quizzes only cover items you have <b>served</b> in the session. Deliver these on the floor first, then sprint them here.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mCNoticeShift2">▶ Start session</button><button class="mBtn ghost" id="mCNoticeBack2">← Sections and progress</button></div></div>';
+      bindHub();
+      document.getElementById('mCNoticeBack2').addEventListener('click',renderBrowseC);
+      document.getElementById('mCNoticeShift2').addEventListener('click',function(){ startMenuWorld('all'); });
+      document.getElementById('menuOverlay').scrollTop=0;
+      return;
+    }
+    startSprintC(pool,title,null,null,true);
+  }
+  function rightIdC(q){
+    if(q.answerId!==undefined) return q.answerId;
+    if(q.kind==='cat') return q.item.sub;
+    if(q.kind==='varietal') return q.item.varietal;
+    if(q.kind==='group') return q.item.sub;
+    return q.item.id;
+  }
+  function renderQC(){
+    if(CS.idx>=CS.queue.length){ renderResultsC(); return; }
+    var q=CS.queue[CS.idx];
+    var isMock=(CS.kind==='mock');
+    var head=topBar(esc(CS.title))+
+      '<p class="mMeta">Question '+(CS.idx+1)+' of '+CS.queue.length+(CS.kind==='sprint'?' · Score '+CS.score+' · Combo ×'+(1+Math.min(CS.combo*5,20)/100).toFixed(2):'')+(isMock?' · Mock, answers at the end':'')+'</p>';
+    var body='';
+    if(q.kind==='temp'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div>';
+    } else if(q.kind==='photo2name'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div>'+foodPhotoHTMLC(q.item);
+    } else if(q.kind==='d2n'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><div class="mDescBox">\u201c'+esc(q.item.desc)+'\u201d</div>';
+    } else if(q.kind==='name2photo'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · tap the matching plate</p>';
+    } else if(q.kind==='ing'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · one list is the guide\u2019s, the others have an ingredient or two swapped</p>';
+    } else if(q.kind==='wt'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the weight the guide states</p>';
+    } else if(q.kind==='garnish'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the garnish the guide lists</p>';
+    } else if(q.kind==='detail'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Detail check, only what the guide states</p>';
+    } else if(q.kind==='seasonal'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div>'+(q.rtype==='food'?foodPhotoHTMLC(q.item):'')+'<p class="mQSub">'+esc(q.item.section)+' · seasonal entry, pick what the guide says</p>';
+    } else if(q.kind==='seasonalRev'){
+      body=(q.rtype==='food'?foodPhotoHTMLC(q.item):'')+'<div class="mQ">'+esc(q.prompt)+'</div><div class="mDescBox">\u201c'+esc(q.item.desc)+'\u201d</div><p class="mQSub">Seasonal items only, every option is a seasonal item</p>';
+    } else if(q.kind==='cat'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Wine · '+esc(q.item.varietal)+' · '+esc(q.item.region)+'</p>';
+    } else if(q.kind==='varietal'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Wine · '+esc(q.item.region)+' · '+esc(q.item.sub)+'</p>';
+    } else if(q.kind==='group'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Beer &amp; Beverages · name to group</p>';
+    } else {
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the guide description</p>';
+    }
+    var optsHTML;
+    if(q.kind==='name2photo'){
+      optsHTML='<div class="mPhotoGrid">'+q.opts.map(function(o,i){ var oi=MENU_ITEMS[o.id]; return '<button class="mOpt" data-i="'+i+'" aria-label="Photo option '+(i+1)+'">'+gridPhotoHTMLC(oi,i)+'</button>'; }).join('')+'</div>';
+    } else {
+      optsHTML=q.opts.map(function(o,i){ return '<button class="mOpt" data-i="'+i+'">'+esc(o.text)+'</button>'; }).join('');
+    }
+    root.innerHTML=head+'<div class="mCard">'+body+optsHTML+'<div id="mFbSlot"></div></div>';
+    bindHub();
+    root.querySelectorAll('.mOpt').forEach(function(btn){ btn.addEventListener('click',function(){ answerQC(q,parseInt(btn.getAttribute('data-i'),10),btn); }); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function answerQC(q,pickIdx,btn){
+    var rightId = q.tempItem ? null : rightIdC(q);
+    var picked=q.opts[pickIdx];
+    var correct = q.tempItem ? (picked.temp===q.tempItem[0]) : (picked.id===rightId);
+    root.querySelectorAll('.mOpt').forEach(function(b2,i){ b2.disabled=true; var o=q.opts[i]; var isR=q.tempItem?(o.temp===q.tempItem[0]):(o.id===rightId); if(isR)b2.classList.add('right'); else if(b2===btn)b2.classList.add('wrong'); });
+    if(CS.kind==='mock'){
+      CS.answered++;
+      if(correct) CS.correct++;
+      else if(q.entry){ var dup=CS.misses.some(function(e){return entryKey(e)===entryKey(q.entry);}); if(!dup) CS.misses.push(q.entry); }
+      CS.idx++; setTimeout(renderQC,120); return;
+    }
+    CS.answered++;
+    var entry=q.entry||null, it=q.item||null;
+    if(correct){
+      CS.correct++;
+      if(entry){
+        var p=POf(entry), wasSolid=p.solid;
+        if(p.rounds.indexOf(store.roundSeq)<0) p.rounds.push(store.roundSeq);
+        p.seen=true; p.miss=false;
+        if(!wasSolid&&p.rounds.length>=2){ p.solid=true; CS.newSolids.push(it.name); }
+        var pts=CS.requeued['rq'+entryKey(entry)]?50:100;
+        CS.combo++; CS.score+=pts+Math.min((CS.combo-1)*5,20);
+      } else { CS.combo++; CS.score+=100; }
+    } else {
+      CS.combo=0;
+      if(entry){
+        var p2=POf(entry); p2.seen=true; p2.miss=true;
+        var dup2=CS.misses.some(function(e){return entryKey(e)===entryKey(entry);});
+        if(!dup2) CS.misses.push(entry);
+        if(!CS.requeued['rq'+entryKey(entry)]&&(CS.kind==='sprint'||CS.kind==='miss')){
+          CS.requeued['rq'+entryKey(entry)]=1;
+          var pos=Math.min(CS.queue.length, CS.idx+3+Math.floor(Math.random()*3));
+          CS.queue.splice(pos,0,makeQCombined(entry));
+        }
+      }
+    }
+    save();
+    var slot=document.getElementById('mFbSlot');
+    if(q.tempItem){
+      slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct.</b>':'✋ <b>Not quite.</b>')+' <b>'+esc(q.tempItem[0])+'</b> = '+esc(q.tempItem[1])+'.</div><div class="mRow"><button class="mBtn" id="mCNext">Next →</button></div>';
+    } else {
+      var photoBit=(q.rtype==='drink')?(isGuideDrink(it)?drinkPhotoHTMLC(it):''):foodPhotoHTMLC(it);
+      var tagsBit=(q.rtype==='drink')?detailTagsC(it):'';
+      slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct!</b>':'✋ <b>Not quite. Here\u2019s what the guide says:</b>')+
+        '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+tagsBit+
+        (q.kind==='ing'?'<div style="margin-top:6px">What\u2019s actually in it: <b>'+esc(q.ingText)+'</b></div>':'')+photoBit+
+        (correct&&POf(entry).solid?'<div style="margin-top:6px">⭐ This one is now <b>Solid</b>'+(q.rtype==='food'?', so its allergen questions are unlocked':'')+'.</div>':'')+
+        (!correct?'<div style="margin-top:6px">'+((CS.worldBlock||CS.refireOnMiss)?'You will see it again in a few questions. After this round it goes back out as a <b>refire</b>, so you will need to deliver it again before you can be quizzed on it.':'You will see it again in a few questions, and it will be right up front in your next round.')+'</div>':'')+
+        '</div><div class="mRow"><button class="mBtn" id="mCNext">Next →</button></div>';
+    }
+    document.getElementById('mCNext').addEventListener('click',function(){ CS.idx++; renderQC(); });
+  }
+  function renderResultsC(){
+    var isWorld=!!(CS&&CS.worldBlock);
+    if((isWorld||CS.refireOnMiss)&&!CS.refiresApplied){
+      CS.refiresApplied=true;
+      CS.misses.forEach(function(e){ addRefireE(e); });
+      save();
+    }
+    var acc=CS.answered?Math.round(100*CS.correct/CS.answered):0;
+    var missList=CS.misses.length? '<p><b>'+((isWorld||CS.refireOnMiss)?'You missed these, so they go back out as refires. Deliver them again and re-read their cards before they can be quizzed:':'You missed these:')+'</b></p><ul class="mList">'+CS.misses.map(function(e){return '<li><b>'+esc(e.it.name)+'</b>: '+esc(e.it.desc)+'</li>';}).join('')+'</ul>' : '<p>🎉 <b>Clean round, nothing missed. Nice work.</b></p>';
+    var solidNote=CS.newSolids&&CS.newSolids.length? '<p>⭐ Newly Solid: <b>'+CS.newSolids.map(esc).join(', ')+'</b>.</p>':'';
+    if(isWorld){
+      var algReady=MENU_ITEMS.filter(algUnlockedF).length;
+      root.innerHTML=topBar('Round complete')+
+        '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+CS.correct+' of '+CS.answered+' correct'+(CS.kind==='sprint'?' · Score <b>'+CS.score+'</b>':'')+'</p>'+solidNote+missList+
+        '<div class="mRow"><button class="mBtn" id="mCFloorBtn">▶ Back to the floor</button>'+(algReady?'<button class="mBtn ghost" id="mCAlgFromQuiz">⚠️ Allergen rounds ('+algReady+' ready)</button>':'')+'</div></div>';
+      bindHub();
+      document.getElementById('mCFloorBtn').addEventListener('click',function(){ returnToFloorFromMenuQuiz(); });
+      var ab=document.getElementById('mCAlgFromQuiz');
+      if(ab) ab.addEventListener('click',function(){
+        menuQuizOpen=false; menuWorldActive=false; menuTrayDishes=[]; target=null; trayOnPass=false; carrying=false;
+        if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
+        hideMenuWorldChrome();
+        renderAlgHomeC();
+      });
+      document.getElementById('menuOverlay').scrollTop=0;
+      return;
+    }
+    root.innerHTML=topBar('Round complete')+
+      '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+CS.correct+' of '+CS.answered+' correct'+(CS.kind==='sprint'?' · Score <b>'+CS.score+'</b>':'')+'</p>'+solidNote+missList+
+      '<div class="mRow"><button class="mBtn" id="mCAgain">↻ Another round</button><button class="mBtn ghost" id="mCHome2">Session home</button></div><div id="mCDoneSlot"></div></div>';
+    bindHub();
+    document.getElementById('mCHome2').addEventListener('click',renderHomeC);
+    document.getElementById('mCAgain').addEventListener('click',function(){ renderHomeC(); });
+    if(CS.onDone){ var cb=CS.onDone, ms=CS.misses.slice(); var slot2=document.getElementById('mCDoneSlot'); slot2.innerHTML='<div class="mRow"><button class="mBtn" id="mCCont">Continue →</button></div>'; document.getElementById('mCCont').addEventListener('click',function(){ cb(ms); }); }
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+
+  // ----- Allergens (food only, LAST, unlocked per dish as before) -----
+  function renderAlgHomeC(){
+    document.getElementById('menuOverlay').style.display='block';
+    var elig=MENU_ITEMS.filter(algEligibleF), unlocked=MENU_ITEMS.filter(algUnlockedF);
+    var watch=MENU_ITEMS.filter(function(it){return PF(it.id).watch;});
+    var lockedN=elig.length-unlocked.length;
+    var html=topBar('⚠️ Allergens (last topic)');
+    html+='<div class="mCard"><p>Allergen questions are for <b>food dishes</b> and unlock <b>one dish at a time</b>, once that dish is Solid. Ingredients first, allergens after. Right now <b>'+unlocked.length+' of '+elig.length+'</b> dishes are unlocked'+(lockedN?' ('+lockedN+' still locked. Keep serving and quizzing and they will open up)':'')+'.</p>'+
+      '<p>Allergen rounds are <b>multi-select</b> (select ALL allergens for this dish), with <b>no timer and no speed bonus</b>. Watchlist items ('+watch.length+') drill first.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mCAlgRound" '+(unlocked.length?'':'disabled')+'>▶ Allergen round'+(unlocked.length?' ('+Math.min(10,unlocked.length)+' questions)':'')+'</button>'+
+      '<button class="mBtn ghost" id="mCGateGo">🏁 Allergen gate</button></div>'+
+      '<p class="mRule">Floor rule, always: <b>never answer a guest\u2019s allergy question from memory. Check the chart</b> and tell a manager. This quiz helps you learn it, but the chart is what counts.</p></div>'+
+      '<div class="mRow"><button class="mBtn ghost" id="mCAlgBack">← Session home</button></div>';
+    root.innerHTML=html; bindHub();
+    document.getElementById('mCAlgBack').addEventListener('click',renderHomeC);
+    var rb=document.getElementById('mCAlgRound'); if(rb) rb.addEventListener('click',function(){ startAlgRoundC(false); });
+    document.getElementById('mCGateGo').addEventListener('click',renderGateIntroC);
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function renderGateIntroC(){
+    document.getElementById('menuOverlay').style.display='block';
+    var elig=MENU_ITEMS.filter(algEligibleF), unlocked=MENU_ITEMS.filter(algUnlockedF);
+    var ready=unlocked.length===elig.length&&elig.length>0;
+    root.innerHTML=topBar('🏁 Allergen gate')+
+      '<div class="mCard"><p>The gate is the <b>last step</b> before the test: every allergen-eligible dish on the menu, answered in one round, and you only pass at <b>100% clean</b>. One miss and the gate stays open.</p>'+
+      '<p>Unlocked: <b>'+unlocked.length+' / '+elig.length+'</b>'+(ready?'. The gate is ready.':'. The rest will unlock as their descriptions turn Solid.')+'</p>'+
+      (store.gates.all?'<p>✅ <b>This gate has been passed.</b> You can still re-run it for a final check.</p>':'')+
+      '<div class="mRow"><button class="mBtn" id="mCGateStart" '+(ready?'':'disabled')+'>Start gate ('+elig.length+' dishes)</button><button class="mBtn ghost" id="mCGateBack">Back</button></div>'+
+      '<p class="mRule">Never answer a guest from memory. Check the chart.</p></div>';
+    bindHub();
+    document.getElementById('mCGateBack').addEventListener('click',renderAlgHomeC);
+    var gs=document.getElementById('mCGateStart'); if(gs) gs.addEventListener('click',function(){ startAlgRoundC(true); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  var AC=null;
+  function startAlgRoundC(isGate){
+    var pool;
+    if(isGate){ pool=shuffle(MENU_ITEMS.filter(algUnlockedF)); }
+    else {
+      var watch=MENU_ITEMS.filter(function(it){return PF(it.id).watch&&algUnlockedF(it);});
+      var rest=shuffle(MENU_ITEMS.filter(function(it){return algUnlockedF(it)&&!PF(it.id).watch;}));
+      pool=watch.concat(rest).slice(0,10);
+    }
+    store.roundSeq++; save();
+    AC={gate:isGate,queue:pool,idx:0,correct:0,clean:true,missedItems:[]};
+    renderAlgQC();
+  }
+  function renderAlgQC(){
+    if(AC.idx>=AC.queue.length){ renderAlgResultsC(); return; }
+    var it=AC.queue[AC.idx];
+    var codes=['F','S','D','E','W','Y','N','P','X'];
+    var chips=codes.map(function(c){ return '<button class="mChip" data-c="'+c+'" aria-pressed="false">'+esc(ALG[c])+'</button>'; }).join('')+
+      '<button class="mChip" data-c="NONE" aria-pressed="false">No major allergens listed</button>';
+    root.innerHTML=topBar(AC.gate?'🏁 Allergen gate':'⚠️ Allergen round')+
+      '<p class="mMeta">Dish '+(AC.idx+1)+' of '+AC.queue.length+' · No timer, accuracy only</p>'+
+      '<div class="mCard"><div class="mQ">From the allergen chart, \u201c'+esc(it.name)+'\u201d contains\u2026</div>'+
+      '<p class="mQSub">Select <b>all</b> that apply. You cannot see most allergens just by looking at a dish. This one is about remembering the chart.</p>'+chips+
+      '<div class="mRow"><button class="mBtn" id="mCAlgSubmit">Check answer</button></div><div id="mFbSlot"></div>'+
+      '<p class="mRule">Never answer a guest from memory. Check the chart.</p></div>';
+    bindHub();
+    root.querySelectorAll('.mChip').forEach(function(ch){ ch.addEventListener('click',function(){
+      var c=ch.getAttribute('data-c'), on=ch.getAttribute('aria-pressed')==='true';
+      if(c==='NONE'&&!on){ root.querySelectorAll('.mChip').forEach(function(x){x.setAttribute('aria-pressed','false');}); }
+      if(c!=='NONE'&&!on){ var n=root.querySelector('[data-c="NONE"]'); if(n)n.setAttribute('aria-pressed','false'); }
+      ch.setAttribute('aria-pressed', on?'false':'true');
+    });});
+    document.getElementById('mCAlgSubmit').addEventListener('click',function(){ answerAlgC(it); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function answerAlgC(it){
+    var sel=[]; root.querySelectorAll('.mChip[aria-pressed="true"]').forEach(function(ch){ sel.push(ch.getAttribute('data-c')); });
+    var want=it.alg.slice(); var gotNone=sel.indexOf('NONE')>=0;
+    var got=sel.filter(function(c){return c!=='NONE';});
+    var missed=want.filter(function(c){return got.indexOf(c)<0;});
+    var added=got.filter(function(c){return want.indexOf(c)<0;});
+    var correct=missed.length===0&&added.length===0&&(want.length>0?got.length>0:gotNone);
+    if(want.length>0&&gotNone){ missed=want.slice(); added=[]; correct=false; }
+    var p=PF(it.id);
+    if(correct){
+      AC.correct++; p.watch=false;
+      if(p.algRounds.indexOf(store.roundSeq)<0) p.algRounds.push(store.roundSeq);
+      if(p.algRounds.length>=2) p.algSolid=true;
+    } else {
+      AC.clean=false; p.watch=true; if(AC.missedItems.indexOf(it)<0) AC.missedItems.push(it);
+    }
+    save();
+    root.querySelectorAll('.mChip').forEach(function(ch){ ch.disabled=true; });
+    var sb=document.getElementById('mCAlgSubmit'); if(sb) sb.disabled=true;
+    var detail='';
+    if(!correct){
+      if(missed.length) detail+='<div>❌ You missed: <b>'+missed.map(function(c){return esc(ALG[c]);}).join(', ')+'</b></div>';
+      if(added.length) detail+='<div>❌ You added: <b>'+added.map(function(c){return esc(ALG[c]);}).join(', ')+'</b>. This dish does not have any of that.</div>';
+      detail+='<div style="margin-top:4px">Correct set: <b>'+(want.length?want.map(function(c){return esc(ALG[c]);}).join(', '):'No major allergens listed')+'</b>. This dish is on your <b>Watchlist</b> and drills first next allergen round.</div>';
+    }
+    document.getElementById('mFbSlot').innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Exactly right.</b> ':'✋ <b>Not quite exact. With allergens, it has to be exact.</b> ')+detail+
+      '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+foodPhotoHTMLC(it)+
+      '<div style="margin-top:4px">You cannot see most allergens. That is exactly why we check the chart.</div></div>'+
+      '<div class="mRow"><button class="mBtn" id="mCAlgNext">Next →</button></div>';
+    document.getElementById('mCAlgNext').addEventListener('click',function(){ AC.idx++; renderAlgQC(); });
+  }
+  function renderAlgResultsC(){
+    var total=AC.queue.length;
+    var passed=AC.gate&&AC.clean&&total>0;
+    if(passed){ store.gates.all=true; save(); }
+    root.innerHTML=topBar(AC.gate?'🏁 Gate result':'Allergen round complete')+
+      '<div class="mCard"><div class="mBig">'+AC.correct+' / '+total+'</div>'+
+      (AC.gate?(passed?'<p>✅ <b>Gate passed, 100% clean.</b> Menu allergens are done. This was the last step before the test.</p>':'<p>Not passed yet. You need one fully clean run. Missed dishes are on the Watchlist and will drill first in the next allergen round.</p>')
+              :'<p>'+(AC.clean?'A fully clean allergen round. Nice work.':'Misses went to the Watchlist and drill first next time.')+'</p>')+
+      (AC.missedItems.length?'<p><b>Watchlist additions:</b> '+AC.missedItems.map(function(it){return esc(it.name);}).join(', ')+'</p>':'')+
+      '<div class="mRow"><button class="mBtn" id="mCAlgAgain">↻ Allergen round again</button><button class="mBtn ghost" id="mCAlgHome2">Session home</button></div>'+
+      '<p class="mRule">Never answer a guest from memory. Check the chart.</p></div>';
+    bindHub();
+    document.getElementById('mCAlgHome2').addEventListener('click',renderHomeC);
+    document.getElementById('mCAlgAgain').addEventListener('click',renderAlgHomeC);
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Test morning ritual (combined pool) -----
+  function startMorningC(){
+    var allEntries=MENU_ITEMS.map(fEntry).concat(DRINK_ITEMS.map(dEntry));
+    root.innerHTML=topBar('☀️ Test morning')+'<div class="mCard"><p><b>The ritual:</b></p><ul class="mList"><li><b>1. Cold mock</b> of the whole combined menu, food and drinks. No previews, no re-reading first.</li><li><b>2. Miss-only sprint.</b> Just the ones the mock shook loose.</li><li><b>3. Allergen gate.</b> One allergen round, 100% clean. That is the last step before the test.</li></ul><div class="mRow"><button class="mBtn" id="mCMockGo">Start cold mock ('+allEntries.length+' questions)</button><button class="mBtn ghost" id="mCMorningBack">Back</button></div></div>';
+    bindHub();
+    document.getElementById('mCMorningBack').addEventListener('click',renderHomeC);
+    document.getElementById('mCMockGo').addEventListener('click',function(){
+      startMockC(allEntries,'Cold mock, whole combined menu',function(misses){
+        if(misses.length){
+          root.innerHTML=topBar('☀️ Step 2, miss-only sprint')+'<div class="mCard"><p>The mock shook loose <b>'+misses.length+'</b> item'+(misses.length===1?'':'s')+'. One focused sprint on just those, then the allergen gate.</p><div class="mRow"><button class="mBtn" id="mCMissGo">Start miss-only sprint</button></div></div>';
+          bindHub();
+          document.getElementById('mCMissGo').addEventListener('click',function(){ newSessionC('miss','Miss-only sprint',shuffle(misses).map(makeQCombined),function(){ renderGateIntroC(); },null,false); });
+        } else { renderGateIntroC(); }
+      });
+    });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Study view: food sections with preview, drink sections as cards -----
+  var prevTimerC=null;
+  function startPreviewC(items){
+    var idx=0;
+    function show(){
+      if(prevTimerC){ clearInterval(prevTimerC); prevTimerC=null; }
+      if(idx>=items.length){ renderBrowseC(); return; }
+      var it=items[idx]; PF(it.id).seen=true; save();
+      root.innerHTML=topBar('👀 Preview, first look')+
+        '<p class="mKicker">'+esc(it.section)+' · '+(idx+1)+' of '+items.length+'</p>'+
+        '<div class="mCard"><div class="mCardTitle" style="font-size:22px">'+esc(it.name)+'</div>'+foodPhotoHTMLC(it)+
+        '<div class="mDescBox">'+esc(it.desc)+'</div>'+
+        '<div class="mIcons">'+algTagsC(it)+'</div>'+
+        '<p class="mMeta">Read it once and picture the plate. Preview is a reference read only: a dish joins your quiz pool when you <b>deliver</b> it. Allergen <i>questions</i> still come last, after the dish is Solid.</p>'+
+        '<div class="mTimerBar"><i id="mCPrevBar" style="width:100%"></i></div>'+
+        '<div class="mRow"><button class="mBtn" id="mCPrevNext">'+(idx+1>=items.length?'Done, back to sections':'Next dish →')+'</button><button class="mBtn ghost" id="mCPrevSkip">Skip preview</button></div></div>';
+      bindHub();
+      var bar=document.getElementById('mCPrevBar'), t0=Date.now();
+      prevTimerC=setInterval(function(){ var left=1-(Date.now()-t0)/20000; if(bar) bar.style.width=Math.max(0,left*100)+'%'; if(left<=0){ clearInterval(prevTimerC); prevTimerC=null; } },200);
+      document.getElementById('mCPrevNext').addEventListener('click',function(){ idx++; show(); });
+      document.getElementById('mCPrevSkip').addEventListener('click',function(){ if(prevTimerC)clearInterval(prevTimerC); renderBrowseC(); });
+      document.getElementById('menuOverlay').scrollTop=0;
+    }
+    show();
+  }
+  function renderBrowseC(){
+    var html=topBar('Sections and progress')+'<p>The real way in is the <b>session</b>: you deliver trays and drinks and read their cards, and that is what puts items in your quiz pool. This page is reference. <b>Preview</b> re-reads a food section, drink cards are listed in full, and sprints here only quiz <b>items you have served</b>, same as out on the floor.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mCBrowseShift">▶ Start session</button><button class="mBtn ghost" id="mCBrowseSprint">⚡ Sprint served items (up to 12)</button><button class="mBtn ghost" id="mCBrowseHome">← Session home</button></div>';
+    var foodSecs=[]; MENU_ITEMS.forEach(function(it){ if(foodSecs.indexOf(it.section)<0) foodSecs.push(it.section); });
+    foodSecs.forEach(function(sec){
+      var items=MENU_ITEMS.filter(function(it){return it.section===sec;});
+      var sc=items.filter(function(it){return PF(it.id).solid;}).length;
+      var sv=items.filter(function(it){return PF(it.id).served;}).length;
+      html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">'+esc(sec)+'</div><div class="mMeta">'+sv+' / '+items.length+' served · '+sc+' / '+items.length+' Solid</div></div>'+
+        '<div class="mProg"><i style="width:'+Math.round(100*sc/items.length)+'%"></i></div>'+
+        '<div class="mRow"><button class="mBtn ghost small" data-cprev="'+esc(sec)+'">👀 Preview chunk</button><button class="mBtn ghost small" data-csprint="'+esc(sec)+'">⚡ Sprint this chunk</button></div></div>';
+    });
+    html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">🥩 Steak Temperatures (mini-chunk)</div><div class="mMeta">5 temps</div></div><p>The temperature chart from the From the Land page, drilled by itself.</p><div class="mRow"><button class="mBtn ghost small" id="mCTempSprint">⚡ Sprint steak temps</button></div></div>';
+    function drinkSectionCard(title,items){
+      var sc=items.filter(function(it){return PD(it.id).solid;}).length;
+      var sv=items.filter(function(it){return PD(it.id).served;}).length;
+      var h='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">'+esc(title)+'</div><div class="mMeta">'+sv+' / '+items.length+' served · '+sc+' / '+items.length+' Solid</div></div>'+
+        '<div class="mProg"><i style="width:'+(items.length?Math.round(100*sc/items.length):0)+'%"></i></div>';
+      items.forEach(function(it){
+        h+='<div style="border-top:1px dashed var(--line);padding:8px 0 2px"><b>'+esc(it.name)+'</b>'+(PD(it.id).solid?' ⭐':'')+(PD(it.id).served?' <span class="mMeta">served ✓</span>':'')+(isGuideDrink(it)?drinkPhotoHTMLC(it):'')+'<div class="mMeta" style="font-size:13.5px;color:var(--ink)">'+esc(it.desc+(it.garnish?' Garnish: '+it.garnish:''))+'</div>'+detailTagsC(it)+'</div>';
+      });
+      return h+'</div>';
+    }
+    html+=drinkSectionCard('🍸 Signature Martinis',DRINK_ITEMS.filter(function(it){return it.section==='Martinis';}));
+    html+=drinkSectionCard('🥃 Hand-Crafted Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Hand-Crafted Cocktails';}));
+    html+=drinkSectionCard('🍹 Other Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Other Cocktails';}));
+    html+=drinkSectionCard('🕔 Social Hour Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Social Hour Cocktails';}));
+    DRINK_WINE_GROUPS.forEach(function(g){ html+=drinkSectionCard('🍷 Wine: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Wine'&&it.sub===g;})); });
+    DRINK_BEER_GROUPS.forEach(function(g){ html+=drinkSectionCard('🍺 Beer & Beverages: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Beer & Beverages'&&it.sub===g;})); });
+    html+='<p class="mRule">Guide drinks corrected to the <b>study guide</b>: guide descriptions and garnishes, quizzed as written. Drink pictures are <b>generated illustrations</b> tagged Illustration and are never used for photo ID questions. Wine, beer and remaining beverages stay provisional on the public Pennsylvania menu, name practice only.</p>';
+    root.innerHTML=html; bindHub();
+    document.getElementById('mCBrowseHome').addEventListener('click',renderHomeC);
+    document.getElementById('mCBrowseShift').addEventListener('click',function(){ startMenuWorld('all'); });
+    document.getElementById('mCBrowseSprint').addEventListener('click',startServedSprintC);
+    root.querySelectorAll('[data-cprev]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.getAttribute('data-cprev'); startPreviewC(MENU_ITEMS.filter(function(it){return it.section===sec;})); }); });
+    root.querySelectorAll('[data-csprint]').forEach(function(btn){ btn.addEventListener('click',function(){ var sec=btn.getAttribute('data-csprint'); startScopedSprintC(MENU_ITEMS.filter(function(it){return it.section===sec;}).map(fEntry),sec+' sprint'); }); });
+    var tb=document.getElementById('mCTempSprint'); if(tb) tb.addEventListener('click',startTempSprintC);
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Entry pop-up and session home -----
+  function renderIntroC(){
+    var totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
+    var servedN=servedEntries().length, refN=store.foodRefire.length+store.drinkRefire.length;
+    function stepC(icon,title,text){
+      return '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">'+icon+' '+title+'</div><div class="mStepText">'+text+'</div></div></div>';
+    }
+    var html=topBar('🍽️ Menu Training')+
+      '<div class="mCard"><div class="mCardTitle" style="font-size:20px">Food and drinks, one session</div>'+
+      '<div class="mIntroChips"><span>'+totalN+' items</span><span>'+MENU_ITEMS.length+' dishes + '+DRINK_ITEMS.length+' drinks</span><span>One combined pool</span></div>'+
+      '<div class="mRow"><button class="mBtn" id="mCIntroStartTop">▶ Start the session, skip the tour</button></div>'+
+      '<div class="mSteps">'+
+      stepC('🔔','Bell rings','Your tray is waiting on the <b>pass</b>. A dining table tray carries <b>up to 2 dishes plus 1 drink</b>, all together. A barstool tray is <b>1 dish, food only</b>: drinks come from the bar, not the kitchen, so no drink ever goes to a barstool (101 to 114). The items are named in the <b>panel on the top left</b>.')+
+      stepC('🍽️','Pick up and deliver','Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the table or barstool</b> it is headed to.')+
+      stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, and garnish for drinks. <b>That is what the quiz asks about</b>, so give them a real read.')+
+      stepC('❓','Quiz pops up','After a few runs you will get quizzed, <b>only on items you have served, food and drinks together</b>. You can tap <b>Quiz me</b> anytime if you want one sooner.')+
+      stepC('🔥','Miss one? It refires','That item <b>comes back out</b> on another tray later. You will deliver it again and re-read the card first, before it can be quizzed again.')+
+      stepC('⭐','Get it Solid','Get it right in <b>2 different rounds</b> and it turns <b>Solid</b>. For food dishes, that is when their <b>allergens unlock</b>.')+
+      stepC('🚪','Leaving','Stand in the small <b>coral EXIT ring</b> by the OUT door for <b>2 seconds</b>. Tapping <b>Exit</b> or hitting <b>Esc</b> works too.')+
+      '</div>'+
+      (servedN?'<p class="mMeta">Picking up where you left off: <b>'+servedN+' of '+totalN+'</b> items served ('+foodServed().length+' dishes, '+drinkServed().length+' drinks)'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+'. Your saved food and drinks progress was carried into this combined pool. Progress saves on this device.</p>':'<p class="mMeta">Progress saves on this device.</p>')+
+      '<div class="mRow"><button class="mBtn" id="mCIntroStart">▶ Start the session</button></div></div>';
+    root.innerHTML=html; bindHub();
+    menuIntroCanvases=[];
+    function go(){ startMenuWorld('all'); }
+    document.getElementById('mCIntroStart').addEventListener('click',go);
+    document.getElementById('mCIntroStartTop').addEventListener('click',go);
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+  function renderHomeC(){
+    var totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
+    var scF=foodSolidCount(), scD=drinkSolidCount(), sc=scF+scD;
+    var elig=MENU_ITEMS.filter(algEligibleF), unlocked=MENU_ITEMS.filter(algUnlockedF).length;
+    var servedN=servedEntries().length, refN=store.foodRefire.length+store.drinkRefire.length;
+    var wc=MENU_ITEMS.filter(function(it){return PF(it.id).watch;}).length;
+    var html=topBar('🍽️ Menu Training, session home')+
+      '<p><b>One session, food and drinks together.</b> You run trays to the tables and barstools, drinks riding along on table orders, read the cards, then get quizzed on everything you have served. Miss one and it <b>refires</b> and comes back out.</p>';
+    html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">The session, all '+totalN+' items</div></div>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*sc/totalN)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedN+' / '+totalN+'</b> ('+foodServed().length+' / '+MENU_ITEMS.length+' dishes · '+drinkServed().length+' / '+DRINK_ITEMS.length+' drinks)'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Solid: <b>'+sc+' / '+totalN+'</b> ('+scF+' dishes · '+scD+' drinks) · Allergens unlocked (food): '+unlocked+' / '+elig.length+(store.gates.all?' · ✅ <b>Allergen gate passed</b>':' · Allergen gate: not yet passed')+'</div>'+
+      '<div class="mRow"><button class="mBtn" data-cact="shift">▶ Start session, back on the floor</button>'+
+      '<button class="mBtn ghost" data-cact="sprint">⚡ Sprint served items</button>'+
+      '<button class="mBtn ghost" data-cact="alg">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
+      '<button class="mBtn ghost" data-cact="morning">☀️ Test morning</button></div>'+
+      '<div class="mRow"><button class="mBtn ghost small" data-cact="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-cact="seasonal">🍂 Seasonal only</button></div></div>';
+    html+='<div class="mCard"><div class="mCardTitle">Cumulative mock, all '+totalN+' items</div><p>Text only, food and drinks together, and you will not see any feedback until the very end, just like the real written final.</p><div class="mRow"><button class="mBtn ghost" data-cact="cum">Start cumulative mock</button></div></div>'+
+      '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' dish'+(wc===1?'':'es')+'</b> waiting for a clean re-check. Refires waiting: <b>'+refN+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
+      '<div class="mRow"><button class="mBtn ghost small" id="mCReset">Reset combined progress</button></div><div id="mCResetMsg"></div></div>';
+    root.innerHTML=html; bindHub();
+    root.querySelectorAll('[data-cact]').forEach(function(btn){ btn.addEventListener('click',function(){
+      var act=btn.getAttribute('data-cact');
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBrowseC(); else if(act==='alg') renderAlgHomeC(); else if(act==='morning') startMorningC(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='sprint') startServedSprintC(); else if(act==='cum') startMockC(MENU_ITEMS.map(fEntry).concat(DRINK_ITEMS.map(dEntry)),'Cumulative mock, all '+totalN+' items',null);
+    });});
+    var rs=document.getElementById('mCReset');
+    rs.addEventListener('click',function(){
+      if(rs.getAttribute('data-arm')){ store=blankCombined(); save(); renderHomeC(); }
+      else { rs.setAttribute('data-arm','1'); rs.textContent='Tap again to confirm reset'; document.getElementById('mCResetMsg').innerHTML='<p>This clears every Solid, served item, refire, the Watchlist, and gate passes for the combined pool on this device.</p>'; }
+    });
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+  return {
+    open:function(){
+      root=document.getElementById('menuRoot');
+      load(); store.visits++; save();
+      renderIntroC();
+    },
+    openHome:function(){
+      root=document.getElementById('menuRoot');
+      load();
+      renderHomeC();
+    },
+    handleNewTicket:handleNewTicket,
+    handleMenuDeliver:handleMenuDeliver,
+    startWorldQuiz:function(){ load(); return startWorldQuizC(false); },
+    quizPoolCount:function(){
+      try{ load(); return quizPoolEntries().length; }catch(e){ return 0; }
     }
   };
 })();
