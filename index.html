@@ -261,6 +261,77 @@
   body.mobile .handSeg button{min-height:30px;min-width:22px;width:22px;padding:3px 0;font-family:system-ui,sans-serif;font-size:11.5px;font-weight:700;background:transparent;color:var(--ink);border:none;border-left:1px solid var(--line);cursor:pointer;text-align:center}
   body.mobile .handSeg .handLab{display:none}
   body.mobile .handSeg button[aria-pressed="true"]{background:var(--accent);color:#1d1408}
+
+  /* POS tab pictures (Build 200.14): a small replica of the tab's real rail
+     button, blue with a white label, shown next to the tab name wherever a
+     POS tab location appears (info cards, answer feedback, tab options). */
+  .posTabs{display:inline-flex;flex-wrap:wrap;gap:5px;vertical-align:middle}
+  .posTabChip{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(#1a4fe0,#0030b8);border:1.5px solid #9db4ff;border-radius:6px;color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:10.5px;line-height:1.15;padding:4px 8px;text-transform:uppercase;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+  .posTabLine{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .mOpt .posTabs{margin-left:8px}
+  .mOpt .posOptText{font-weight:600}
+  /* Tablet Sim (Build 200.14): a window over the blurred restaurant holding
+     the full POS tablet simulator, recreated screens in the standalone
+     Bonefish POS Simulator styling, ts- prefixed so nothing collides. */
+  #tabletOverlay{position:absolute;inset:0;display:none;z-index:15;align-items:center;justify-content:center;padding:10px}
+  #tabletOverlay.open{display:flex}
+  @media(max-width:640px){ #tabletOverlay{position:fixed;padding:6px} }
+  #tabletOverlay .tsBackdrop{position:absolute;inset:0;background:rgba(10,7,5,.5);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+  #tabletOverlay .tsWindow{position:relative;background:#17110d;border:1px solid #6b5636;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.65);padding:10px 12px 12px;width:min(980px,100%,calc((100dvh - 215px)*1.3));max-height:100%;overflow-y:auto;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif}
+  .tsHead{display:flex;align-items:flex-start;gap:10px;padding:2px 2px 8px;color:#f5ead9}
+  .tsHeadText{flex:1;min-width:0}
+  .tsTitle{font-family:Georgia,serif;font-size:19px;font-weight:700;line-height:1.2}
+  .tsSub{font-family:system-ui,sans-serif;font-size:12px;line-height:1.4;color:#c9b8a3;margin-top:2px}
+  #tsClose{background:#b3541e;color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:system-ui,sans-serif;min-height:44px;white-space:nowrap;flex:none}
+  #tsClose:active{transform:scale(.98)}
+  #tabletOverlay .tsBezel{background:#050505;border-radius:14px;padding:clamp(6px,1.4vw,18px);box-shadow:inset 0 0 0 2px #222}
+  #tabletOverlay .tsScreen{background:#2b0a0e;border-radius:4px;overflow:hidden;position:relative;display:flex;flex-direction:column;aspect-ratio:1.30/1;width:100%}
+  #tabletOverlay .tsHdr{background:linear-gradient(#f4f4f4,#c9c9c9);display:flex;align-items:center;gap:1%;padding:.6% 1%;font-size:clamp(6px,1.15vw,14px);color:#222;flex:0 0 5.2%;white-space:nowrap;overflow:hidden}
+  #tabletOverlay .tsHdr .tsQ{background:#2456d6;color:#fff;font-weight:900;border-radius:4px;padding:.15em .45em}
+  #tabletOverlay .tsHdr .tsMid{flex:1;text-align:center;font-weight:600;letter-spacing:.02em}
+  #tabletOverlay .tsHdr .tsRight{font-weight:600}
+  #tabletOverlay .tsHdr .tsBatt{color:#1a9e1a;font-weight:900}
+  #tabletOverlay .tsMain{flex:1;display:flex;gap:.7%;padding:.7%;min-height:0}
+  #tabletOverlay .tsZone{flex:1;position:relative;min-width:0}
+  #tabletOverlay .tsOrder{width:23.5%;background:linear-gradient(#fdfdfd,#e8e8e8);border-radius:6px;display:flex;flex-direction:column;padding:2% 3%;flex:0 0 23.5%}
+  #tabletOverlay .tsOrder .tsArrows{display:flex;justify-content:space-between;color:#2456d6;font-size:clamp(8px,1.6vw,20px);line-height:1}
+  #tabletOverlay .tsOrder .tsSp{flex:1}
+  #tabletOverlay .tsOrder .tsTot{display:flex;justify-content:space-between;background:#d9d9d9;padding:4% 5%;font-size:clamp(6px,1.2vw,15px);font-weight:700;color:#222}
+  #tabletOverlay .tsOrder .tsLogo{text-align:center;color:#1b3a8f;font-style:italic;font-weight:900;font-size:clamp(6px,1.3vw,16px);padding-top:3%}
+  #tabletOverlay .tsOrder .tsLogo span{color:#c00}
+  #tabletOverlay .tsTabs{width:12.5%;display:flex;flex-direction:column;gap:1.1%;flex:0 0 12.5%}
+  #tabletOverlay .tsTab{flex:1;background:linear-gradient(#1a4fe0,#0030b8);color:#fff;border:2px solid #9db4ff;border-radius:6px;font-weight:800;font-size:clamp(5px,1.05vw,13px);display:flex;align-items:center;justify-content:center;text-align:center;padding:2px;cursor:pointer;line-height:1.15;text-transform:uppercase}
+  #tabletOverlay .tsTab.on{background:linear-gradient(#2ee6a8,#0bbf83);border-color:#bff5e2;color:#fff}
+  #tabletOverlay .tsFoot{flex:0 0 9%;display:flex;gap:.7%;padding:0 .7% .7%}
+  #tabletOverlay .tsFbtn{flex:1;background:linear-gradient(#ffffff,#dcdcdc);border:2px solid #aaa;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.25vw,15px);color:#333;cursor:pointer;text-align:center}
+  #tabletOverlay .tsGrid{position:absolute;inset:0;display:flex;flex-direction:column;gap:1.4%}
+  #tabletOverlay .tsGrow{display:flex;gap:1.2%;flex:1;min-height:0}
+  #tabletOverlay .tsBtn{flex:1;border-radius:7px;color:#fff;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:clamp(5px,1.08vw,13.5px);line-height:1.12;padding:2px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.5);text-transform:uppercase;position:relative;overflow:hidden}
+  #tabletOverlay .tsSpacer{flex:1;visibility:hidden}
+  #tabletOverlay .tsTag{background:#ff2e4d;color:#fff;font-size:.72em;border-radius:8px;padding:0 .7em;margin-top:2px;font-weight:800;text-transform:none}
+  #tabletOverlay .tsTagS{background:#14c8a0;color:#fff;font-size:.72em;border-radius:8px;padding:0 .7em;margin-top:2px;font-weight:800}
+  #tabletOverlay .tsFlash{filter:brightness(1.7)!important}
+  #tabletOverlay .tsQty{display:flex;flex-direction:column;gap:1.4%;width:9%;flex:0 0 9%}
+  #tabletOverlay .tsQkey{flex:1;background:linear-gradient(#fff,#ddd);border:2px solid #999;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.1vw,14px);color:#333;cursor:pointer}
+  #tabletOverlay .tsWithq{display:flex;gap:1.2%;height:100%}
+  #tabletOverlay .tsWithq .tsGrid{position:relative;flex:1}
+  #tabletOverlay .tsNote{color:#fff;font-size:clamp(9px,1.8vw,22px);text-align:center;padding:12% 8%;line-height:1.5}
+  #tabletOverlay .tsC-blue{background:linear-gradient(#25a5ec,#0b7fc6)}
+  #tabletOverlay .tsC-royal{background:linear-gradient(#5b7cf0,#4663d8)}
+  #tabletOverlay .tsC-red{background:linear-gradient(#f43a47,#d80f1e)}
+  #tabletOverlay .tsC-hot{background:linear-gradient(#f43a8e,#d8006e)}
+  #tabletOverlay .tsC-pink{background:linear-gradient(#e91e7e,#c4006a)}
+  #tabletOverlay .tsC-mag{background:linear-gradient(#d633f0,#a800c8)}
+  #tabletOverlay .tsC-purp{background:linear-gradient(#b44ae0,#8e24c8)}
+  #tabletOverlay .tsC-orange{background:linear-gradient(#ff9a1f,#f56f00)}
+  #tabletOverlay .tsC-teal{background:linear-gradient(#17b8cc,#0793a8)}
+  #tabletOverlay .tsC-cyan{background:linear-gradient(#1fb6d9,#0899bd)}
+  #tabletOverlay .tsC-green{background:linear-gradient(#22d84f,#00b02e)}
+  #tabletOverlay .tsC-mint{background:linear-gradient(#1fd67f,#00b35c)}
+  #tabletOverlay .tsC-slate{background:linear-gradient(#5a6b7d,#3c4a5a)}
+  #tabletOverlay .tsC-gray{background:linear-gradient(#7d8a99,#5a6675)}
+  #tabletOverlay .tsC-dark{background:linear-gradient(#4a4a52,#2e2e36)}
+  #tabletOverlay .tsC-white{background:linear-gradient(#fff,#ddd);color:#333}
 </style>
 </head>
 <body class="hand-right">
@@ -285,7 +356,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.5</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.6</span>
     </div>
   </div>
 
@@ -314,6 +385,7 @@
               <div class="bStep"><div class="bIco" aria-hidden="true">🖥️</div><div class="bStepBody"><b>Stand in the ring for 2 seconds</b><span>The PCs are down in the lower-left corner, against the bottom wall just left of the front door. Step in and the ring turns gold. Step out and it starts over.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">🎫</div><div class="bStepBody"><b>Table Training</b><span>You'll run trays and learn the floor as you go, table numbers and all.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Menu Training</b><span>Same idea, but you're learning the food while you run trays. Once you're in, a pop-up walks you through the rest.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">📱</div><div class="bStepBody"><b>Tablet Sim</b><span>The POS tablet itself, all 25 pages in a window over the floor. Flip through the tabs and learn where every button lives.</span></div></div>
             </div>
             <p class="bookNote">You won't see an exit ring here in the hub. You're not in a training run yet.</p>
           </section>
@@ -363,10 +435,12 @@
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
           <div class="patchEntry">
-            <div class="patchEntryHead"><b>Build 300.5</b></div>
+            <div class="patchEntryHead"><b>Build 300.6</b></div>
             <ul>
-              <li>Quiz now teaches which POS tab each item is on.</li>
-              <li>Item cards and quiz answers show the POS tab.</li>
+              <li>Added a Tablet Sim training track with the full POS tablet.</li>
+              <li>Quiz shows a picture of each POS tab.</li>
+              <li>Hub PCs are smaller.</li>
+              <li>Two-entree tables now get two drinks.</li>
             </ul>
           </div>
         </div>
@@ -375,6 +449,17 @@
     </div>
     <div id="menuOverlay" role="dialog" aria-label="Menu Training">
       <div class="mwrap" id="menuRoot"></div>
+    </div>
+    <div id="tabletOverlay" role="dialog" aria-label="Tablet Sim, POS tablet simulator">
+      <div class="tsBackdrop"></div>
+      <div class="tsWindow">
+        <div class="tsHead"><div class="tsHeadText"><div class="tsTitle">📱 Tablet Sim</div><div class="tsSub">The POS tablet, all 25 pages. Tap a tab on the right to open its page. The bottom tab flips the tab list down a set, the top tab flips it back up. Item buttons just flash, nothing is rung up.</div></div><button id="tsClose" aria-label="Close Tablet Sim and return to the hub">✕ Close, back to hub</button></div>
+        <div class="tsBezel"><div class="tsScreen">
+          <div class="tsHdr"><span class="tsQ">?</span><span id="tsHdrL"></span><span class="tsMid" id="tsHdrM"></span><span class="tsRight">Table: 55T, Check: 0073</span><span class="tsBatt">▬▲</span></div>
+          <div class="tsMain"><div class="tsZone" id="tsZone"></div><div class="tsOrder"><div class="tsArrows"><span>▲</span><span>▼</span></div><div class="tsSp"></div><div class="tsTot"><span>Total:</span><span>0.00</span></div><div class="tsLogo">POS<span>i</span>touch</div></div><div class="tsTabs" id="tsTabs"></div></div>
+          <div class="tsFoot" id="tsFoot"></div>
+        </div></div>
+      </div>
     </div>
     <div class="dpad" aria-label="Movement pad">
       <button class="up" data-dir="up" aria-label="Move up">▲</button>
@@ -395,8 +480,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Prod 300.5: the combined Menu Training quiz now teaches POS tablet tabs. Every item in the combined pool carries the POS tab set it is rung on, tab questions join the rotation, and the tab set shows on delivery info cards and in answer feedback. Delivery routing is unchanged from 200.12: every dining table order (200s to 800s) carries one drink alongside its food, barstool orders (100s) are food only, and refires follow the same rule. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.5';
+// This build is Beta 300.6 (internal, not published): a hub terminal adjustment plus one Menu Training delivery rule. The three PC terminals (monitor and desk) are drawn 30 percent smaller, scaled around each terminal's own centre, and the whole terminal row (the PCs, their name labels, and their stand rings) shifts 0.33 units left so the Tablet Sim desk clears the FRONT DOOR floor lettering. The stand rings keep their size, and their trigger zones and the exit landing spots move with them, so each ring stays right in front of its PC. The terminal labels keep their original size so they stay readable. The front door, its mat and lettering, and the coral EXIT ring do not move. Delivery rule: a Menu Training table order with two entrees now carries two drinks on the tray instead of one (one entree still carries one drink, barstool orders stay food only, and refires of a two-entree order carry two drinks the same way). Everything else is unchanged from 200.14: the Tablet Sim track, the combined pool and POS tab data and icons, all other delivery rules, all other quiz kinds, spaced repetition, seasonal handling, merged progress, Table Training, and all item content and images. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.6';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -522,6 +607,7 @@ var outerWallSegs=[
 var started=false, carrying=false, target=null, trayOnPass=false, lastTable=null;
 var bookletOpen=true; // the guide booklet overlays the stage at load; movement waits while it is open
 var patchOpen=false; // patch notes overlay; movement waits while it is open, same as the booklet
+var tabletOpen=false; // Tablet Sim window over the floor; movement waits while it is open, same as the booklet
 var deliveries=0, streak=0, hint=false, soundOn=true, nextTimer=null;
 var spawnX=4.8, spawnY=H+1.15; // outside the restaurant, just below the front door (bottom wall, below the 241/306 area)
 var player={x:spawnX,y:spawnY,r:0.21,face:1,walk:0,moving:false}; // deliveries in Table Training teleport back to the expo pass (passX, passY)
@@ -541,9 +627,29 @@ var mode='hub';
 // just touches the top edge of its label pill (y 15.17), and the ring
 // tops still clear table 241 by a wide margin. They are HUB-ONLY access
 // points: they render and activate only in the hub.
+// Build 200.14 adds a THIRD terminal alongside, Tablet Sim at x 4.0,
+// continuing the row east at the same 1.4 spacing and in the same style
+// (desk spans 3.54-4.47, label pill 3.42-4.58, ring at termZoneY spanning
+// x 3.68-4.32): it sits against the bottom wall just west of the front
+// door. The two existing terminals, their rings, the front door gap in
+// the wall, and the coral EXIT ring do not move. Terminals have no
+// collision of their own, so the door walk-through is unchanged.
+// Build 300.6: the whole row shifts 0.33 west as one piece (x was
+// 1.2 / 2.6 / 4.0 through 200.14, now 0.87 / 2.27 / 3.67): PCs, name
+// labels and stand rings all move together, so each ring stays right
+// in front of its PC exactly as before, and the ring drawing, the 0.34
+// trigger check and the exitToHub landing spots all keep using x. The
+// rings keep their size (r 0.32, unchanged); only the PC drawing
+// shrinks, scaled to 0.7 around each terminal's own centre (see
+// drawTerminals), so the Tablet Sim desk now spans x 3.34-4.00 and
+// clears the FRONT DOOR floor lettering east of it. The Table ring's
+// west edge (x 0.55) still clears stool 114's east edge (x 0.28). The
+// front door, its mat and lettering, and the coral EXIT ring stay
+// exactly where they are.
 var terminals=[
-  {x:1.2, mode:'table', label:'TABLE TRAINING', name:'Table Training'},
-  {x:2.6, mode:'menu', label:'MENU TRAINING', name:'Menu Training'}
+  {x:0.87, mode:'table', label:'TABLE TRAINING', name:'Table Training'},
+  {x:2.27, mode:'menu', label:'MENU TRAINING', name:'Menu Training'},
+  {x:3.67, mode:'tablet', label:'TABLET SIM', name:'Tablet Sim'}
 ];
 var termZoneY=14.85, termState={zone:null,t:0};
 // Exit spot: the ONLY access point inside Table Training and Menu Training
@@ -625,7 +731,7 @@ function setMsg(html,kind){ msgEl.innerHTML=html; msgEl.className=kind||''; }
 function updateHUD(){
   document.getElementById('ticketVal').textContent = target? String(target.n) : '-';
   document.getElementById('ticketBox').className='stat ticket'+(target?'':' waiting');
-  if(!target) document.getElementById('ticketVal').textContent = !started ? '-' : (mode==='hub' ? 'Hub' : (mode==='menu' ? 'Menu' : 'Waiting…'));
+  if(!target) document.getElementById('ticketVal').textContent = !started ? '-' : (mode==='hub' ? 'Hub' : (mode==='menu' ? 'Menu' : (mode==='tablet' ? 'Tablet Sim' : 'Waiting…')));
   document.getElementById('delivVal').textContent=deliveries;
   document.getElementById('streakVal').textContent=streak;
   if(mode==='menu' && menuTrayDishes.length && target){
@@ -1096,13 +1202,22 @@ function drawSeats(tb,bx,by,bw,bh,hl){
 // on the dining floor just below the kitchen wall). In hub mode each also gets a dashed activation ring on
 // the floor in front of it (north of the desk); standing in the ring fills a gold progress arc
 // over 2 seconds (drawn here, timed in the main loop).
-// Prop layout, north → south (all dimensions 20% smaller since 200.5, the
-// stack compressed toward the bottom wall so the desk stays flush with it):
-// activation ring at termZoneY (14.85 since 200.6, r 0.32, so it spans
-// y 14.53–15.17 and its bottom edge just touches the label pill's top
-// edge), label pill y 15.17–15.46, monitor y 15.52–15.94, desk
-// y 16.00–16.27, its south edge flush with the bottom wall's top edge
-// (16.27).
+// Prop layout, north → south. Through 200.14 (dimensions 20% smaller
+// since 200.5, the stack compressed toward the bottom wall so the desk
+// stayed flush with it): activation ring at termZoneY (14.85 since
+// 200.6, r 0.32, spanning y 14.53–15.17), label pill y 15.17–15.46,
+// monitor y 15.52–15.94, desk y 16.00–16.27, its south edge flush with
+// the bottom wall's top edge (16.27).
+// Build 300.6: the PC drawing (monitor, stand, desk) shrinks 30
+// percent, scaled by 0.7 around the PC block's own centre (y 15.895)
+// and around the terminal's x, so the row stays in place vertically:
+// monitor y 15.63–15.93, desk y 15.97–16.16, desk half-width 0.3255.
+// The whole row (PCs, labels, rings) also shifts 0.33 west via
+// terminals[].x. The ring keeps its size (r 0.32) and stays centred on
+// the terminal's x at termZoneY, right in front of its PC. The label
+// pill keeps its original size and font so it stays readable, centred
+// on the terminal's x with its bottom edge the same 0.06 above the
+// shrunken monitor (pill y 15.28–15.57).
 function drawTerminals(now){
   if(mode!=='hub') return;
   terminals.forEach(function(tm){
@@ -1121,18 +1236,21 @@ function drawTerminals(now){
       ctx.restore();
     }
     ctx.save();
-    // Label pill above the screen (20% narrower with the rest of the
-    // terminal, so the two pills sit side by side without touching)
-    ctx.fillStyle='#1d2733'; rr(cx-D(0.58),Y(15.17),D(1.16),D(0.29),6); ctx.fill();
+    // Label pill above the screen: NOT shrunk in 300.6, it keeps its
+    // size and 6.5px font so the name stays readable; it moves west
+    // with the PC and sits just above the shrunken monitor.
+    ctx.fillStyle='#1d2733'; rr(cx-D(0.58),Y(15.2825),D(1.16),D(0.29),6); ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1; ctx.stroke();
     ctx.fillStyle='#eaf6ff'; ctx.font='800 6.5px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(tm.label,cx,Y(15.32));
-    // Monitor + stand + desk against the bottom wall
-    ctx.fillStyle='#141a21'; rr(cx-D(0.35),Y(15.52),D(0.70),D(0.42),2); ctx.fill();
-    ctx.fillStyle='#79d2f2'; rr(cx-D(0.305),Y(15.56),D(0.61),D(0.34),2); ctx.fill();
-    ctx.fillStyle='#141a21'; ctx.fillRect(cx-D(0.04),Y(15.94),D(0.08),D(0.08));
-    ctx.fillStyle='#3a3f47'; rr(cx-D(0.465),Y(16.00),D(0.93),D(0.27),2); ctx.fill();
-    ctx.fillStyle='#22262c'; rr(cx-D(0.32),Y(16.07),D(0.64),D(0.16),2); ctx.fill();
+    ctx.fillText(tm.label,cx,Y(15.4275));
+    // Monitor + stand + desk against the bottom wall, 30% smaller in
+    // 300.6: every offset and size below is the 200.14 value times 0.7,
+    // measured from the PC block's centre (see the layout note above).
+    ctx.fillStyle='#141a21'; rr(cx-D(0.245),Y(15.6325),D(0.49),D(0.294),2); ctx.fill();
+    ctx.fillStyle='#79d2f2'; rr(cx-D(0.2135),Y(15.6605),D(0.427),D(0.238),2); ctx.fill();
+    ctx.fillStyle='#141a21'; ctx.fillRect(cx-D(0.028),Y(15.9265),D(0.056),D(0.056));
+    ctx.fillStyle='#3a3f47'; rr(cx-D(0.3255),Y(15.9685),D(0.651),D(0.189),2); ctx.fill();
+    ctx.fillStyle='#22262c'; rr(cx-D(0.224),Y(16.0175),D(0.448),D(0.112),2); ctx.fill();
     ctx.textBaseline='alphabetic';
     ctx.restore();
   });
@@ -1501,7 +1619,7 @@ var lastT=0;
 function loop(t){
   requestAnimationFrame(loop);
   var dt=Math.min(50,t-lastT||16); lastT=t;
-  if(started && !paused && !bookletOpen && !patchOpen && (mode!=='menu' || menuFloorLive())){
+  if(started && !paused && !bookletOpen && !patchOpen && !tabletOpen && (mode!=='menu' || menuFloorLive())){
     var sp=3.4*dt/1000; // units per frame-step, ample, unhurried pace
     var dx=0,dy=0;
     if(keys.left||pad.left)dx-=1; if(keys.right||pad.right)dx+=1;
@@ -1550,7 +1668,7 @@ function loop(t){
         termState.t+=dt;
         if(termState.t>=2000){
           var dest=zone.mode; termState.zone=null; termState.t=0;
-          if(dest==='table') enterTableTraining(); else enterMenuTraining();
+          if(dest==='table') enterTableTraining(); else if(dest==='tablet') enterTabletSim(); else enterMenuTraining();
         }
       } else if(termState.zone){
         termState.zone=null; termState.t=0;
@@ -1668,6 +1786,7 @@ function enterTableTraining(){
   nextTimer=setTimeout(newTicket,1200);
 }
 function exitToHub(placeX){
+  tabletOpen=false; var tovEl=document.getElementById('tabletOverlay'); if(tovEl) tovEl.classList.remove('open');
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   target=null; trayOnPass=false; carrying=false;
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false; menuDeliveriesSinceQuiz=0; menuDeck=null;
@@ -1682,6 +1801,373 @@ function exitToHub(placeX){
   setMsg('🖥️ <b>Pick your training track</b> at the PC terminals.','');
   updateHUD();
 }
+// ---------- Tablet Sim (Build 200.14) ----------
+// The full POS tablet simulator as a training track: the same recreation
+// as the standalone Bonefish POS Simulator Space, data and navigation
+// carried over from it (all 25 photographed pages, the tablet frame,
+// right side tabs with the active tab lit green, tab sets that flip from
+// the bottom tab down a set or the top tab back up a set, in-page
+// sub-screen buttons, and the TEST page as an empty frame with its not
+// photographed note). Pages are recreated screens (styled buttons), not
+// photos. Item buttons only flash when tapped. It opens in a window over
+// the restaurant with the floor blurred behind it; closing the window
+// returns to the hub, landing just north of the terminal rings.
+// ----- POS tab pictures (Build 200.14) -----
+// A tab picture is just the blue tab icon itself: a small replica of the
+// tab's right rail button on the tablet (blue rounded button, white
+// label), never a picture of the tab's page. One icon per tab in an
+// item's tab set, in order, next to the tab name.
+function posTabChipHTML(tabName){ return '<span class="posTabChip">' + escHtml(tabName) + '</span>'; }
+function posTabChipsHTML(tabs){
+  if(!tabs || !tabs.length) return '';
+  var h='<span class="posTabs">';
+  for(var i=0;i<tabs.length;i++) h+=posTabChipHTML(tabs[i]);
+  return h+'</span>';
+}
+function posTabLineHTML(it){
+  if(!it || !it.posTabs || !it.posTabs.length) return '';
+  return '<div class="posTabLine" style="margin-top:6px">POS tab: ' + posTabChipsHTML(it.posTabs) + '<b>' + escHtml(it.posTabs.join(', ')) + '</b></div>';
+}
+function posTabSetHTML(text){
+  var tabs=String(text).split(', ');
+  return '<span class="posOptText">' + escHtml(text) + '</span>' + posTabChipsHTML(tabs);
+}
+var TS_SETS=[
+["seafood","landfood","seasonal","partner","soup","dinapps","desserts","kids","winebottle","featwine","amcock"],
+["amcock","nzcock","vodka","bourbon","rum","shooter","cordials"],
+["cordials","mgrcomp","misc","gift","refills","privatedining","brunch","lunch","bundles","test"]];
+var TS_TABLABEL={seafood:"SEAFOOD",landfood:"LAND FOOD",seasonal:"SEASONAL ENT SPECIALS",partner:"PARTNER SELECT",soup:"SOUP & SALAD",dinapps:"DIN APPS/SIDES",desserts:"DESSERTS",kids:"KIDS",winebottle:"WINE BOTTLE",featwine:"FEAT WINE/ BEER",amcock:"A-M COCKTAILS HH",nzcock:"N-Z COCKTAILS HH",vodka:"VODKA/GIN HH",bourbon:"BOUR/SCO/ WHISK HH",rum:"RUM/TEQ HH",shooter:"SHOOTER/ COFFEE DRNK",cordials:"CORDIALS",mgrcomp:"MGR COMP",misc:"MISCELLANEOU",gift:"GIFT CARDS",refills:"REFILLS",privatedining:"PRIVATE_DINING",brunch:"BRUNCH",lunch:"LUNCH",bundles:"BUNDLES",test:"TEST"};
+var TS_NATURAL={seafood:0,landfood:0,seasonal:0,partner:0,soup:0,dinapps:0,desserts:0,kids:0,winebottle:0,featwine:0,amcock:0,nzcock:1,vodka:1,bourbon:1,rum:1,shooter:1,cordials:1,mgrcomp:2,misc:2,gift:2,refills:2,privatedining:2,brunch:2,lunch:2,bundles:2,test:2};
+function tsB(l,c,t,w,d){return{l:l,c:c||"blue",t:t||"",w:w||0,d:d||""}}
+var COMMON4=[tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")];
+var TS_PAGES={
+seafood:{h:"Order Screen 11/17/26 18:04|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("SEABASS","red"),tsB("",""),tsB("SKEWER","red"),tsB("PARM TROUT","mag"),tsB("BANG SFT T-3","mag")],
+[tsB("TROUT","red"),tsB("SALMON","hot"),tsB("MAHI & SHRIMP","red"),tsB("IMPERIAL COD","mag"),tsB("FISH SFT T-3","mag")],
+[tsB("MAHI","red"),tsB("WAHOO","hot"),tsB("UNI FISH & SHRMP","red"),tsB("BLKND AHI TUNA","mag"),tsB("FISH & CHIPS","mag")],
+[tsB("TAIL 1","red"),tsB("",""),tsB("",""),tsB("S&S SCAMPI","mag"),tsB("LOBSTR RAV","mag")],
+[tsB("TAILS 2","red","SPECIAL"),tsB("",""),tsB("",""),tsB("BOURBON SALMON","mag"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("PARTNER GRILL","slate"),tsB("SHRMP TMTO LING","mag"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("PARTNER SAUTE","slate"),tsB("SLMN TMTO LING","mag"),tsB("","")],
+[tsB("PRT SLCT SCREEN","slate","",0,"partner"),tsB("",""),tsB("LANDFOOD SCREEN","slate","",0,"landfood"),tsB("PAN ASIAN BTRFSH","mag"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")]]},
+landfood:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("BISTRO W/ CHIMI","blue"),tsB("GRILL CHICKEN","green"),tsB("GRILLED PORK CHP","mint"),tsB("",""),tsB("","")],
+[tsB("BURGER 8OZ","blue"),tsB("LILY CHIX","green"),tsB("FONTINA CHOP","mint"),tsB("",""),tsB("","")],
+[tsB("FILET 7OZ","blue"),tsB("CHICKEN MARSALA","green"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("SIRLOIN 9OZ","blue"),tsB("CHIX SFT T-3","green"),tsB("3 BANG CHIX TACO","mag"),tsB("",""),tsB("","")],
+[tsB("FILT 7 & TAIL","blue","SPECIAL"),tsB("CHIX TMTO LING","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("SIR 9 & TAIL","blue","SPECIAL"),tsB("TOMATO LINGUINE","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("SEAFOOD SCREEN","slate","",0,"seafood"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan"),tsB("","")]]},
+seasonal:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("CURRENT SPECIALS","royal","",2),tsB("NAT EVENT DINNER","orange"),tsB("PAST SPECIALS","royal","",2)],
+[tsB("OF CEDAR SALMON","blue"),tsB("",""),tsB("SWD & PUMPKN RAV","blue"),tsB("PMKN CRM BRULEE","mag"),tsB("","")],
+[tsB("LOB STFD SHRIMP","blue"),tsB("OCEAN MIXD GRILL","slate"),tsB("DYNAMITE SALMON","blue"),tsB("",""),tsB("","")],
+[tsB("GROUPER & CC","blue"),tsB("",""),tsB("BRBN SHRMP BWI","mag","0 Left"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("OMG CAESAR","green"),tsB("BOB UNI CC W S&S","mag"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("OMG HOUSE SALAD","green"),tsB("THAI CSTL GRPR","mag"),tsB("13OZ SAGE RIBEYE","blue"),tsB("","")],
+[tsB("",""),tsB("OMG SHAVED BRUSS","green"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("OMG CHOWDER CUP","green"),tsB("",""),tsB("LANDFOOD SCREEN","slate","",0,"landfood"),tsB("","")],
+[tsB("",""),tsB("OMG TOM BISQ CUP","green"),tsB("DRIVE","cyan"),tsB("SEAFOOD SCREEN","slate","",0,"seafood"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("","")]]},
+partner:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("GR UNICORN FISH","blue"),tsB("SAU UNICORN FISH","blue")],
+[tsB("",""),tsB("SAU COHO SALMON","blue"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("GR GROUPER RED","blue"),tsB("SAU GROUPER RED","blue"),tsB("",""),tsB("",""),tsB("","")]]},
+soup:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("HSE SALAD","green"),tsB("CZR SAL","green"),tsB("SHV BRS SAL","green"),tsB("",""),tsB("","")],
+[tsB("ENT HSE SAL","mint"),tsB("ENT CZR SAL","mint"),tsB("ENT SHV BRS SAL","mint"),tsB("",""),tsB("","")],
+[tsB("ENT LG HOUSE","royal"),tsB("ENT LG CAESAR","royal"),tsB("ENT LG BRS SAL","royal"),tsB("",""),tsB("","")],
+[tsB("ENT LG CHIX HSE","royal"),tsB("ENT LG CHIX CZR","royal"),tsB("ENT LG CHIX BRS","royal"),tsB("",""),tsB("","")],
+[tsB("ENT LG SRMP HSE","royal"),tsB("ENT LG SRMP CZR","royal"),tsB("ENT LG SHR BRS","royal"),tsB("",""),tsB("","")],
+[tsB("ENT LG SLMN HSE","royal"),tsB("ENT LG SLM CZR","royal"),tsB("ENT LG SLM BRS","royal"),tsB("",""),tsB("","")],
+[tsB("CHOWDER CUP","green"),tsB("CHOWDER BOWL","green"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("ENT CHOW CUP","mint"),tsB("ENT CHOW BOWL","mint"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("TOM BSQ CUP","green"),tsB("TOM BSQ BWL","green"),tsB("",""),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
+[tsB("ENT TOM BSQ CUP","mint"),tsB("ENT TOM BSQ BWL","mint"),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")]]},
+dinapps:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("SD ASPARAGUS","slate"),tsB("SD SLAW","slate"),tsB("",""),tsB("ADD 1 TAIL","gray"),tsB("ADD SIRLOIN 9 OZ","gray")],
+[tsB("SD BROCC","slate","0 Left"),tsB("SD SPINACH","slate"),tsB("",""),tsB("ADD 2 TAILS","gray"),tsB("ADD CRB CAKE REG","gray")],
+[tsB("SD NOBTR BROCC","slate","0 Left"),tsB("*SD AU GRATIN","blue"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("SD FRIES","slate"),tsB("*SD BACON MAC","blue"),tsB("",""),tsB("ADD SALMON","gray"),tsB("","")],
+[tsB("SD GREEN BEAN","slate"),tsB("*SD CRSP CAULI","blue"),tsB("",""),tsB("ADD 1/2 SHR","gray"),tsB("","")],
+[tsB("SD NOBTR GR BEAN","slate"),tsB("*SD KP BRUSSELS","blue"),tsB("",""),tsB("ADD 1/2 SCAL","gray"),tsB("","")],
+[tsB("SD GPOT","slate"),tsB("*SD TRFFL FRIES","blue"),tsB("",""),tsB("ADD 7OZ FILET","gray"),tsB("","")],
+[tsB("SD RICE","slate"),tsB("*SD SSNL RISOTTO","blue"),tsB("",""),tsB("ADD 8OZ CHIX","gray"),tsB("","")],
+[tsB("SD RSTD POTATOS","slate"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("SD SEAS VEG","slate"),tsB("*SD PUMPKIN RAV","blue"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("SD SHV BRSSL SPR","slate"),tsB("SD PASTA","slate"),tsB("",""),tsB("",""),tsB("ADD AVOCADO","gray")]]},
+desserts:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("BRBN BROWNIE","mag"),tsB("1 SCOOP I.C.","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("CHEESECAKE","mag"),tsB("2 SCOOPS I.C.","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("BB CRM BRULEE","mag","0 Left"),tsB("CHOC CHIP COOKIE","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("WHT CRAN COOKIE","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("COCONUT PIE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("MNGO CRM BRULEE","mag","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("PMKN CRM BRULEE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KEY LIME PIE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("SPC OCC CHOCOLAT","orange"),tsB("",""),tsB("",""),tsB("","")]]},
+kids:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("CHIX AND VEGGIE","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("MAC & CHEESE","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KIDS POP SHMP","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KID FISH STRIP","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KIDS GRILL FISH","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KID GR SHRIMP","blue"),tsB("L- KID GR SHRIMP","royal"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("KIDS POP CHIX","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
+winebottle:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",qty:true,rows:[
+[tsB("",""),tsB("B BEZEL CAKEBRD","orange"),tsB("SPLT BRUT","royal"),tsB("B BANSHEE PN","pink"),tsB("B MONDAVI CB","pink")],
+[tsB("B BEACH WHSP ANG","mag"),tsB("B ROMBAUER CH","orange"),tsB("SPLT ROSE","royal"),tsB("",""),tsB("","")],
+[tsB("B JACOB CRK MOSC","orange"),tsB("B KIM CRAWF SB","orange"),tsB("B VEUVE CLQ","royal"),tsB("",""),tsB("","")],
+[tsB("B CSM RS","orange"),tsB("",""),tsB("B LA MARCA PROS","royal"),tsB("B MEOIMI PN","pink"),tsB("B CAYMUS CA CAB","pink")],
+[tsB("B SEVEN D MSCT","orange"),tsB("B KJ CHARD","orange"),tsB("",""),tsB("",""),tsB("WD BOTTLES $","slate")],
+[tsB("",""),tsB("B WILL HILL CH","orange"),tsB("",""),tsB("B PORTILLO MB","pink"),tsB("B SB ROMBAUER","orange","0 Left")],
+[tsB("",""),tsB("B JSH SSWPT WB","orange"),tsB("",""),tsB("",""),tsB("B DUCKHORN CH","orange","0 Left")],
+[tsB("B ECCO PG","orange"),tsB("",""),tsB("",""),tsB("B-V ANTINORI RD","pink"),tsB("B ZIN ROMBAUER","pink","0 Left")],
+[tsB("B SANTA M PG","orange"),tsB("",""),tsB("",""),tsB("",""),tsB("B PRISONER RB","pink")],
+[tsB("B DECOY SB","orange"),tsB("",""),tsB("",""),tsB("B LOUIS MT CAB","pink"),tsB("","")]]},
+featwine:{h:"Order Screen 11/17/26 18:03|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("GL 6 Apothic","red"),tsB("BTL Apothic","red"),tsB("",""),tsB("YUENG LAGER","orange"),tsB("GLS 9 Apothic","red")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("DF IPA 60MIN","orange"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("Troegs Leaf Btl","royal"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("APPLE PIE BEER","pink"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("VAULT Dead Cat","slate"),tsB("","")],
+[tsB("GL 6 Alamos mlbc","pink"),tsB("Btl Alamos mlbc","pink"),tsB("",""),tsB("",""),tsB("GLS 9 Alamos","pink")],
+[tsB("GL Prosecco","green"),tsB("",""),tsB("Vault 5 CEES","teal"),tsB("Vault Clouds","teal"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("VDR IPA Draft","mag"),tsB("HH VDR IPA","mag"),tsB("","")]]},
+amcock:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("APEROL SPRITZ","teal"),tsB("BRBN APPLE","teal"),tsB("FRESH RASP TINI","teal"),tsB("LEMON DROP TINI","teal"),tsB("MIMOSA","teal")],
+[tsB("AMARETTO SOUR","teal"),tsB("CAPE COD","teal"),tsB("FUZZY NAVEL","teal"),tsB("LIT","teal"),tsB("MINT JULEP","teal")],
+[tsB("BAHAMA MAMA","teal"),tsB("CARAJILLO","teal"),tsB("GOLD RUSH","orange"),tsB("LIT TOP SHELF","teal"),tsB("MOJITO","teal")],
+[tsB("BAYBREEZE","teal"),tsB("CASTAWAY COSMO","teal"),tsB("GRAPEFRUIT TINI","teal"),tsB("LONG BCH ICE TEA","teal"),tsB("MUDSLIDE","teal")],
+[tsB("BEEHIVE SPRITZ","teal"),tsB("CHOCOLATE TINI","teal"),tsB("GREYHOUND","teal"),tsB("LYCHEE TINI","orange"),tsB("MUDSLIDE FROZEN","teal")],
+[tsB("BLACK RUSSIAN","teal"),tsB("CUBA LIBRA","teal"),tsB("HEATWAVE TINI","teal"),tsB("MADRAS","teal"),tsB("","")],
+[tsB("BLAZIN BRITCHES","orange"),tsB("",""),tsB("HURRICANE","teal"),tsB("MAI TAI","teal"),tsB("OLD COSMO","teal")],
+[tsB("BLOODY MARY","teal"),tsB("DAIQUIRI STRWBRY","teal"),tsB("HYPNOTIQ TINI","teal"),tsB("MARG TOP SHELF","teal"),tsB("COSMO","teal")],
+[tsB("",""),tsB("ENCHANTED ROSE","teal"),tsB("ICE PICK","teal"),tsB("MARGARITA","teal"),tsB("","")],
+[tsB("BONEFISH TINI","teal"),tsB("FRENCH TINI","teal"),tsB("ISLAND BREEZE","teal"),tsB("MARGARITA STRAWB","teal"),tsB("","")],
+[tsB("BRANDY ALEXANDER","teal"),tsB("FRESH APPLE TINI","orange"),tsB("KIR ROYAL","teal"),tsB("MERMAID TIKI","teal"),tsB("COCKTAIL N-Z","red","",0,"nzcock")]]},
+nzcock:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("NEGRONI","teal"),tsB("SALTY DOG","teal"),tsB("VODKA COLLINS","teal"),tsB("",""),tsB("","")],
+[tsB("OLD FASHIONED","teal"),tsB("SCREWDRIVER","teal"),tsB("WATERMELON TINI","teal","0 Left"),tsB("",""),tsB("","")],
+[tsB("PALOMA","teal"),tsB("SEABREEEZE","teal"),tsB("WHISKEY COLLINS","teal"),tsB("",""),tsB("","")],
+[tsB("PARTRIDGE PEAR","teal"),tsB("SEX ON THE BEACH","teal"),tsB("WHISKEY SOUR","teal"),tsB("",""),tsB("","")],
+[tsB("PINA COLADA","teal"),tsB("SIDECAR","teal"),tsB("WHITE COSMO","orange"),tsB("",""),tsB("","")],
+[tsB("P COLADA TOP SH","teal"),tsB("SOUR APPLE TINI","teal"),tsB("WHITE RUSSIAN","teal"),tsB("",""),tsB("","")],
+[tsB("MARG PTRN CUC","teal"),tsB("SPRITZER","teal"),tsB("WILD FLOWER","teal"),tsB("",""),tsB("","")],
+[tsB("PUMPKIN TINI","teal"),tsB("STRW CITRUS TINI","teal"),tsB("WINT WH BELLINI","teal"),tsB("",""),tsB("","")],
+[tsB("RASPBERRY TINI","teal"),tsB("TEQUILA SUNRISE","teal"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("RUM RUNNER","teal"),tsB("TOM COLLINS","teal"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("RUSTY NAIL","teal"),tsB("TROPIC HEAT TINI","teal"),tsB("",""),tsB("COCKTAIL A-M","red","",0,"amcock"),tsB("","")]]},
+vodka:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("*VODKA","green"),tsB("",""),tsB("",""),tsB("",""),tsB("*GIN","green")],
+[tsB("*ABSOLUT","green"),tsB("",""),tsB("",""),tsB("",""),tsB("BEEFEATER","green")],
+[tsB("*ABS CITRON","green"),tsB("NEW AM VAN","green"),tsB("",""),tsB("",""),tsB("BOMBAY","green","0 Left")],
+[tsB("*ABS LIME","green","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("BOMBAY SAPPHIRE","green")],
+[tsB("*ABS MANDARIN","green","0 Left"),tsB("REYKA","green"),tsB("",""),tsB("",""),tsB("*GRAY WHALE","green")],
+[tsB("*ABS PEAR","green","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("HENDRICKS","green")],
+[tsB("BELVEDERE","green"),tsB("STOLI RASPBERRY","green","0 Left"),tsB("",""),tsB("",""),tsB("MR PICKLES","green")],
+[tsB("FRIS","green"),tsB("STOLI VANILLA","green"),tsB("",""),tsB("",""),tsB("*NEW AMSTERDAM","green")],
+[tsB("GREY GOOSE","green"),tsB("",""),tsB("",""),tsB("",""),tsB("TANQUERAY","green")],
+[tsB("",""),tsB("SVEDKA VANILLA","green","0 Left"),tsB("",""),tsB("TANQUERAY 10","teal"),tsB("","")],
+[tsB("KETEL 1","green"),tsB("*TITOS HANDMADE","green"),tsB("",""),tsB("",""),tsB("STUFFED OLIVE","red")]]},
+bourbon:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
+[tsB("*BOURBON","pink"),tsB("GLENLIVET 12","pink"),tsB("*MAKERS MARK","pink"),tsB("",""),tsB("","")],
+[tsB("*SCOTCH","pink"),tsB("JEFFERSONS OCEAN","pink"),tsB("MAKERS 46","pink","0 Left"),tsB("",""),tsB("","")],
+[tsB("*WHISKEY","pink"),tsB("J & B","pink"),tsB("RABBIT HOLE","pink","0 Left"),tsB("",""),tsB("","")],
+[tsB("ANGELS ENVY","pink"),tsB("*JACK DANIELS","pink"),tsB("SEAGRAMS 7","pink"),tsB("",""),tsB("","")],
+[tsB("BASIL HAYDENS","pink"),tsB("JAMESONS IRISH","pink"),tsB("SEAGRAMS VO","pink"),tsB("",""),tsB("","")],
+[tsB("C.C.","pink","0 Left"),tsB("JIM BEAM","pink"),tsB("SOUTHERN COMFORT","pink"),tsB("",""),tsB("","")],
+[tsB("CHIVAS","pink","0 Left"),tsB("JW BLACK","pink"),tsB("WHISTLEPIG","pink"),tsB("",""),tsB("","")],
+[tsB("CROWN ROYAL","pink"),tsB("JW RED","pink"),tsB("WLD TURKEY 101","pink","0 Left"),tsB("",""),tsB("","")],
+[tsB("*DEWARS WHITE","pink"),tsB("KNOB CREEK","pink"),tsB("WOODFORD RESERVE","pink"),tsB("BULLEIT 95 RYE","red","0 Left"),tsB("","")],
+[tsB("GENTLEMAN JACK","pink","0 Left"),tsB("MACALLAN 12","pink"),tsB("",""),tsB("",""),tsB("NA LYRES BRBN","royal")],
+[tsB("GLENFIDDICH 12","pink"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
+rum:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("*RUM","blue"),tsB("",""),tsB("NA LYRES WT RUM","royal"),tsB("PANTALONES BLNCO","blue"),tsB("*TEQUILA/ SAUZA G","blue")],
+[tsB("*BACARDI","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("ALTOS","blue","0 Left")],
+[tsB("BACARDI ANEJO","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("CASAMIGOS ANEJO","blue","0 Left")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("CASAMIGOS BLANCO","blue")],
+[tsB("CAPT MORGAN","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("CUERVO GOLD","blue","0 Left")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("HERRADURA REPO","blue","0 Left")],
+[tsB("MALIBU","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("HORNITOS REPSADO","blue")],
+[tsB("MOUNT GAY","blue","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("*LUNAZUL BLANCO","blue")],
+[tsB("MYERS DARK","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("MEZCAL","blue","0 Left")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("PATRON REPOSADO","blue","0 Left")],
+[tsB("RUMHAVEN","royal","0 Left"),tsB("SAILOR JERRY","royal","0 Left"),tsB("",""),tsB("1800 REPOSADO","royal","0 Left"),tsB("PATRON SILVER","blue")]]},
+shooter:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("ALABAMA SLAMMER","red"),tsB("ORANGE TIC TAC","red"),tsB("",""),tsB("BAILEYS COFFEE","blue"),tsB("","")],
+[tsB("B-52","red"),tsB("PURPLE HOOTER","red"),tsB("",""),tsB("BFG IRISH COFFEE","blue"),tsB("","")],
+[tsB("BUTTERY NIPPLE","red"),tsB("RED HEADED TART","red"),tsB("",""),tsB("CARIBBEAN COFFEE","blue"),tsB("","")],
+[tsB("CREAMSICLE","red"),tsB("RED SNAPPER","red"),tsB("",""),tsB("IRISH GOODBYE","blue"),tsB("","")],
+[tsB("GRAPE BOMB","red"),tsB("WASHGTON APPLE","red"),tsB("",""),tsB("KAHLUA COFFEE","blue"),tsB("","")],
+[tsB("GRASSHOPPER","red"),tsB("WOO WOO","red"),tsB("",""),tsB("KENTUCKY COFFEE","blue"),tsB("","")],
+[tsB("IRISH CAR BOMB","red"),tsB("",""),tsB("",""),tsB("KEOKE COFFEE","blue"),tsB("","")],
+[tsB("KAMIKAZE","red"),tsB("",""),tsB("",""),tsB("MEXICAN COFFEE","blue"),tsB("","")],
+[tsB("LEMON DROP SHOT","red"),tsB("",""),tsB("",""),tsB("NUTTY IRISH COFF","blue"),tsB("","")],
+[tsB("MELONBALL","red"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
+cordials:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("APEROL","mag"),tsB("REMY MARTIN VSOP","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("AMARO NONINO","mag"),tsB("",""),tsB("",""),tsB("SANDEMANS","mag","0 Left"),tsB("","")],
+[tsB("AMRETTO DISRRONO","mag"),tsB("",""),tsB("",""),tsB("SAMBUCA WHITE","mag","0 Left"),tsB("","")],
+[tsB("BAILEYS","mag"),tsB("ST GERMAIN ELDER","mag"),tsB("",""),tsB("HENNESSEY VS","mag"),tsB("","")],
+[tsB("CHAMBORD","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("COINTREAU","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FRANGELICO","mag"),tsB("",""),tsB("",""),tsB("DRAMBUIE","mag"),tsB("","")],
+[tsB("GRAND MARNIER","mag"),tsB("",""),tsB("",""),tsB("COURVOISIER VS","mag"),tsB("","")],
+[tsB("HYPNOTIQ","mag"),tsB("",""),tsB("",""),tsB("CHRIS BRO BRNDY","mag"),tsB("","")],
+[tsB("KAHLUA","mag"),tsB("",""),tsB("",""),tsB("CAMPARI","mag"),tsB("","")],
+[tsB("PATRON CITRONGE","mag","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
+mgrcomp:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("ROUND UP","blue"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("CHARITY","blue"),tsB("",""),tsB("","")]]},
+misc:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty:true,rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("ASAP","slate"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("CORKING FEE","slate"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("LARGE PARTY","slate"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("OPEN MERCHANDISE","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("NAME","slate"),tsB("",""),tsB("",""),tsB("<<RTRN COMP SCRN","slate"),tsB("","")]]},
+gift:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("BRACELET","orange"),tsB("OPEN $ GIFT CARD","green","",2),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("BONUS CARD","red"),tsB("","")]]},
+refills:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("A1 1oz","blue"),tsB("COCKTAIL 1OZ","blue"),tsB("SOY 1oz","blue"),tsB("",""),tsB("CHIPS 8EA","orange")],
+[tsB("ASIAN BANG 2oz","blue"),tsB("HNY BRBN GLZ 1oz","blue"),tsB("RUM SC 1.5oz","blue"),tsB("",""),tsB("WONTON CHIPS 8EA","orange")],
+[tsB("",""),tsB("KETCHUP 1.5OZ","blue"),tsB("SPC BRBN GLZ 2oz","blue"),tsB("1/2 GR LEMON","pink"),tsB("LEMON WEDGE","mag")],
+[tsB("BANG 2oz","blue"),tsB("KUNG PAO 1oz","blue"),tsB("TARTAR 1.5oz","blue"),tsB("LCB 1oz","pink"),tsB("WHIPPED BUTTER","mag")],
+[tsB("BLU CHZ 1.5oz","blue"),tsB("LOB CRM SAUC 2OZ","blue"),tsB("THAI SWT 1.5oz","blue"),tsB("CHIMI 3/4oz","pink"),tsB("LOB BUTTER","mag")],
+[tsB("BRBN CHOC 1oz","blue"),tsB("MPLE BALSMIC 1oz","blue"),tsB("TMTO CRM SC 2oz","blue"),tsB("LEMON BTR 1oz","pink"),tsB("PARM CHEESE 1oz","mag")],
+[tsB("BOURBON GLZ 2OZ","blue"),tsB("MAYO 1tbs","blue"),tsB("TNGY MUSTARD 1oz","blue"),tsB("MANGO 2oz","pink"),tsB("PESTO BREAD","mag")],
+[tsB("CAESAR 2oz","blue"),tsB("PESTO 1oz","blue"),tsB("TRUFFL AIOLI 1OZ","blue"),tsB("MARSALA 2oz","pink"),tsB("","")],
+[tsB("CHRRY SC 1.5oz","blue"),tsB("RANCH 1.5oz","blue"),tsB("WASABI 100#","blue"),tsB("PAN ASIAN 3/4oz","pink"),tsB("","")],
+[tsB("CIL LIME SC 1oz","blue"),tsB("SASH 3/4oz","blue"),tsB("RF PINEAPPLE GLZ","blue"),tsB("",""),tsB("","")],
+[tsB("CITRS HERB 3/4oz","blue"),tsB("SCAMPI BTR 2oz","blue"),tsB("",""),tsB("DIABLO SAUCE 1.5","pink"),tsB("","")]]},
+privatedining:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty:true,rows:[
+[tsB("LARGE PARTY","slate"),tsB("",""),tsB("",""),tsB("PD BEER WINE $","orange"),tsB("PD BEER WINEMENU","orange")],
+[tsB("PD-HOOK","royal"),tsB("",""),tsB("",""),tsB("PD BEER $","orange"),tsB("PD BEER MENU","orange")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("PD WINE $","orange"),tsB("PD WINE MENU","orange")],
+[tsB("PD-PEARL","blue"),tsB("WG LUNCH","teal"),tsB("",""),tsB("PD LIQUOR $","orange"),tsB("PD LIQUOR MENU","orange")],
+[tsB("PD-SUNSET","blue"),tsB("WG DINNER","teal"),tsB("",""),tsB("PD BWL $","orange"),tsB("PD BWL MENU","orange")],
+[tsB("PD-RIPTIDE","royal"),tsB("",""),tsB("",""),tsB("PD BRUNCH LQR $","orange"),tsB("PD BRNCH LQ MENU","orange")],
+[tsB("PD-CUSTOM MENU","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("PD-$CUSTOM","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("PD-BRUNCH","blue"),tsB("SOUPS/ SALADS","royal"),tsB("PD-LURE APPS","royal"),tsB("",""),tsB("","")],
+[tsB("PD-$BRUNCH","blue"),tsB("APPS","royal"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("DESSERTS","royal"),tsB("",""),tsB("",""),tsB("","")]]},
+brunch:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("B BUBBLS W/ JUICE","royal"),tsB("BAC BLOODY MARY","teal"),tsB("N/A BB REFRESHER","royal"),tsB("TRADITNL BENE","blue"),tsB("SD BACON","slate")],
+[tsB("P BLKBRY SANGRIA","pink"),tsB("BEEHIVE SPRITZ","teal"),tsB("N/A DRG NOJITO","royal"),tsB("BANG BENE","blue"),tsB("SD BF POTATOES","slate")],
+[tsB("P WHITE SANGRIA","orange"),tsB("COLD FASHIONED","teal"),tsB("N/A BOTANIC BRZ","royal"),tsB("CRB/FNT FRITTATA","blue"),tsB("SD SCRMBLED EGGS","slate")],
+[tsB("P PATRN PRKR MRG","teal"),tsB("ESPRESSO TINI","teal"),tsB("",""),tsB("B SHRIMP & GRITS","blue"),tsB("SD GRITS","slate")],
+[tsB("P SAUZA PRKR MRG","teal"),tsB("MIMOSA","teal"),tsB("",""),tsB("CB FRNCH TOAST","blue"),tsB("KID EGG PLATE","blue")],
+[tsB("MINI TINI FLIGHT","mint"),tsB("WINT WH BELLINI","teal"),tsB("",""),tsB("EGG BURGER","blue"),tsB("KID CB FRNCH TST","blue")],
+[tsB("",""),tsB("STRWBRRY APEROL","orange"),tsB("",""),tsB("BURGR & CB F TST","blue"),tsB("BRKFAST TACO","blue")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("TACO & CB F TST","blue"),tsB("CC HUEVOS RNCHRO","blue")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")]]},
+lunch:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
+[tsB("L ENT SOUP/ SAL","mint"),tsB("ENT LG BRS SAL","royal"),tsB("L FR CHIX SAND","mint"),tsB("PRIX FIXE NA BEV","red"),tsB("LPF FISH & CHIPS","pink")],
+[tsB("",""),tsB("ENT LG CHIX BRS","royal"),tsB("L FR FISH SAND","mint"),tsB("LPF 2 BANG TACO","pink"),tsB("LPF BURGER 8 OZ","pink")],
+[tsB("ENT LG HOUSE","royal"),tsB("ENT LG SHR BRS","royal"),tsB("L GR CHIX SAND","mint"),tsB("LPF 2 FISH TACO","pink"),tsB("LPF GR CHICKEN","pink")],
+[tsB("ENT LG CHIX HSE","royal"),tsB("ENT LG SLM BRS","royal"),tsB("L GR FISH SAND","mint"),tsB("LPF 2 CHIX TACO","pink"),tsB("LPF 2 BNG CHX TC","pink")],
+[tsB("ENT LG SRMP HSE","royal"),tsB("",""),tsB("L BLKN CHIX SAND","mint"),tsB("LPF SHRMP & GRTS","pink"),tsB("","")],
+[tsB("ENT LG SLMN HSE","royal"),tsB("",""),tsB("L BLKN FISH SAND","mint"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("POKE BOWL","mag"),tsB("LPF PRM LING","pink"),tsB("LPF ANGLRS CATCH","pink")],
+[tsB("ENT LG CAESAR","royal"),tsB("LPF BANG BURGER","mag"),tsB("",""),tsB("LPF CHX PRM LING","mag"),tsB("","")],
+[tsB("ENT LG CHIX CZR","royal"),tsB("LPF TMTO LING","mag"),tsB("",""),tsB("LPF SHRP PRM LNG","mag"),tsB("","")],
+[tsB("ENT LG SLM CZR","royal"),tsB("LPF CHIX LING","mag"),tsB("",""),tsB("DRIVE","cyan"),tsB("BEVERAGE SCREEN","slate")],
+[tsB("ENT LG SRMP CZR","royal"),tsB("LPF SHP LING","mag"),tsB("",""),tsB("1st TIME GUEST","cyan"),tsB("","")]]},
+bundles:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty:true,rows:[
+[tsB("FAMILY BUNDLE","royal","",2),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB LILY CHICKEN","blue"),tsB("FB BANG TACO","blue"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB SG CHICKEN","blue"),tsB("FB MAHI SHRIMP","blue"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB SALMON","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB MAHI","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB CRMY T CAVA","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("FB SH CRMY T CAV","blue"),tsB("",""),tsB("",""),tsB("TG NA MTCHA CLDA","royal"),tsB("","")],
+[tsB("FB CH CRMY T CAV","blue"),tsB("",""),tsB("B BANSHEE PN","pink"),tsB("TG NA DRG NOJITO","royal"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB(".5GAL TEA","blue"),tsB("","")],
+[tsB("",""),tsB("$ ALC FB SIDE","blue"),tsB("",""),tsB(".5GAL LEMONADE","blue"),tsB("","")]]},
+test:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",test:true,rows:[]}
+};
+var tsCur="seafood", tsCurSet=0;
+function tsGoTo(id,setIdx){tsCur=id; if(setIdx!==undefined&&setIdx!==null)tsCurSet=setIdx; else tsCurSet=TS_NATURAL[id]; tsRender();}
+function tsTabClick(id,idx){
+  var set=TS_SETS[tsCurSet];
+  var isTop=(idx===0), isBot=(idx===set.length-1);
+  if(isBot && tsCurSet<2){ tsGoTo(id,tsCurSet+1); }
+  else if(isTop && tsCurSet>0){ tsGoTo(id,tsCurSet-1); }
+  else { tsGoTo(id,tsCurSet); }
+}
+function tsRender(){
+  var p=TS_PAGES[tsCur];
+  var parts=p.h.split("|");
+  document.getElementById("tsHdrL").textContent=parts[0];
+  document.getElementById("tsHdrM").textContent=parts[1];
+  var zone=document.getElementById("tsZone"); zone.innerHTML="";
+  if(p.test){
+    var n=document.createElement("div"); n.className="tsNote"; n.textContent="The TEST page has not been photographed yet, so there are no buttons to show here."; zone.appendChild(n);
+  } else {
+    var wrap=document.createElement("div");
+    if(p.qty){ wrap.className="tsWithq";
+      var q=document.createElement("div"); q.className="tsQty";
+      for(var i=0;i<10;i++){var k=document.createElement("div");k.setAttribute("role","button");k.className="tsQkey";k.textContent=i;k.onclick=(function(el){return function(){el.classList.add("tsFlash");setTimeout(function(){el.classList.remove("tsFlash")},180)}})(k);q.appendChild(k);}
+      wrap.appendChild(q);
+    }
+    var g=document.createElement("div"); g.className="tsGrid";
+    p.rows.forEach(function(row){
+      var r=document.createElement("div"); r.className="tsGrow";
+      row.forEach(function(cell){
+        if(!cell.l){var s=document.createElement("div");s.className="tsSpacer";if(cell.w)s.style.flex=cell.w;r.appendChild(s);return;}
+        var d=document.createElement("div"); d.setAttribute("role","button");
+        var dest=cell.d;
+        d.className="tsBtn tsC-"+cell.c; if(cell.w)d.style.flex=cell.w;
+        var lab=document.createElement("span"); lab.textContent=cell.l; d.appendChild(lab);
+        if(cell.t){var tg=document.createElement("span");tg.className=(cell.t==="SPECIAL"?"tsTagS":"tsTag");tg.textContent=cell.t;d.appendChild(tg);}
+        d.onclick=function(){ if(dest){tsGoTo(dest);} else {d.classList.add("tsFlash");setTimeout(function(){d.classList.remove("tsFlash")},180);} };
+        r.appendChild(d);
+      });
+      g.appendChild(r);
+    });
+    wrap.appendChild(g); zone.appendChild(wrap);
+  }
+  var tabs=document.getElementById("tsTabs"); tabs.innerHTML="";
+  TS_SETS[tsCurSet].forEach(function(id,idx){
+    var t=document.createElement("div"); t.setAttribute("role","button"); t.className="tsTab"+(id===tsCur?" on":""); t.textContent=TS_TABLABEL[id];
+    t.onclick=function(){tsTabClick(id,idx)}; tabs.appendChild(t);
+  });
+  var foot=document.getElementById("tsFoot"); foot.innerHTML="";
+  ["Menu","Delete Item","Modify Item","Review Order","Send/Stay","Send Order","Print Check"].forEach(function(l){
+    var f=document.createElement("div"); f.setAttribute("role","button"); f.className="tsFbtn"; f.textContent=l;
+    f.onclick=function(){f.classList.add("tsFlash");setTimeout(function(){f.classList.remove("tsFlash")},180)}; foot.appendChild(f);
+  });
+}
+tsRender();
+function enterTabletSim(){
+  mode='tablet'; menuDeck=null;
+  if(musicOn) startMusic(); // lounge loop carries into the track, already running, never restarted
+  menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
+  exitState.inside=false; exitState.t=0;
+  document.getElementById('exitBtn').style.display='';
+  tabletOpen=true;
+  document.getElementById('tabletOverlay').classList.add('open');
+  tsGoTo('seafood',0);
+  setMsg('📱 <b>Tablet Sim.</b> Flip through the POS tablet: tap a tab on the right to open its page. Close the window to head back to the hub.','');
+  updateHUD();
+}
+document.getElementById('tsClose').addEventListener('click',function(){ exitToHub(terminals[2].x); });
+document.getElementById('tabletOverlay').addEventListener('click',function(e){ if(e.target===this || e.target.className==='tsBackdrop') exitToHub(terminals[2].x); });
 // (Build 200.11: the Food or Drinks deck chooser is gone. The Menu
 // Training terminal opens the one combined session directly, see
 // CombinedModule below. The Seasonal only list and drill stay.)
@@ -1844,7 +2330,7 @@ function startMenuWorld(block){
   // Entry teleport: straight to the kitchen pass for the first dish, same
   // as Table Training, no walk in through the IN door first.
   player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
-  setMsg('<b>Menu Training, one session, food and drinks together.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>up to two dishes plus a drink</b> for a table, or <b>one dish</b> for a barstool. Drinks come from the bar, so they only ever ride along to tables, never to the barstools. Deliver it and you\'ll get to read the cards. After a few runs you\'ll get a quiz on everything you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  setMsg('<b>Menu Training, one session, food and drinks together.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>up to two dishes plus a drink for each dish</b> for a table (two dishes carry two drinks), or <b>one dish</b> for a barstool. Drinks come from the bar, so they only ever ride along to tables, never to the barstools. Deliver it and you\'ll get to read the cards. After a few runs you\'ll get a quiz on everything you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
   updateHUD();
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   nextTimer=setTimeout(newTicket,1200);
@@ -3941,8 +4427,11 @@ var CombinedModule=(function(){
   // same dish on one tab are firing variants, not two tabs.
   function posTabTextC(it){ return (it.posTabs&&it.posTabs.length)?it.posTabs.join(', '):''; }
   function posTabLineC(it){
-    var t=posTabTextC(it);
-    return t?'<div style="margin-top:6px">POS tab: <b>'+esc(t)+'</b></div>':'';
+    // Build 200.14: the POS tab line shows a picture of each tab too, a
+    // small replica of its blue rail button, next to the tab names. One
+    // shared helper renders it everywhere (info cards, quiz feedback,
+    // allergen rounds).
+    return posTabLineHTML(it);
   }
   var POS_AREA_FOOD_C=['SEAFOOD','LAND FOOD','SOUP & SALAD','DIN APPS/SIDES','DESSERTS','KIDS','LUNCH','BRUNCH','BUNDLES','PARTNER SELECT','SEASONAL ENT SPECIALS','REFILLS'];
   var POS_AREA_DRINK_C=['A-M COCKTAILS HH','N-Z COCKTAILS HH','VODKA/GIN HH','BOUR/SCO/WHISK HH','RUM/TEQ HH','SHOOTER/COFFEE DRNK','CORDIALS','BRUNCH','BUNDLES','WINE BOTTLE','FEAT WINE/BEER'];
@@ -4048,6 +4537,28 @@ var CombinedModule=(function(){
     if(pool.length) return shuffle(pool)[0];
     return DRINK_ITEMS[0];
   }
+  // Build 300.6: a table tray carries one drink per food dish, so a
+  // two-entree table order needs TWO distinct drinks. Same priorities
+  // as pickDrink (refiring drinks first, then unserved off the deck,
+  // then repeats of served drinks), never the same drink twice.
+  function pickDrinks(n){
+    var out=[], used={};
+    for(var i=0;i<store.drinkRefire.length&&out.length<n;i++){ var r=DRINK_ITEMS[store.drinkRefire[i]]; if(r&&!used[r.id]){ out.push(r); used[r.id]=1; } }
+    if(out.length<n){
+      var deck=ensureDrinkDeck();
+      while(deck.idx<deck.order.length&&out.length<n){
+        var it=DRINK_ITEMS[deck.order[deck.idx++]];
+        if(it&&!PD(it.id).served&&!used[it.id]){ out.push(it); used[it.id]=1; }
+      }
+      save();
+    }
+    if(out.length<n){
+      var pool=shuffle(drinkServed().filter(function(it2){ return !used[it2.id]; }));
+      for(var j=0;j<pool.length&&out.length<n;j++){ out.push(pool[j]); used[pool[j].id]=1; }
+    }
+    if(!out.length){ var d0=pickDrink(); if(d0) out.push(d0); }
+    return out;
+  }
   var stoolDeckC=[], stoolIdxC=0;
   function nextStoolC(){
     if(stoolIdxC>=stoolDeckC.length){
@@ -4075,8 +4586,9 @@ var CombinedModule=(function(){
   // waiting drink refire or table dish refire forces a dining table
   // tray; a waiting barstool dish refire goes back to a barstool on its
   // own. With nothing on refire, the destination comes off the shared
-  // table deck as before: a dining table gets food plus a drink, a
-  // barstool gets one dish, food only.
+  // table deck as before: a dining table gets food plus a drink per
+  // dish (two drinks on a two-entree tray since 300.6), a barstool
+  // gets one dish, food only.
   // ----- In-world shift -----
   function handleNewTicket(){
     if(!menuWorldActive||menuCurrentBlock===null||menuCurrentBlock===undefined) return;
@@ -4107,19 +4619,22 @@ var CombinedModule=(function(){
       updateHUD(); updateMenuWorldButtons();
       return;
     }
-    // Dining table order: up to 2 food dishes plus 1 drink, together.
-    // pickDrink returns a refiring drink first, so a missed drink comes
-    // back out on a table tray, never to a barstool.
+    // Dining table order: up to 2 food dishes plus one drink per dish,
+    // together (Build 300.6: two entrees carry two drinks, one entree
+    // carries one). pickDrinks returns refiring drinks first, so a
+    // missed drink comes back out on a table tray, never to a barstool,
+    // and a refire of a two-entree order carries two drinks the same
+    // way.
     var dishes=pickFoodDishes(2,'table');
-    var drink=pickDrink();
+    var drinks=pickDrinks(dishes.length>=2?2:1);
     var tray=dishes.slice();
-    if(drink) tray.push(drink);
+    drinks.forEach(function(d){ tray.push(d); });
     if(!tray.length){ target=null; setMsg('📋 <b>No items available right now.</b>',''); updateHUD(); return; }
     menuTrayDishes=tray;
     trayOnPass=true; carrying=false;
     bell();
     var anyRefire=tray.some(function(it){return isRefireE((DRINK_ITEMS.indexOf(it)>=0)?dEntry(it):fEntry(it));});
-    setMsg('🔔 <b>Order up!</b> Tray for <b>table '+target.n+'</b>, waiting on the pass inside the kitchen. '+(dishes.length?('<b>'+dishes.length+' dish'+(dishes.length===1?'':'es')+' plus a drink</b> on this tray. '):'<b>One drink</b> on this tray. ')+'Everything on the tray is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(anyRefire?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
+    setMsg('🔔 <b>Order up!</b> Tray for <b>table '+target.n+'</b>, waiting on the pass inside the kitchen. '+(dishes.length?('<b>'+dishes.length+' dish'+(dishes.length===1?'':'es')+' plus '+(drinks.length===1?'a drink':drinks.length+' drinks')+'</b> on this tray. '):'<b>One drink</b> on this tray. ')+'Everything on the tray is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(anyRefire?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
     updateHUD(); updateMenuWorldButtons();
   }
   function handleMenuDeliver(){
@@ -4544,6 +5059,10 @@ var CombinedModule=(function(){
     var optsHTML;
     if(q.kind==='name2photo'){
       optsHTML='<div class="mPhotoGrid">'+q.opts.map(function(o,i){ var oi=MENU_ITEMS[o.id]; return '<button class="mOpt" data-i="'+i+'" aria-label="Photo option '+(i+1)+'">'+gridPhotoHTMLC(oi,i)+'</button>'; }).join('')+'</div>';
+    } else if(q.kind==='postab'){
+      // Build 200.14: each tab option shows a picture of every tab in the
+      // set (small blue rail button replicas) next to the set's names.
+      optsHTML=q.opts.map(function(o,i){ return '<button class="mOpt" data-i="'+i+'">'+posTabSetHTML(o.text)+'</button>'; }).join('');
     } else {
       optsHTML=q.opts.map(function(o,i){ return '<button class="mOpt" data-i="'+i+'">'+esc(o.text)+'</button>'; }).join('');
     }
@@ -4850,7 +5369,7 @@ var CombinedModule=(function(){
       '<div class="mIntroChips"><span>'+totalN+' items</span><span>'+MENU_ITEMS.length+' dishes + '+DRINK_ITEMS.length+' drinks</span><span>One combined pool</span></div>'+
       '<div class="mRow"><button class="mBtn" id="mCIntroStartTop">▶ Start the session, skip the tour</button></div>'+
       '<div class="mSteps">'+
-      stepC('🔔','Bell rings','Your tray is waiting on the <b>pass</b>. A dining table tray carries <b>up to 2 dishes plus 1 drink</b>, all together. A barstool tray is <b>1 dish, food only</b>: drinks come from the bar, not the kitchen, so no drink ever goes to a barstool (101 to 114). The items are named in the <b>panel on the top left</b>.')+
+      stepC('🔔','Bell rings','Your tray is waiting on the <b>pass</b>. A dining table tray carries <b>up to 2 dishes plus a drink for each dish</b>, all together: 1 dish carries 1 drink, 2 dishes carry 2 drinks. A barstool tray is <b>1 dish, food only</b>: drinks come from the bar, not the kitchen, so no drink ever goes to a barstool (101 to 114). The items are named in the <b>panel on the top left</b>.')+
       stepC('🍽️','Pick up and deliver','Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the table or barstool</b> it is headed to.')+
       stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, garnish for drinks, and the <b>POS tab</b> it is rung on. <b>That is what the quiz asks about</b>, so give them a real read.')+
       stepC('❓','Quiz pops up','After a few runs you will get quizzed, <b>only on items you have served, food and drinks together</b>. You can tap <b>Quiz me</b> anytime if you want one sooner.')+
@@ -4936,6 +5455,7 @@ document.getElementById('musicBtn').addEventListener('click',function(){
 document.getElementById('exitBtn').addEventListener('click',function(){
   if(mode==='table') exitToHub(terminals[0].x);
   else if(mode==='menu') exitToHub(terminals[1].x);
+  else if(mode==='tablet') exitToHub(terminals[2].x);
 });
 document.getElementById('menuQuizBtn').addEventListener('click',function(){
   var am=activeMenuModule();
@@ -4945,8 +5465,10 @@ document.getElementById('menuQuizBtn').addEventListener('click',function(){
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     if(patchOpen){ closePatchNotes(); return; }
+    if(tabletOpen){ exitToHub(terminals[2].x); return; }
     if(mode==='table') exitToHub(terminals[0].x);
     else if(mode==='menu') exitToHub(terminals[1].x);
+    else if(mode==='tablet') exitToHub(terminals[2].x);
   }
 });
 // ---------- Patch notes: full log in this Spaces (Beta) build, newest first ----------

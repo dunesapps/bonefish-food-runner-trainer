@@ -3,6 +3,13 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.6 — Prod — Nov 21, 2026
+
+- Added a Tablet Sim training track with the full POS tablet.
+- Quiz shows a picture of each POS tab.
+- Hub PCs are smaller.
+- Two-entree tables now get two drinks.
+
 ## Build 300.5 — Prod — Nov 21, 2026
 
 - Quiz now teaches which POS tab each item is on.
