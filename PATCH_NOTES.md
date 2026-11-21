@@ -3,6 +3,15 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.3 — Prod — Nov 21, 2026
+
+- Drinks deck corrected against the study guide.
+- Added garnishes for all drinks, with garnish questions.
+- Added Social Hour Cocktails, Mimosa, Bloody Mary, and Whistlepig Old Fashioned.
+- Removed Chocolate Martini and Indigo Sunset.
+- Added illustrations for all guide drinks.
+- Fixed seasonal items in the quiz. Added a Seasonal only drill.
+
 ## Build 300.2 — Prod — Nov 20, 2026
 
 - Added a drinks deck: martinis, cocktails, wines, beers.
