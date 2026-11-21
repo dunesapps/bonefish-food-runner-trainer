@@ -356,7 +356,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.6</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.7</span>
     </div>
   </div>
 
@@ -435,12 +435,9 @@
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
           <div class="patchEntry">
-            <div class="patchEntryHead"><b>Build 300.6</b></div>
+            <div class="patchEntryHead"><b>Build 300.7</b></div>
             <ul>
-              <li>Added a Tablet Sim training track with the full POS tablet.</li>
-              <li>Quiz shows a picture of each POS tab.</li>
-              <li>Hub PCs are smaller.</li>
-              <li>Two-entree tables now get two drinks.</li>
+              <li>Quiz no longer uses the Bundles tab for dishes that live on other tabs.</li>
             </ul>
           </div>
         </div>
@@ -480,8 +477,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Beta 300.6 (internal, not published): a hub terminal adjustment plus one Menu Training delivery rule. The three PC terminals (monitor and desk) are drawn 30 percent smaller, scaled around each terminal's own centre, and the whole terminal row (the PCs, their name labels, and their stand rings) shifts 0.33 units left so the Tablet Sim desk clears the FRONT DOOR floor lettering. The stand rings keep their size, and their trigger zones and the exit landing spots move with them, so each ring stays right in front of its PC. The terminal labels keep their original size so they stay readable. The front door, its mat and lettering, and the coral EXIT ring do not move. Delivery rule: a Menu Training table order with two entrees now carries two drinks on the tray instead of one (one entree still carries one drink, barstool orders stay food only, and refires of a two-entree order carry two drinks the same way). Everything else is unchanged from 200.14: the Tablet Sim track, the combined pool and POS tab data and icons, all other delivery rules, all other quiz kinds, spaced repetition, seasonal handling, merged progress, Table Training, and all item content and images. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.6';
+// This build is Prod 300.7: one quiz data rule on top of Prod 300.6 / Build 200.15. For every item in the combined pool whose POS tab set includes BUNDLES along with at least one other tab, BUNDLES is removed from the tab set the quiz uses: it is not in that item's correct answer for "Which POS tab is this on?" questions, it is not in any distractor option for any item, and it is not in the POS tab line on info cards or in answer feedback. Items whose only POS tab is BUNDLES keep BUNDLES as their tab, as their correct answer and as their POS tab line, and no item is left with an empty tab set. The raw POS mapping arrays keep the full real tab sets; the filter applies when the quiz tab set is assigned to each item and again as a guard when tab question options are built. Everything else is unchanged from Prod 300.6 / Build 200.15: the Tablet Sim track (whose tablet still shows the real BUNDLES tab), the hub layout with the smaller shifted PCs, all other POS tab data and icons, delivery rules including the two drinks rule, all other quiz kinds, spaced repetition, seasonal handling, merged progress, Table Training, and all item content and images. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.7';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -3763,8 +3760,22 @@ var POS_TABS_DRINK=[
 ['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE','FEAT WINE/BEER'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],
 ['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER']
 ];
-MENU_ITEMS.forEach(function(it,i){ it.posTabs=POS_TABS_FOOD[i]||[]; });
-DRINK_ITEMS.forEach(function(it,i){ it.posTabs=POS_TABS_DRINK[i]||[]; });
+// Build 300.7: the tab set the quiz uses excludes BUNDLES for any item
+// that also lives on at least one other tab, so BUNDLES never shows as
+// part of a correct answer, a distractor, or a POS tab line for those
+// items. An item whose ONLY tab is BUNDLES keeps BUNDLES as its tab.
+// The filter only runs when a set has more than one tab, so no item can
+// be left with an empty set. The raw arrays above keep the full real
+// mapping; the Tablet Sim tablet itself is separate and unchanged.
+function quizPosTabs(raw){
+  var tabs=(raw||[]).slice();
+  if(tabs.length>1 && tabs.indexOf('BUNDLES')>=0){
+    tabs=tabs.filter(function(t){ return t!=='BUNDLES'; });
+  }
+  return tabs;
+}
+MENU_ITEMS.forEach(function(it,i){ it.posTabs=quizPosTabs(POS_TABS_FOOD[i]); });
+DRINK_ITEMS.forEach(function(it,i){ it.posTabs=quizPosTabs(POS_TABS_DRINK[i]); });
 
 // ---------- Drinks Training module (Beta): same machinery, own store ----------
 // Mirrors the food Menu Training flow (bell, tray, deliver, info card,
@@ -4446,6 +4457,11 @@ var CombinedModule=(function(){
     var scored=[], seen={};
     function consider(text,shared){
       if(!text||text===correct||seen[text]) return;
+      // Build 300.7: BUNDLES never appears in a distractor option. The
+      // only tab set that may carry it is the correct answer of an item
+      // whose sole tab is BUNDLES (correct==='BUNDLES'), and that text is
+      // already excluded above because it equals the correct answer.
+      if(correct!=='BUNDLES' && text.split(', ').indexOf('BUNDLES')>=0) return;
       seen[text]=1; scored.push({text:text,shared:shared});
     }
     poolItems.forEach(function(x){
