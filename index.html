@@ -356,7 +356,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.8</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.9</span>
     </div>
   </div>
 
@@ -434,6 +434,12 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.9</b></div>
+            <ul>
+              <li>Tablet Sim clock now shows Eastern time.</li>
+            </ul>
+          </div>
           <div class="patchEntry">
             <div class="patchEntryHead"><b>Build 300.8</b></div>
             <ul>
@@ -536,8 +542,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.8 (Beta, internal): one change on top of Build 200.16 / Prod 300.7. The POS tablet header in the Tablet Sim window no longer shows the frozen training photo timestamp: the date and time next to "Order Screen" are the player's own device clock, live, in the same POS format (M/D/YY HH:MM, 24 hour), set when the window opens and refreshed while it stays open. The "Order Screen" label and everything else in the header are unchanged. Everything else is exactly as Build 200.16 / Prod 300.7 shipped: the Tablet Sim pages, tabs, and navigation, the hub, the quiz including the BUNDLES tab rule, all other POS tab data and icons, delivery rules including the two drinks rule, and progress. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.8';
+// This build is Build 300.9 (Prod): one change on top of Prod 300.8. The Tablet Sim header clock next to "Order Screen" is now pinned to US Eastern time (America/New_York) for the restaurant's location, instead of reading the player's device time zone, so the date and time are always the restaurant's local date and time in the same POS format (M/D/YY HH:MM, 24 hour), and the frozen 11/17/26 training photo date can no longer show. The "Order Screen" label and everything else in the header are unchanged. Everything else is exactly as Prod 300.8 shipped: the Tablet Sim pages, tabs, and navigation, the hub, the quiz including the BUNDLES tab rule, all other POS tab data and icons, delivery rules including the two drinks rule, and progress. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.9';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -2166,18 +2172,35 @@ function tsTabClick(id,idx){
   else if(isTop && tsCurSet>0){ tsGoTo(id,tsCurSet-1); }
   else { tsGoTo(id,tsCurSet); }
 }
-// Build 300.8: the header timestamp is the live client clock, not the
-// frozen training photo time. The stored page headers keep their photo
-// timestamps; only the date and time are swapped for the current device
-// time when the header renders, in the same POS format (M/D/YY HH:MM,
-// 24 hour). The "Order Screen" label and the rest of the header stay
-// exactly as they are. A timer refreshes the clock while the sim is up.
+// Build 300.9: the header clock is pinned to the restaurant's own time
+// zone, US Eastern (America/New_York), no matter what time zone the
+// player's device or browser reports. Build 300.8 read the device clock
+// directly (getHours/getDate), so a device or webview reporting UTC or
+// any other zone showed the wrong time and, near midnight, the wrong
+// date, and Ryan still saw the frozen 11/17 photo date. Now the stamp
+// is always computed in Eastern, and the header is rebuilt as
+// "Order Screen" + that stamp instead of patching the frozen photo
+// timestamp in place, so the 11/17 date can never show through. Same
+// POS format as before (M/D/YY HH:MM, 24 hour), set when the window
+// opens and refreshed every 30 seconds while the sim is up.
+// America/New_York follows the real Eastern clock (EST in winter, EDT
+// in summer); if a browser has no Intl time zone support, the fallback
+// is a fixed EST (UTC-5) offset from UTC.
 function tsClockStamp(){
-  var d=new Date();
   function p2(n){ return (n<10?"0":"")+n; }
-  return (d.getMonth()+1)+"/"+d.getDate()+"/"+String(d.getFullYear()).slice(-2)+" "+p2(d.getHours())+":"+p2(d.getMinutes());
+  try{
+    var parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",month:"numeric",day:"numeric",year:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+    var v={};
+    for(var i=0;i<parts.length;i++) v[parts[i].type]=parts[i].value;
+    var hh=parseInt(v.hour,10)%24;
+    return parseInt(v.month,10)+"/"+parseInt(v.day,10)+"/"+v.year+" "+p2(hh)+":"+p2(parseInt(v.minute,10));
+  }catch(e){
+    var d=new Date(Date.now()-5*60*60*1000);
+    return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+"/"+String(d.getUTCFullYear()).slice(-2)+" "+p2(d.getUTCHours())+":"+p2(d.getUTCMinutes());
+  }
 }
 function tsLiveHeader(left){
+  if(/^Order Screen/.test(left)) return "Order Screen "+tsClockStamp();
   return left.replace(/\d{1,2}\/\d{1,2}\/\d{2} \d{1,2}:\d{2}/, tsClockStamp());
 }
 function tsRefreshClock(){
