@@ -285,7 +285,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.4</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.5</span>
     </div>
   </div>
 
@@ -363,11 +363,10 @@
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
           <div class="patchEntry">
-            <div class="patchEntryHead"><b>Build 300.4</b></div>
+            <div class="patchEntryHead"><b>Build 300.5</b></div>
             <ul>
-              <li>Combined food and drinks into one training pool.</li>
-              <li>Drinks now arrive with table orders instead of going to the bar.</li>
-              <li>Barstool orders are food only.</li>
+              <li>Quiz now teaches which POS tab each item is on.</li>
+              <li>Item cards and quiz answers show the POS tab.</li>
             </ul>
           </div>
         </div>
@@ -396,8 +395,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Prod 300.4: food and drinks are one combined training pool, drinks no longer deliver to the barstools. Every dining table order (200s to 800s) carries one drink alongside its food, barstool orders (100s) are food only, and refires follow the same rule. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.4';
+// This build is Prod 300.5: the combined Menu Training quiz now teaches POS tablet tabs. Every item in the combined pool carries the POS tab set it is rung on, tab questions join the rotation, and the tab set shows on delivery info cards and in answer feedback. Delivery routing is unchanged from 200.12: every dining table order (200s to 800s) carries one drink alongside its food, barstool orders (100s) are food only, and refires follow the same rule. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.5';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -3241,6 +3240,46 @@ DRINK_ITEMS.forEach(function(it){ var src=DRINK_PHOTO_BY_NAME[it.name]; if(src){
 var DRINK_GUIDE_SECTIONS=['Martinis','Hand-Crafted Cocktails','Other Cocktails','Social Hour Cocktails'];
 function isGuideDrink(it){ return DRINK_GUIDE_SECTIONS.indexOf(it.section)>=0; }
 
+// ---------- POS tablet tabs (Build 300.5) ----------
+// Every item in the combined pool carries the set of POS tablet tabs it
+// is rung on, from pos-mapping-food.md and pos-mapping-drinks.md with
+// the 2026-11-21 rulings applied: shared buttons with modifiers count
+// as matches; duplicates list EVERY tab; items with no exact button
+// use the closest generic button's tab; seasonal ask-manager items
+// point to wherever they would be entered on the tablet; starters and
+// social hour dishes with no button anywhere use DIN APPS/SIDES.
+// Firing note: app and ENT buttons for the same dish are firing
+// variants of one dish (app fires first, ENT rolls with the mains) and
+// usually sit on the same tab, so each set below lists a tab once even
+// when both an app button and an ENT button reach the dish there.
+// Sets are keyed by item id, in MENU_ITEMS / DRINK_ITEMS order.
+var POS_TABS_FOOD=[
+['SEAFOOD','LAND FOOD','SOUP & SALAD','BRUNCH'],
+['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],
+['SOUP & SALAD','SEASONAL ENT SPECIALS'],['SOUP & SALAD','SEASONAL ENT SPECIALS'],
+['SOUP & SALAD','LUNCH','SEASONAL ENT SPECIALS'],['SOUP & SALAD','LUNCH','SEASONAL ENT SPECIALS'],['SOUP & SALAD','LUNCH','SEASONAL ENT SPECIALS'],
+['SEAFOOD'],['SEAFOOD'],['SEAFOOD'],['SEAFOOD'],['LAND FOOD'],['LAND FOOD'],
+['SEAFOOD','BUNDLES'],['SEAFOOD'],['SEAFOOD','BUNDLES'],['SEAFOOD'],['SEAFOOD'],['SEAFOOD'],
+['REFILLS'],['REFILLS'],['REFILLS'],['REFILLS'],['REFILLS'],
+['SEAFOOD'],['SEAFOOD','LAND FOOD','LUNCH'],['SEAFOOD'],['SEAFOOD'],['SEAFOOD','PARTNER SELECT'],['SEAFOOD'],['SEAFOOD','LUNCH'],['SEAFOOD','LUNCH','BUNDLES'],['SEAFOOD','LUNCH'],
+['LAND FOOD','BUNDLES'],['LAND FOOD'],['LAND FOOD'],['LAND FOOD','LUNCH'],['SEAFOOD'],
+['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],
+['DESSERTS'],['DESSERTS'],['DESSERTS'],['DESSERTS'],['DESSERTS','SEASONAL ENT SPECIALS'],
+['KIDS'],['KIDS'],['KIDS'],['KIDS'],['KIDS'],['KIDS'],
+['LUNCH'],['LUNCH'],['LUNCH'],['LUNCH'],
+['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES'],['DIN APPS/SIDES']
+];
+var POS_TABS_DRINK=[
+['A-M COCKTAILS HH'],['A-M COCKTAILS HH'],['A-M COCKTAILS HH'],['N-Z COCKTAILS HH'],['A-M COCKTAILS HH'],['BRUNCH'],['A-M COCKTAILS HH'],
+['N-Z COCKTAILS HH'],['VODKA/GIN HH'],['A-M COCKTAILS HH'],['A-M COCKTAILS HH'],['BRUNCH','A-M COCKTAILS HH'],['RUM/TEQ HH'],['BRUNCH'],['BRUNCH'],['A-M COCKTAILS HH'],
+['A-M COCKTAILS HH','BRUNCH'],['A-M COCKTAILS HH','BRUNCH'],['N-Z COCKTAILS HH'],['BRUNCH'],['BRUNCH','BUNDLES'],['BRUNCH'],
+['A-M COCKTAILS HH'],['RUM/TEQ HH'],['A-M COCKTAILS HH'],['N-Z COCKTAILS HH'],['N-Z COCKTAILS HH'],
+['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE','FEAT WINE/BEER'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],
+['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER']
+];
+MENU_ITEMS.forEach(function(it,i){ it.posTabs=POS_TABS_FOOD[i]||[]; });
+DRINK_ITEMS.forEach(function(it,i){ it.posTabs=POS_TABS_DRINK[i]||[]; });
+
 // ---------- Drinks Training module (Beta): same machinery, own store ----------
 // Mirrors the food Menu Training flow (bell, tray, deliver, info card,
 // quizzes from the served pool, misses refire after re-delivery, Solid =
@@ -3897,6 +3936,52 @@ var CombinedModule=(function(){
     if(it.alg.length===0) return '<span class="tag">No major allergens listed</span>';
     return it.alg.map(function(c){return '<span class="tag">'+esc(ALG[c])+'</span>';}).join('');
   }
+  // ----- POS tab helpers (Build 300.5) -----
+  // An item's tab set lists each tab once: app and ENT buttons for the
+  // same dish on one tab are firing variants, not two tabs.
+  function posTabTextC(it){ return (it.posTabs&&it.posTabs.length)?it.posTabs.join(', '):''; }
+  function posTabLineC(it){
+    var t=posTabTextC(it);
+    return t?'<div style="margin-top:6px">POS tab: <b>'+esc(t)+'</b></div>':'';
+  }
+  var POS_AREA_FOOD_C=['SEAFOOD','LAND FOOD','SOUP & SALAD','DIN APPS/SIDES','DESSERTS','KIDS','LUNCH','BRUNCH','BUNDLES','PARTNER SELECT','SEASONAL ENT SPECIALS','REFILLS'];
+  var POS_AREA_DRINK_C=['A-M COCKTAILS HH','N-Z COCKTAILS HH','VODKA/GIN HH','BOUR/SCO/WHISK HH','RUM/TEQ HH','SHOOTER/COFFEE DRNK','CORDIALS','BRUNCH','BUNDLES','WINE BOTTLE','FEAT WINE/BEER'];
+  // Four options for a tab question: the item's full tab set is the
+  // correct one; the wrong ones are other real tab sets from the same
+  // pool (nearest first, sets that share a tab with the answer rank
+  // highest), single tabs from the correct set, and single tabs drawn
+  // from the same area of the tablet.
+  function buildPosTabOptionsC(it,poolItems,areaTabs){
+    var correct=posTabTextC(it);
+    var correctSet=it.posTabs.slice();
+    var scored=[], seen={};
+    function consider(text,shared){
+      if(!text||text===correct||seen[text]) return;
+      seen[text]=1; scored.push({text:text,shared:shared});
+    }
+    poolItems.forEach(function(x){
+      if(x===it||!x.posTabs||!x.posTabs.length) return;
+      var sh=0; x.posTabs.forEach(function(t){ if(correctSet.indexOf(t)>=0) sh++; });
+      consider(x.posTabs.join(', '),sh);
+    });
+    if(correctSet.length>1){
+      correctSet.forEach(function(t){ consider(t,1); });
+      for(var di=0;di<correctSet.length;di++){
+        consider(correctSet.filter(function(t,j){return j!==di;}).join(', '),correctSet.length-1);
+      }
+    }
+    areaTabs.forEach(function(t){ consider(t,correctSet.indexOf(t)>=0?1:0); });
+    scored.sort(function(a,b){ return (b.shared-a.shared)||(Math.random()-0.5); });
+    var opts=scored.slice(0,3).map(function(o,i){ return {id:'w'+(i+1),text:o.text}; });
+    opts.push({id:it.id,text:correct});
+    return shuffle(opts);
+  }
+  function makePosTabQFoodC(it){
+    return {item:it,kind:'postab',prompt:'Which POS tab is \u201c'+it.name+'\u201d on?',opts:buildPosTabOptionsC(it,MENU_ITEMS,POS_AREA_FOOD_C)};
+  }
+  function makePosTabQDrinkC(it){
+    return {item:it,kind:'postab',prompt:'Which POS tab is \u201c'+it.name+'\u201d on?',opts:buildPosTabOptionsC(it,DRINK_ITEMS,POS_AREA_DRINK_C)};
+  }
   // ----- Decks and tray picking (interleaved food and drink) -----
   function ensureFoodDeck(){
     if(!store.foodDeck||!Array.isArray(store.foodDeck.order)){ store.foodDeck={order:shuffle(MENU_ITEMS.map(function(it){return it.id;})),idx:0}; save(); }
@@ -4066,13 +4151,13 @@ var CombinedModule=(function(){
       if(en.e.type==='drink'){
         html+='<div class="mCard mDishInfo"><div class="mCardTop"><div class="mCardTitle" style="font-size:20px">'+esc(it.name)+'</div><div class="mMeta">'+esc(it.section)+(it.sub?' · '+esc(it.sub):'')+'</div></div>'+
           (en.wasRefire?'<p class="mMeta">🔥 <b>Refire re-delivered.</b> This drink is back in your quiz pool.</p>':'')+
-          (isGuideDrink(it)?drinkPhotoHTMLC(it):'')+'<div class="mDescBox">'+esc(it.desc)+'</div>'+detailTagsC(it)+
+          (isGuideDrink(it)?drinkPhotoHTMLC(it):'')+'<div class="mDescBox">'+esc(it.desc)+'</div>'+detailTagsC(it)+posTabLineC(it)+
           '<p class="mMeta">'+(p.solid?'⭐ <b>Solid.</b> You already got this one right in 2 different rounds.':'Served ✓. Get it right in <b>2 different rounds</b> and it turns Solid.')+'</p></div>';
       } else {
         html+='<div class="mCard mDishInfo"><div class="mCardTop"><div class="mCardTitle" style="font-size:20px">'+esc(it.name)+'</div><div class="mMeta">'+esc(it.section)+'</div></div>'+
           (en.wasRefire?'<p class="mMeta">🔥 <b>Refire re-delivered.</b> This dish is back in your quiz pool.</p>':'')+
           foodPhotoHTMLC(it)+
-          '<div class="mDescBox">'+esc(it.desc)+'</div>'+
+          '<div class="mDescBox">'+esc(it.desc)+'</div>'+posTabLineC(it)+
           '<p class="mMeta">'+(p.solid?'⭐ <b>Solid.</b> You already got this one right in 2 different rounds.':'Served ✓. Get it right in <b>2 different rounds</b> and it turns Solid.')+'</p></div>';
       }
     });
@@ -4213,8 +4298,10 @@ var CombinedModule=(function(){
     else cands.push({k:'n2d',w:2});
     if(dishWeight(it)) cands.push({k:'wt',w:3});
     cands.push({k:'d2n',w:2});
+    if(it.posTabs&&it.posTabs.length) cands.push({k:'postab',w:2.5});
     if(MENU_PHOTO_QUIZ[it.id]) cands.push({k:'photo',w:1.2});
     var kind=pickKindFoodC(it,cands);
+    if(kind==='postab') return makePosTabQFoodC(it);
     if(kind==='photo'){
       if(Math.random()<0.5) return {item:it,kind:'photo2name',prompt:'Which dish is this?',opts:buildOptionsFoodC(it,'name')};
       return {item:it,kind:'name2photo',prompt:'Which photo shows \u201c'+it.name+'\u201d?',opts:buildPhotoOptionsFoodC(it)};
@@ -4296,7 +4383,8 @@ var CombinedModule=(function(){
   }
   function makeDrinkQC(it){
     if(it.section==='Wine'){
-      var wk=pickKindDrinkC(it,[{k:'cat',w:1},{k:'varietal',w:1}]);
+      var wk=pickKindDrinkC(it,[{k:'cat',w:1},{k:'varietal',w:1},{k:'postab',w:1}]);
+      if(wk==='postab') return makePosTabQDrinkC(it);
       if(wk==='cat'){
         return {item:it,kind:'cat',prompt:'Which wine group is \u201c'+it.name+'\u201d in?',opts:shuffle(DRINK_WINE_GROUPS.map(function(g){return {id:g,text:g};}))};
       }
@@ -4306,7 +4394,8 @@ var CombinedModule=(function(){
       return {item:it,kind:'varietal',prompt:'What\u2019s the varietal in \u201c'+it.name+'\u201d?',opts:shuffle(vopts)};
     }
     if(it.section==='Beer & Beverages'){
-      PD(it.id).lastKind='group';
+      var bk=pickKindDrinkC(it,[{k:'group',w:1},{k:'postab',w:1}]);
+      if(bk==='postab') return makePosTabQDrinkC(it);
       return {item:it,kind:'group',prompt:'\u201c'+it.name+'\u201d is which kind of drink?',opts:shuffle(DRINK_BEER_GROUPS.map(function(g){return {id:g,text:g};}))};
     }
     if(it.seasonal){
@@ -4320,7 +4409,9 @@ var CombinedModule=(function(){
     if(it.ing&&it.ing.length>=3) cands.push({k:'ing',w:3});
     else cands.push({k:'n2d',w:2});
     cands.push({k:'d2n',w:2});
+    if(it.posTabs&&it.posTabs.length) cands.push({k:'postab',w:2.5});
     var kind=pickKindDrinkC(it,cands);
+    if(kind==='postab') return makePosTabQDrinkC(it);
     if(kind==='garnish') return makeGarnishQDrinkC(it);
     if(kind==='detail'){
       var f=it.facts[Math.floor(Math.random()*it.facts.length)];
@@ -4433,6 +4524,8 @@ var CombinedModule=(function(){
       body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the weight the guide states</p>';
     } else if(q.kind==='garnish'){
       body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the garnish the guide lists</p>';
+    } else if(q.kind==='postab'){
+      body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">'+esc(q.item.section)+' · pick the full POS tab set for this one</p>';
     } else if(q.kind==='detail'){
       body='<div class="mQ">'+esc(q.prompt)+'</div><p class="mQSub">Detail check, only what the guide states</p>';
     } else if(q.kind==='seasonal'){
@@ -4503,7 +4596,7 @@ var CombinedModule=(function(){
       var photoBit=(q.rtype==='drink')?(isGuideDrink(it)?drinkPhotoHTMLC(it):''):foodPhotoHTMLC(it);
       var tagsBit=(q.rtype==='drink')?detailTagsC(it):'';
       slot.innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Correct!</b>':'✋ <b>Not quite. Here\u2019s what the guide says:</b>')+
-        '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+tagsBit+
+        '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+tagsBit+posTabLineC(it)+
         (q.kind==='ing'?'<div style="margin-top:6px">What\u2019s actually in it: <b>'+esc(q.ingText)+'</b></div>':'')+photoBit+
         (correct&&POf(entry).solid?'<div style="margin-top:6px">⭐ This one is now <b>Solid</b>'+(q.rtype==='food'?', so its allergen questions are unlocked':'')+'.</div>':'')+
         (!correct?'<div style="margin-top:6px">'+((CS.worldBlock||CS.refireOnMiss)?'You will see it again in a few questions. After this round it goes back out as a <b>refire</b>, so you will need to deliver it again before you can be quizzed on it.':'You will see it again in a few questions, and it will be right up front in your next round.')+'</div>':'')+
@@ -4643,7 +4736,7 @@ var CombinedModule=(function(){
       detail+='<div style="margin-top:4px">Correct set: <b>'+(want.length?want.map(function(c){return esc(ALG[c]);}).join(', '):'No major allergens listed')+'</b>. This dish is on your <b>Watchlist</b> and drills first next allergen round.</div>';
     }
     document.getElementById('mFbSlot').innerHTML='<div class="mFb '+(correct?'good':'bad')+'">'+(correct?'✅ <b>Exactly right.</b> ':'✋ <b>Not quite exact. With allergens, it has to be exact.</b> ')+detail+
-      '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+foodPhotoHTMLC(it)+
+      '<div style="margin-top:6px"><b>'+esc(it.name)+'</b>: '+esc(it.desc)+'</div>'+posTabLineC(it)+foodPhotoHTMLC(it)+
       '<div style="margin-top:4px">You cannot see most allergens. That is exactly why we check the chart.</div></div>'+
       '<div class="mRow"><button class="mBtn" id="mCAlgNext">Next →</button></div>';
     document.getElementById('mCAlgNext').addEventListener('click',function(){ AC.idx++; renderAlgQC(); });
@@ -4759,7 +4852,7 @@ var CombinedModule=(function(){
       '<div class="mSteps">'+
       stepC('🔔','Bell rings','Your tray is waiting on the <b>pass</b>. A dining table tray carries <b>up to 2 dishes plus 1 drink</b>, all together. A barstool tray is <b>1 dish, food only</b>: drinks come from the bar, not the kitchen, so no drink ever goes to a barstool (101 to 114). The items are named in the <b>panel on the top left</b>.')+
       stepC('🍽️','Pick up and deliver','Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the table or barstool</b> it is headed to.')+
-      stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, and garnish for drinks. <b>That is what the quiz asks about</b>, so give them a real read.')+
+      stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, garnish for drinks, and the <b>POS tab</b> it is rung on. <b>That is what the quiz asks about</b>, so give them a real read.')+
       stepC('❓','Quiz pops up','After a few runs you will get quizzed, <b>only on items you have served, food and drinks together</b>. You can tap <b>Quiz me</b> anytime if you want one sooner.')+
       stepC('🔥','Miss one? It refires','That item <b>comes back out</b> on another tray later. You will deliver it again and re-read the card first, before it can be quizzed again.')+
       stepC('⭐','Get it Solid','Get it right in <b>2 different rounds</b> and it turns <b>Solid</b>. For food dishes, that is when their <b>allergens unlock</b>.')+

@@ -3,6 +3,11 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.5 — Prod — Nov 21, 2026
+
+- Quiz now teaches which POS tab each item is on.
+- Item cards and quiz answers show the POS tab.
+
 ## Build 300.4 — Prod — Nov 21, 2026
 
 - Combined food and drinks into one training pool.
