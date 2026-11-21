@@ -356,7 +356,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.7</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.8</span>
     </div>
   </div>
 
@@ -435,9 +435,68 @@
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
           <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.8</b></div>
+            <ul>
+              <li>Tablet Sim clock now shows the current time.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
             <div class="patchEntryHead"><b>Build 300.7</b></div>
             <ul>
               <li>Quiz no longer uses the Bundles tab for dishes that live on other tabs.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.6</b></div>
+            <ul>
+              <li>Added a Tablet Sim training track with the full POS tablet.</li>
+              <li>Quiz shows a picture of each POS tab.</li>
+              <li>Hub PCs are smaller.</li>
+              <li>Two-entree tables now get two drinks.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.5</b></div>
+            <ul>
+              <li>Quiz now teaches which POS tab each item is on.</li>
+              <li>Item cards and quiz answers show the POS tab.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.4</b></div>
+            <ul>
+              <li>Combined food and drinks into one training pool.</li>
+              <li>Drinks now arrive with table orders instead of going to the bar.</li>
+              <li>Barstool orders are food only.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.3</b></div>
+            <ul>
+              <li>Drinks deck corrected against the study guide.</li>
+              <li>Added garnishes for all drinks, with garnish questions.</li>
+              <li>Added Social Hour Cocktails, Mimosa, Bloody Mary, and Whistlepig Old Fashioned.</li>
+              <li>Removed Chocolate Martini and Indigo Sunset.</li>
+              <li>Added illustrations for all guide drinks.</li>
+              <li>Fixed seasonal items in the quiz. Added a Seasonal only drill.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.2</b></div>
+            <ul>
+              <li>Added a drinks deck: martinis, cocktails, wines, beers. Drinks deliver to the barstools.</li>
+              <li>Training terminals moved to the lower left corner by the front door. Smaller, rings at the desks. Exit ring unchanged.</li>
+              <li>Most description questions replaced with ingredient list questions. Wrong lists have one or two ingredients swapped.</li>
+              <li>Added weight questions for dishes with a stated weight.</li>
+              <li>Quiz rotation reworked: dishes you know return less often, in different forms. Dishes you miss appear more.</li>
+              <li>Added a Patch notes view in the game.</li>
+            </ul>
+          </div>
+          <div class="patchEntry">
+            <div class="patchEntryHead"><b>Build 300.1</b></div>
+            <ul>
+              <li>The game now shows its build number, small in the header: "Build 300.1". Future updates bump the number so you can always tell which version you are playing.</li>
+              <li>No gameplay changes in this build.</li>
             </ul>
           </div>
         </div>
@@ -477,8 +536,8 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Prod 300.7: one quiz data rule on top of Prod 300.6 / Build 200.15. For every item in the combined pool whose POS tab set includes BUNDLES along with at least one other tab, BUNDLES is removed from the tab set the quiz uses: it is not in that item's correct answer for "Which POS tab is this on?" questions, it is not in any distractor option for any item, and it is not in the POS tab line on info cards or in answer feedback. Items whose only POS tab is BUNDLES keep BUNDLES as their tab, as their correct answer and as their POS tab line, and no item is left with an empty tab set. The raw POS mapping arrays keep the full real tab sets; the filter applies when the quiz tab set is assigned to each item and again as a guard when tab question options are built. Everything else is unchanged from Prod 300.6 / Build 200.15: the Tablet Sim track (whose tablet still shows the real BUNDLES tab), the hub layout with the smaller shifted PCs, all other POS tab data and icons, delivery rules including the two drinks rule, all other quiz kinds, spaced repetition, seasonal handling, merged progress, Table Training, and all item content and images. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.7';
+// This build is Build 300.8 (Beta, internal): one change on top of Build 200.16 / Prod 300.7. The POS tablet header in the Tablet Sim window no longer shows the frozen training photo timestamp: the date and time next to "Order Screen" are the player's own device clock, live, in the same POS format (M/D/YY HH:MM, 24 hour), set when the window opens and refreshed while it stays open. The "Order Screen" label and everything else in the header are unchanged. Everything else is exactly as Build 200.16 / Prod 300.7 shipped: the Tablet Sim pages, tabs, and navigation, the hub, the quiz including the BUNDLES tab rule, all other POS tab data and icons, delivery rules including the two drinks rule, and progress. Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.8';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -2107,10 +2166,29 @@ function tsTabClick(id,idx){
   else if(isTop && tsCurSet>0){ tsGoTo(id,tsCurSet-1); }
   else { tsGoTo(id,tsCurSet); }
 }
+// Build 300.8: the header timestamp is the live client clock, not the
+// frozen training photo time. The stored page headers keep their photo
+// timestamps; only the date and time are swapped for the current device
+// time when the header renders, in the same POS format (M/D/YY HH:MM,
+// 24 hour). The "Order Screen" label and the rest of the header stay
+// exactly as they are. A timer refreshes the clock while the sim is up.
+function tsClockStamp(){
+  var d=new Date();
+  function p2(n){ return (n<10?"0":"")+n; }
+  return (d.getMonth()+1)+"/"+d.getDate()+"/"+String(d.getFullYear()).slice(-2)+" "+p2(d.getHours())+":"+p2(d.getMinutes());
+}
+function tsLiveHeader(left){
+  return left.replace(/\d{1,2}\/\d{1,2}\/\d{2} \d{1,2}:\d{2}/, tsClockStamp());
+}
+function tsRefreshClock(){
+  var el=document.getElementById("tsHdrL");
+  if(el && TS_PAGES[tsCur]) el.textContent=tsLiveHeader(TS_PAGES[tsCur].h.split("|")[0]);
+}
+setInterval(tsRefreshClock, 30000);
 function tsRender(){
   var p=TS_PAGES[tsCur];
   var parts=p.h.split("|");
-  document.getElementById("tsHdrL").textContent=parts[0];
+  document.getElementById("tsHdrL").textContent=tsLiveHeader(parts[0]);
   document.getElementById("tsHdrM").textContent=parts[1];
   var zone=document.getElementById("tsZone"); zone.innerHTML="";
   if(p.test){

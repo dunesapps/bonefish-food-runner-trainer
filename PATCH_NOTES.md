@@ -3,6 +3,10 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.8 — Prod — Nov 21, 2026
+
+- Tablet Sim clock now shows the current time.
+
 ## Build 300.7 — Prod — Nov 21, 2026
 
 - Quiz no longer uses the Bundles tab for dishes that live on other tabs.
