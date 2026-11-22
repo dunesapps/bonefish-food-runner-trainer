@@ -3,6 +3,12 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.10 — Prod — Nov 21, 2026
+
+- Tablet Sim adds the ten pages before SEAFOOD
+- Quiz POS tabs corrected from the new pages
+- Kids meals are no longer sent to the bar
+
 ## Build 300.9 — Prod — Nov 21, 2026
 
 - Tablet Sim clock now shows Eastern time.
