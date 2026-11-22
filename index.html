@@ -308,6 +308,8 @@
   #tabletOverlay .tsGrow{display:flex;gap:1.2%;flex:1;min-height:0}
   #tabletOverlay .tsBtn{flex:1;border-radius:7px;color:#fff;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:clamp(5px,1.08vw,13.5px);line-height:1.12;padding:2px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.5);text-transform:uppercase;position:relative;overflow:hidden}
   #tabletOverlay .tsSpacer{flex:1;visibility:hidden}
+  #tabletOverlay .tsTallWrap{position:relative;min-height:0}
+  #tabletOverlay .tsTallWrap .tsBtn{position:absolute;left:0;top:0;width:100%;z-index:3}
   #tabletOverlay .tsTag{background:#ff2e4d;color:#fff;font-size:.72em;border-radius:8px;padding:0 .7em;margin-top:2px;font-weight:800;text-transform:none}
   #tabletOverlay .tsTagS{background:#14c8a0;color:#fff;font-size:.72em;border-radius:8px;padding:0 .7em;margin-top:2px;font-weight:800}
   #tabletOverlay .tsFlash{filter:brightness(1.7)!important}
@@ -356,7 +358,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.11</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.12</span>
     </div>
   </div>
 
@@ -434,6 +436,7 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.12</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim pages corrected to match the POS photos</li><li>Quiz tabs now show the real tablet tab labels</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.11</b><span>Nov 21, 2026</span></div><ul><li>Removed the description text from the Tablet Sim window</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.10</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim adds the ten pages before SEAFOOD</li><li>Quiz POS tabs corrected from the new pages</li><li>Kids meals are no longer sent to the bar</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.9</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim clock now shows Eastern time.</li></ul></div>
@@ -482,14 +485,14 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.11 (Prod): one change on top of
-// Prod 300.10. The small description paragraph under the Tablet Sim
-// heading in the Tablet Sim window is removed entirely, no replacement
-// text. The Tablet Sim heading and the Close, back to hub button stay,
-// and the tablet sits up in the space the paragraph freed. Nothing else
-// changes: no behavior, data, or layout changes anywhere else.
+// This build is Build 300.12 (Prod): a visual fidelity pass
+// on the Tablet Sim against the POS photos (all 35 pages). Button
+// size, color, and on-screen location were checked photo by photo and
+// corrected where the sim drifted from the real tablet, and the quiz
+// POS tab displays now use the proper tablet tab names and rail icons.
+// Representation only: no behavior changes anywhere.
 // Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.11';
+var BUILD_NUMBER = '300.12';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -1825,7 +1828,30 @@ function exitToHub(placeX){
 // tab's right rail button on the tablet (blue rounded button, white
 // label), never a picture of the tab's page. One icon per tab in an
 // item's tab set, in order, next to the tab name.
-function posTabChipHTML(tabName){ return '<span class="posTabChip">' + escHtml(tabName) + '</span>'; }
+// Build 200.21: quiz tab displays use the proper tablet tab names,
+// resolved through the same rail labels the Tablet Sim renders
+// (TS_TABLABEL), so a tab question, an info card, and answer feedback
+// always show the tab exactly as it appears on the real rail, including
+// the first set tabs (DR LANDING through PREMIUM BEVERAGES). Which tabs
+// belong to which item is unchanged; this only fixes how a tab name is
+// presented. The lookup is built lazily because TS_TABLABEL is defined
+// further down the script.
+var POS_TAB_CANON=null;
+function posTabCanon(name){
+  if(!POS_TAB_CANON){
+    POS_TAB_CANON={};
+    try{
+      for(var k in TS_TABLABEL){
+        var lab=TS_TABLABEL[k];
+        POS_TAB_CANON[lab]=lab;
+        POS_TAB_CANON[lab.replace(/\/ /g,'/')]=lab;
+        POS_TAB_CANON[lab.replace(/\//g,'/ ')]=lab;
+      }
+    }catch(e){}
+  }
+  return POS_TAB_CANON[name]||name;
+}
+function posTabChipHTML(tabName){ return '<span class="posTabChip">' + escHtml(posTabCanon(tabName)) + '</span>'; }
 function posTabChipsHTML(tabs){
   if(!tabs || !tabs.length) return '';
   var h='<span class="posTabs">';
@@ -1834,11 +1860,13 @@ function posTabChipsHTML(tabs){
 }
 function posTabLineHTML(it){
   if(!it || !it.posTabs || !it.posTabs.length) return '';
-  return '<div class="posTabLine" style="margin-top:6px">POS tab: ' + posTabChipsHTML(it.posTabs) + '<b>' + escHtml(it.posTabs.join(', ')) + '</b></div>';
+  var names=it.posTabs.map(function(t){ return posTabCanon(t); });
+  return '<div class="posTabLine" style="margin-top:6px">POS tab: ' + posTabChipsHTML(it.posTabs) + '<b>' + escHtml(names.join(', ')) + '</b></div>';
 }
 function posTabSetHTML(text){
   var tabs=String(text).split(', ');
-  return '<span class="posOptText">' + escHtml(text) + '</span>' + posTabChipsHTML(tabs);
+  var names=tabs.map(function(t){ return posTabCanon(t); });
+  return '<span class="posOptText">' + escHtml(names.join(', ')) + '</span>' + posTabChipsHTML(tabs);
 }
 var TS_SETS=[
 ["drlanding","specials","shfood","appetizer","marti","wineglass","wineglass9","beer","beverages","premiumbev","seafood"],
@@ -1847,7 +1875,7 @@ var TS_SETS=[
 ["cordials","mgrcomp","misc","gift","refills","privatedining","brunch","lunch","bundles","test"]];
 var TS_TABLABEL={drlanding:"DR LANDING",specials:"SPECIALS SCREEN",shfood:"SH FOOD",appetizer:"APPETIZER",marti:"MARTI/MANH",wineglass:"WINE GLASS",wineglass9:"WINE GLASS 9OZ",beer:"BEER",beverages:"BEVERAGES",premiumbev:"PREMIUM BEVERAGES",seasonlapp:"SEASONL APP SCRN",seafood:"SEAFOOD",landfood:"LAND FOOD",seasonal:"SEASONAL ENT SPECIALS",partner:"PARTNER SELECT",soup:"SOUP & SALAD",dinapps:"DIN APPS/SIDES",desserts:"DESSERTS",kids:"KIDS",winebottle:"WINE BOTTLE",featwine:"FEAT WINE/ BEER",amcock:"A-M COCKTAILS HH",nzcock:"N-Z COCKTAILS HH",vodka:"VODKA/GIN HH",bourbon:"BOUR/SCO/ WHISK HH",rum:"RUM/TEQ HH",shooter:"SHOOTER/ COFFEE DRNK",cordials:"CORDIALS",mgrcomp:"MGR COMP",misc:"MISCELLANEOU",gift:"GIFT CARDS",refills:"REFILLS",privatedining:"PRIVATE_DINING",brunch:"BRUNCH",lunch:"LUNCH",bundles:"BUNDLES",test:"TEST"};
 var TS_NATURAL={drlanding:0,specials:0,shfood:0,appetizer:0,marti:0,wineglass:0,wineglass9:0,beer:0,beverages:0,premiumbev:0,seasonlapp:0,seafood:0,landfood:1,seasonal:1,partner:1,soup:1,dinapps:1,desserts:1,kids:1,winebottle:1,featwine:1,amcock:1,nzcock:2,vodka:2,bourbon:2,rum:2,shooter:2,cordials:2,mgrcomp:3,misc:3,gift:3,refills:3,privatedining:3,brunch:3,lunch:3,bundles:3,test:3};
-function tsB(l,c,t,w,d){return{l:l,c:c||"blue",t:t||"",w:w||0,d:d||""}}
+function tsB(l,c,t,w,d,v){return{l:l,c:c||"blue",t:t||"",w:w||0,d:d||"",v:v||0}}
 var COMMON4=[tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")];
 var TS_PAGES={
 drlanding:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
@@ -1856,9 +1884,15 @@ drlanding:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("",""),tsB("MEMBER?","green","",3),tsB("","")],
 [tsB("",""),tsB("",""),tsB("","")],
 [tsB("BEVERAGE SCREEN","slate","",2,"beverages"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("<<RTRN COMP SCRN","slate","",2,"mgrcomp"),tsB("","")]]},
 specials:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("SEASONAL ENTREES","slate","",0,"seasonal"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("","")],
@@ -1873,10 +1907,10 @@ appetizer:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("BANG BANG","pink"),tsB("ENT BANG BANG","orange"),tsB("BANG CHIX BITES","pink"),tsB("ENT BANG CHIX BI","orange"),tsB("BREAD","orange")],
 [tsB("CALAMARI","pink"),tsB("ENT CALAMARI","orange"),tsB("SH CSPY CAULI","pink"),tsB("ENT SH CSP CAULI","orange"),tsB("BREAD ($1)","green")],
 [tsB("",""),tsB("",""),tsB("CRAB CAKE APP","pink"),tsB("ENT CRAB CAKE AP","orange"),tsB("TO GO BREAD","orange")],
-[tsB("EDAMAME APP","pink"),tsB("ENT EDAMAME","orange"),tsB("",""),tsB("",""),tsB("TO GO BREAD ($)","green")],
-[tsB("IMPERIAL DIP","pink"),tsB("ENT IMPERIAL DIP","orange"),tsB("",""),tsB("",""),tsB("BAR SPC INSTRUCT","dark")],
-[tsB("",""),tsB("",""),tsB("6CT CHR OYST","pink"),tsB("ENT 6CT CHR OYST","orange"),tsB("LOBBY 1 BANG SHR","pink")],
-[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("LOBBY 2 BANG SHR","pink")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("TO GO BREAD ($)","green")],
+[tsB("EDAMAME APP","pink"),tsB("ENT EDAMAME","orange"),tsB("",""),tsB("",""),tsB("BAR SPC INSTRUCT","dark")],
+[tsB("IMPERIAL DIP","pink"),tsB("ENT IMPERIAL DIP","orange"),tsB("",""),tsB("",""),tsB("LOBBY 1 BANG SHR","pink")],
+[tsB("",""),tsB("",""),tsB("6CT CHR OYST","pink"),tsB("ENT 6CT CHR OYST","orange"),tsB("LOBBY 2 BANG SHR","pink")],
 [tsB("SW CHX EGGROLL","pink"),tsB("ENT SW CHX EGGRL","orange"),tsB("",""),tsB("",""),tsB("SEASONL APP SCRN","slate","",0,"seasonlapp")],
 [tsB("TEMPURA SASH","pink"),tsB("ENT TEMPURA SASH","orange"),tsB("",""),tsB("",""),tsB("COMP SCREEN","slate","",0,"mgrcomp")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("1st TIME GUEST","cyan")]]},
@@ -1888,13 +1922,13 @@ marti:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("ESPRESSO TINI","teal"),tsB("POMEGRANATE TINI","teal"),tsB("OVERALL MARG","orange"),tsB("NA WINTER SPRKLR","purp"),tsB("MANHATTAN","blue")],
 [tsB("FRENCH 75","teal"),tsB("SMKD OLD FASHION","orange"),tsB("",""),tsB("",""),tsB("ROB ROY","blue")],
 [tsB("HEATWAVE TINI","teal"),tsB("STR ROSE SIDECAR","orange"),tsB("",""),tsB("",""),tsB("FROZEN DRINK","purp")],
-[tsB("KEY LIME TINI","teal"),tsB("STRWBRRY APEROL","orange"),tsB("JEFFERSONS OCEAN","pink"),tsB("",""),tsB("MINI TINI FLIGHT","mint")],
+[tsB("KEY LIME TINI","teal"),tsB("STRWBRRY APEROL","orange"),tsB("",""),tsB("JEFFERSONS OCEAN","pink"),tsB("MINI TINI FLIGHT","mint")],
 [tsB("THE MULE","teal"),tsB("WP MPL OLD FASHN","teal"),tsB("MNGO BOURB SOUR","orange"),tsB("",""),tsB("STUFFED OLIVE","red")],
 [tsB("PINEAPPLE TINI","teal"),tsB("WR OLD FASHION","teal"),tsB("BB LEM TINI","orange"),tsB("",""),tsB("**NAME**","dark")],
 [tsB("NA SMK & MIRROR","purp"),tsB("",""),tsB("FRESH RITA","red"),tsB("",""),tsB("**ROVER**","dark")],
 [tsB("NA BREWD AWKNG","purp"),tsB("",""),tsB("COCONUT CRUSH","orange"),tsB("",""),tsB("","")]]},
 wineglass:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
-[tsB("",""),tsB("G HSE CHARD","gray"),tsB("",""),tsB("",""),tsB("G HSE CAB","red")],
+[tsB("",""),tsB("G HSE CHARD","dark"),tsB("",""),tsB("",""),tsB("G HSE CAB","red")],
 [tsB("",""),tsB("G BEZEL CAKEBRD","orange"),tsB("",""),tsB("G BANSHEE PN","pink"),tsB("","")],
 [tsB("G BEACH WHSP ANG","purp"),tsB("G ROMBAUER CH","orange"),tsB("G WYCLIFF","blue"),tsB("",""),tsB("","")],
 [tsB("G JACOB CRK MSCT","orange"),tsB("G KIM CRAWF SB","orange"),tsB("G LYRES CLASSICO","blue"),tsB("",""),tsB("","")],
@@ -1906,7 +1940,7 @@ wineglass:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("G SANTA M PG","orange"),tsB("",""),tsB("G SANGRIA BLKBRR","pink"),tsB("G-V ANTINORI RD","pink"),tsB("**ROVER**","dark")],
 [tsB("G DECOY SB","orange"),tsB("",""),tsB("G SANGRIA WHT","orange"),tsB("G PRISONER RB","pink"),tsB("**NAME**","dark")]]},
 wineglass9:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
-[tsB("9 G HSE WH ZIN","purp","0 Left"),tsB("9 G HSE CHARD","gray"),tsB("",""),tsB("9 G HSE CAB","red"),tsB("","")],
+[tsB("9 G HSE WH ZIN","purp","0 Left"),tsB("9 G HSE CHARD","dark"),tsB("",""),tsB("9 G HSE CAB","red"),tsB("","")],
 [tsB("",""),tsB("9 G ROMBAUER CH","orange"),tsB("9 G BANSHEE PN","pink"),tsB("",""),tsB("","")],
 [tsB("9 G BEACH WHSP","purp"),tsB("9 G KIM CRAWF SB","orange"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("9 G JACB CR MSCT","orange"),tsB("",""),tsB("",""),tsB("9 G LOUIS MRTINI","pink"),tsB("","")],
@@ -1918,27 +1952,28 @@ wineglass9:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("9 G DECOY SB","orange"),tsB("",""),tsB("9 G ANTINORI RED","pink"),tsB("",""),tsB("**ROVER**","dark")],
 [tsB("9 G BEZEL CAKEBR","orange"),tsB("",""),tsB("9 G PRISONER RB","pink"),tsB("",""),tsB("**NAME**","dark")]]},
 beer:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
-[tsB("",""),tsB("",""),tsB("D BLUE MOON","teal"),tsB("","")],
-[tsB("BT BUD LIGHT","red"),tsB("",""),tsB("D BUD LIGHT","teal"),tsB("","")],
-[tsB("BT COORS LIGHT","red"),tsB("BT STELLA ARTOIS","red"),tsB("D MICH ULTRA","teal"),tsB("","")],
-[tsB("BT CORONA EXTRA","red"),tsB("",""),tsB("D SA SEASONAL","teal"),tsB("","")],
-[tsB("",""),tsB("CN TRULY BERRY","purp","0 Left"),tsB("",""),tsB("","")],
-[tsB("BT MICH ULTRA","red"),tsB("DECOY SELTZ CHAR","purp","0 Left"),tsB("",""),tsB("","")],
-[tsB("BT MILLER LITE","red"),tsB("DECOY SELTZ ROSE","purp","0 Left"),tsB("",""),tsB("","")],
-[tsB("BT MODELO","red"),tsB("CN PNAPPL HINOON","purp","0 Left"),tsB("",""),tsB("","")],
-[tsB("",""),tsB("BT MICH ULT ZERO","green"),tsB("**NAME**","dark"),tsB("","")],
-[tsB("",""),tsB("BT ATHLTC RUN IP","green","0 Left"),tsB("**ROVER**","dark"),tsB("","")]]},
+[tsB("",""),tsB("",""),tsB("D BLUE MOON","teal")],
+[tsB("BT BUD LIGHT","red"),tsB("",""),tsB("D BUD LIGHT","teal")],
+[tsB("BT COORS LIGHT","red"),tsB("BT STELLA ARTOIS","red"),tsB("D MICH ULTRA","teal")],
+[tsB("BT CORONA EXTRA","red"),tsB("",""),tsB("D SA SEASONAL","teal")],
+[tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("CN TRULY BERRY","purp","0 Left"),tsB("","")],
+[tsB("BT MICH ULTRA","red"),tsB("DECOY SELTZ CHAR","purp","0 Left"),tsB("","")],
+[tsB("BT MILLER LITE","red"),tsB("DECOY SELTZ ROSE","purp","0 Left"),tsB("","")],
+[tsB("BT MODELO","red"),tsB("CN PNAPPL HINOON","purp","0 Left"),tsB("","")],
+[tsB("",""),tsB("BT MICH ULT ZERO","green"),tsB("**NAME**","dark")],
+[tsB("",""),tsB("BT ATHLTC RUN IP","green","0 Left"),tsB("**ROVER**","dark")]]},
 beverages:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",qty:true,rows:[
 [tsB("WATER","red","",2),tsB("REFILL","red","",2),tsB("COFFEE","royal")],
 [tsB("ICED TEA","royal"),tsB("KID BEV","royal"),tsB("",""),tsB("",""),tsB("DECAF COFFEE","royal")],
 [tsB("SWEET TEA","royal"),tsB("1/2 & 1/2 TEA","royal"),tsB("",""),tsB("",""),tsB("CAPPUCCINO","royal")],
-[tsB("COKE","royal"),tsB("CHRY COKE","royal"),tsB("1L AQUA PANA","royal"),tsB("1L PELLEGRINO","royal"),tsB("DECAF CAPPUC","royal")],
+[tsB("COKE","royal","",0,"",2),tsB("CHRY COKE","royal","",0,"",2),tsB("1L AQUA PANA","royal"),tsB("1L PELLEGRINO","royal"),tsB("DECAF CAPPUC","royal")],
 [tsB("",""),tsB("",""),tsB("BFG PALMER","royal"),tsB(".5GAL LEMONADE","royal"),tsB("ESPRESSO","royal")],
-[tsB("DIET COKE","royal"),tsB("COKE ZERO","royal"),tsB("LEMONADE","royal"),tsB("GAL LEMONADE","royal"),tsB("DBL ESPRESSO","royal")],
+[tsB("DIET COKE","royal","",0,"",2),tsB("COKE ZERO","royal","",0,"",2),tsB("LEMONADE","royal"),tsB("GAL LEMONADE","royal"),tsB("DBL ESPRESSO","royal")],
 [tsB("",""),tsB("",""),tsB("SHIRLY TEMPLE","royal"),tsB(".5GAL TEA","royal"),tsB("DECAF ESPRESSO","royal")],
-[tsB("SPRITE","royal"),tsB("GINGERALE","royal"),tsB("SODA WATER","royal"),tsB("GAL TEA","royal"),tsB("TEA HOT FLAV","royal")],
+[tsB("SPRITE","royal","",0,"",2),tsB("GINGERALE","royal","",0,"",2),tsB("SODA WATER","royal"),tsB("GAL TEA","royal"),tsB("TEA HOT FLAV","royal")],
 [tsB("",""),tsB("",""),tsB("TONIC","royal"),tsB("TOGO KID BEV","pink"),tsB("TOGO BEV","pink")],
-[tsB("DR PEPPER","royal"),tsB("ROOT BEER","royal"),tsB("MILK","royal"),tsB("",""),tsB("APP SCRN","slate","",0,"appetizer")],
+[tsB("DR PEPPER","royal","",0,"",2),tsB("ROOT BEER","royal","",0,"",2),tsB("MILK","royal"),tsB("",""),tsB("APP SCRN","slate","",0,"appetizer")],
 [tsB("",""),tsB("",""),tsB("ICE GLASS","royal"),tsB("",""),tsB("","")]]},
 premiumbev:{h:"Order Screen 11/21/26 20:40|TRAINING T - DINING RM DIN I",qty:true,rows:[
 [tsB("NA GNG MNT LEM $","royal"),tsB("CRANBERRY JC","pink"),tsB("VIRG BL MARY","blue")],
@@ -1957,7 +1992,7 @@ seafood:{h:"Order Screen 11/17/26 18:04|TRAINING T - HH DINING RM DINNER I",rows
 [tsB("",""),tsB("",""),tsB("PARTNER GRILL","slate"),tsB("SHRMP TMTO LING","mag"),tsB("","")],
 [tsB("",""),tsB("",""),tsB("PARTNER SAUTE","slate"),tsB("SLMN TMTO LING","mag"),tsB("","")],
 [tsB("PRT SLCT SCREEN","slate","",0,"partner"),tsB("",""),tsB("LANDFOOD SCREEN","slate","",0,"landfood"),tsB("PAN ASIAN BTRFSH","mag"),tsB("","")],
-[tsB("",""),tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
+[tsB("",""),tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal",2),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")]]},
 landfood:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("BISTRO W/ CHIMI","blue"),tsB("GRILL CHICKEN","green"),tsB("GRILLED PORK CHP","mint"),tsB("",""),tsB("","")],
@@ -1968,7 +2003,7 @@ landfood:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",row
 [tsB("SIR 9 & TAIL","blue","SPECIAL"),tsB("TOMATO LINGUINE","mag"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("SEAFOOD SCREEN","slate","",0,"seafood"),tsB("",""),tsB("",""),tsB("","")],
-[tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("","")],
+[tsB("",""),tsB("SPECIALS SCREEN","slate","",0,"seasonal",2),tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("","")],
 [tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan"),tsB("","")]]},
 seasonal:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("CURRENT SPECIALS","royal","",2),tsB("NAT EVENT DINNER","orange"),tsB("PAST SPECIALS","royal","",2)],
@@ -1982,10 +2017,12 @@ seasonal:{h:"Order Screen 11/17/26 18:05|TRAINING T - HH DINING RM DINNER I",row
 [tsB("",""),tsB("OMG TOM BISQ CUP","green"),tsB("DRIVE","cyan"),tsB("SEAFOOD SCREEN","slate","",0,"seafood"),tsB("","")],
 [tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("SPECIALS SCREEN","slate","",0,"seasonal"),tsB("","")]]},
 partner:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
-[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
-[tsB("",""),tsB("",""),tsB("",""),tsB("GR UNICORN FISH","blue"),tsB("SAU UNICORN FISH","blue")],
-[tsB("",""),tsB("SAU COHO SALMON","blue"),tsB("",""),tsB("",""),tsB("","")],
-[tsB("GR GROUPER RED","blue"),tsB("SAU GROUPER RED","blue"),tsB("",""),tsB("",""),tsB("","")]]},
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("GR UNICORN FISH","blue"),tsB("SAU UNICORN FISH","blue")],
+[tsB("",""),tsB("SAU COHO SALMON","blue"),tsB("",""),tsB("","")],
+[tsB("GR GROUPER RED","blue"),tsB("SAU GROUPER RED","blue"),tsB("",""),tsB("","")]]},
 soup:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("HSE SALAD","green"),tsB("CZR SAL","green"),tsB("SHV BRS SAL","green"),tsB("",""),tsB("","")],
 [tsB("ENT HSE SAL","mint"),tsB("ENT CZR SAL","mint"),tsB("ENT SHV BRS SAL","mint"),tsB("",""),tsB("","")],
@@ -1993,6 +2030,7 @@ soup:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("ENT LG CHIX HSE","royal"),tsB("ENT LG CHIX CZR","royal"),tsB("ENT LG CHIX BRS","royal"),tsB("",""),tsB("","")],
 [tsB("ENT LG SRMP HSE","royal"),tsB("ENT LG SRMP CZR","royal"),tsB("ENT LG SHR BRS","royal"),tsB("",""),tsB("","")],
 [tsB("ENT LG SLMN HSE","royal"),tsB("ENT LG SLM CZR","royal"),tsB("ENT LG SLM BRS","royal"),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("CHOWDER CUP","green"),tsB("CHOWDER BOWL","green"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("ENT CHOW CUP","mint"),tsB("ENT CHOW BOWL","mint"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("TOM BSQ CUP","green"),tsB("TOM BSQ BWL","green"),tsB("",""),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
@@ -2014,10 +2052,12 @@ desserts:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",row
 [tsB("CHEESECAKE","mag"),tsB("2 SCOOPS I.C.","mag"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("BB CRM BRULEE","mag","0 Left"),tsB("CHOC CHIP COOKIE","mag"),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("WHT CRAN COOKIE","mag"),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("COCONUT PIE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("MNGO CRM BRULEE","mag","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("PMKN CRM BRULEE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("KEY LIME PIE","mag"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("SPC OCC CHOCOLAT","orange"),tsB("",""),tsB("",""),tsB("","")]]},
 kids:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("CHIX AND VEGGIE","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
@@ -2040,6 +2080,7 @@ winebottle:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",q
 [tsB("B DECOY SB","orange"),tsB("",""),tsB("",""),tsB("B LOUIS MT CAB","pink"),tsB("","")]]},
 featwine:{h:"Order Screen 11/17/26 18:03|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("GL 6 Apothic","red"),tsB("BTL Apothic","red"),tsB("",""),tsB("YUENG LAGER","orange"),tsB("GLS 9 Apothic","red")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("DF IPA 60MIN","orange"),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("Troegs Leaf Btl","royal"),tsB("","")],
@@ -2061,17 +2102,17 @@ amcock:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:
 [tsB("BONEFISH TINI","teal"),tsB("FRENCH TINI","teal"),tsB("ISLAND BREEZE","teal"),tsB("MARGARITA STRAWB","teal"),tsB("","")],
 [tsB("BRANDY ALEXANDER","teal"),tsB("FRESH APPLE TINI","orange"),tsB("KIR ROYAL","teal"),tsB("MERMAID TIKI","teal"),tsB("COCKTAIL N-Z","red","",0,"nzcock")]]},
 nzcock:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
-[tsB("NEGRONI","teal"),tsB("SALTY DOG","teal"),tsB("VODKA COLLINS","teal"),tsB("",""),tsB("","")],
-[tsB("OLD FASHIONED","teal"),tsB("SCREWDRIVER","teal"),tsB("WATERMELON TINI","teal","0 Left"),tsB("",""),tsB("","")],
-[tsB("PALOMA","teal"),tsB("SEABREEEZE","teal"),tsB("WHISKEY COLLINS","teal"),tsB("",""),tsB("","")],
-[tsB("PARTRIDGE PEAR","teal"),tsB("SEX ON THE BEACH","teal"),tsB("WHISKEY SOUR","teal"),tsB("",""),tsB("","")],
-[tsB("PINA COLADA","teal"),tsB("SIDECAR","teal"),tsB("WHITE COSMO","orange"),tsB("",""),tsB("","")],
-[tsB("P COLADA TOP SH","teal"),tsB("SOUR APPLE TINI","teal"),tsB("WHITE RUSSIAN","teal"),tsB("",""),tsB("","")],
-[tsB("MARG PTRN CUC","teal"),tsB("SPRITZER","teal"),tsB("WILD FLOWER","teal"),tsB("",""),tsB("","")],
-[tsB("PUMPKIN TINI","teal"),tsB("STRW CITRUS TINI","teal"),tsB("WINT WH BELLINI","teal"),tsB("",""),tsB("","")],
-[tsB("RASPBERRY TINI","teal"),tsB("TEQUILA SUNRISE","teal"),tsB("",""),tsB("",""),tsB("","")],
-[tsB("RUM RUNNER","teal"),tsB("TOM COLLINS","teal"),tsB("",""),tsB("",""),tsB("","")],
-[tsB("RUSTY NAIL","teal"),tsB("TROPIC HEAT TINI","teal"),tsB("",""),tsB("COCKTAIL A-M","red","",0,"amcock"),tsB("","")]]},
+[tsB("NEGRONI","teal"),tsB("SALTY DOG","teal"),tsB("VODKA COLLINS","teal")],
+[tsB("OLD FASHIONED","teal"),tsB("SCREWDRIVER","teal"),tsB("WATERMELON TINI","teal","0 Left")],
+[tsB("PALOMA","teal"),tsB("SEABREEEZE","teal"),tsB("WHISKEY COLLINS","teal")],
+[tsB("PARTRIDGE PEAR","teal"),tsB("SEX ON THE BEACH","teal"),tsB("WHISKEY SOUR","teal")],
+[tsB("PINA COLADA","teal"),tsB("SIDECAR","teal"),tsB("WHITE COSMO","orange")],
+[tsB("P COLADA TOP SH","teal"),tsB("SOUR APPLE TINI","teal"),tsB("WHITE RUSSIAN","teal")],
+[tsB("MARG PTRN CUC","teal"),tsB("SPRITZER","teal"),tsB("WILD FLOWER","teal")],
+[tsB("PUMPKIN TINI","teal"),tsB("STRW CITRUS TINI","teal"),tsB("WINT WH BELLINI","teal")],
+[tsB("RASPBERRY TINI","teal"),tsB("TEQUILA SUNRISE","teal"),tsB("","")],
+[tsB("RUM RUNNER","teal"),tsB("TOM COLLINS","teal"),tsB("","")],
+[tsB("RUSTY NAIL","teal"),tsB("TROPIC HEAT TINI","teal"),tsB("COCKTAIL A-M","red","",0,"amcock")]]},
 vodka:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows:[
 [tsB("*VODKA","green"),tsB("",""),tsB("",""),tsB("",""),tsB("*GIN","green")],
 [tsB("*ABSOLUT","green"),tsB("",""),tsB("",""),tsB("",""),tsB("BEEFEATER","green")],
@@ -2094,10 +2135,10 @@ bourbon:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER I",rows
 [tsB("CHIVAS","pink","0 Left"),tsB("JW BLACK","pink"),tsB("WHISTLEPIG","pink"),tsB("",""),tsB("","")],
 [tsB("CROWN ROYAL","pink"),tsB("JW RED","pink"),tsB("WLD TURKEY 101","pink","0 Left"),tsB("",""),tsB("","")],
 [tsB("*DEWARS WHITE","pink"),tsB("KNOB CREEK","pink"),tsB("WOODFORD RESERVE","pink"),tsB("BULLEIT 95 RYE","red","0 Left"),tsB("","")],
-[tsB("GENTLEMAN JACK","pink","0 Left"),tsB("MACALLAN 12","pink"),tsB("",""),tsB("",""),tsB("NA LYRES BRBN","royal")],
+[tsB("GENTLEMAN JACK","pink","0 Left"),tsB("MACALLAN 12","pink"),tsB("",""),tsB("",""),tsB("NA LYRES BRBN","royal","",0,"",2)],
 [tsB("GLENFIDDICH 12","pink"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
 rum:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
-[tsB("*RUM","blue"),tsB("",""),tsB("NA LYRES WT RUM","royal"),tsB("PANTALONES BLNCO","blue"),tsB("*TEQUILA/ SAUZA G","blue")],
+[tsB("*RUM","blue"),tsB("",""),tsB("NA LYRES WT RUM","royal","",0,"",3),tsB("PANTALONES BLNCO","blue"),tsB("*TEQUILA/ SAUZA G","blue")],
 [tsB("*BACARDI","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("ALTOS","blue","0 Left")],
 [tsB("BACARDI ANEJO","blue"),tsB("",""),tsB("",""),tsB("",""),tsB("CASAMIGOS ANEJO","blue","0 Left")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("CASAMIGOS BLANCO","blue")],
@@ -2116,8 +2157,9 @@ shooter:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",row
 [tsB("GRAPE BOMB","red"),tsB("WASHGTON APPLE","red"),tsB("",""),tsB("KAHLUA COFFEE","blue"),tsB("","")],
 [tsB("GRASSHOPPER","red"),tsB("WOO WOO","red"),tsB("",""),tsB("KENTUCKY COFFEE","blue"),tsB("","")],
 [tsB("IRISH CAR BOMB","red"),tsB("",""),tsB("",""),tsB("KEOKE COFFEE","blue"),tsB("","")],
-[tsB("KAMIKAZE","red"),tsB("",""),tsB("",""),tsB("MEXICAN COFFEE","blue"),tsB("","")],
-[tsB("LEMON DROP SHOT","red"),tsB("",""),tsB("",""),tsB("NUTTY IRISH COFF","blue"),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("MEXICAN COFFEE","blue"),tsB("","")],
+[tsB("KAMIKAZE","red"),tsB("",""),tsB("",""),tsB("NUTTY IRISH COFF","blue"),tsB("","")],
+[tsB("LEMON DROP SHOT","red"),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("MELONBALL","red"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
 cordials:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
 [tsB("APEROL","mag"),tsB("REMY MARTIN VSOP","mag"),tsB("",""),tsB("",""),tsB("","")],
@@ -2132,7 +2174,7 @@ cordials:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",ro
 [tsB("KAHLUA","mag"),tsB("",""),tsB("",""),tsB("CAMPARI","mag"),tsB("","")],
 [tsB("PATRON CITRONGE","mag","0 Left"),tsB("",""),tsB("",""),tsB("",""),tsB("","")]]},
 mgrcomp:{h:"Order Screen 11/17/26 18:06|TRAINING T - HH DINING RM DINNER II",rows:[
-[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("ROUND UP","blue"),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("CHARITY","blue"),tsB("",""),tsB("","")]]},
 misc:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty:true,rows:[
@@ -2144,9 +2186,9 @@ misc:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty:tr
 [tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("NAME","slate"),tsB("",""),tsB("",""),tsB("<<RTRN COMP SCRN","slate","",0,"mgrcomp"),tsB("","")]]},
 gift:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
-[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("BRACELET","orange"),tsB("OPEN $ GIFT CARD","green","",2),tsB("",""),tsB("","")],
-[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
+[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],[tsB("",""),tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("BONUS CARD","red"),tsB("","")]]},
 refills:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
 [tsB("A1 1oz","blue"),tsB("COCKTAIL 1OZ","blue"),tsB("SOY 1oz","blue"),tsB("",""),tsB("CHIPS 8EA","orange")],
@@ -2184,7 +2226,7 @@ brunch:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows
 [tsB("",""),tsB("",""),tsB("",""),tsB("DRIVE","cyan"),tsB("BREAD","orange")],
 [tsB("",""),tsB("",""),tsB("",""),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")]]},
 lunch:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",rows:[
-[tsB("L ENT SOUP/ SAL","mint"),tsB("ENT LG BRS SAL","royal"),tsB("L FR CHIX SAND","mint"),tsB("PRIX FIXE NA BEV","red"),tsB("LPF FISH & CHIPS","pink")],
+[tsB("L ENT SOUP/ SAL","mint","",0,"",2),tsB("ENT LG BRS SAL","royal"),tsB("L FR CHIX SAND","mint"),tsB("PRIX FIXE NA BEV","red"),tsB("LPF FISH & CHIPS","pink")],
 [tsB("",""),tsB("ENT LG CHIX BRS","royal"),tsB("L FR FISH SAND","mint"),tsB("LPF 2 BANG TACO","pink"),tsB("LPF BURGER 8 OZ","pink")],
 [tsB("ENT LG HOUSE","royal"),tsB("ENT LG SHR BRS","royal"),tsB("L GR CHIX SAND","mint"),tsB("LPF 2 FISH TACO","pink"),tsB("LPF GR CHICKEN","pink")],
 [tsB("ENT LG CHIX HSE","royal"),tsB("ENT LG SLM BRS","royal"),tsB("L GR FISH SAND","mint"),tsB("LPF 2 CHIX TACO","pink"),tsB("LPF 2 BNG CHX TC","pink")],
@@ -2269,7 +2311,14 @@ function tsRender(){
       wrap.appendChild(q);
     }
     var g=document.createElement("div"); g.className="tsGrid";
-    p.rows.forEach(function(row){
+    // Build 200.21 fidelity: the real tablet lays every page out on the
+    // same 11-row pitch, so a page with fewer rows leaves the rest of the
+    // screen empty instead of stretching its buttons to fill it. Pages
+    // with a 0-9 quantity key column keep their own key alignment and are
+    // not padded. Representation only: padding rows are inert spacers.
+    var tsRows=p.rows.slice();
+    if(!p.qty){ while(tsRows.length<11) tsRows.push([tsB("","")]); }
+    tsRows.forEach(function(row){
       var r=document.createElement("div"); r.className="tsGrow";
       row.forEach(function(cell){
         if(!cell.l){var s=document.createElement("div");s.className="tsSpacer";if(cell.w)s.style.flex=cell.w;r.appendChild(s);return;}
@@ -2279,7 +2328,17 @@ function tsRender(){
         var lab=document.createElement("span"); lab.textContent=cell.l; d.appendChild(lab);
         if(cell.t){var tg=document.createElement("span");tg.className=(cell.t==="SPECIAL"?"tsTagS":"tsTag");tg.textContent=cell.t;d.appendChild(tg);}
         d.onclick=function(){ if(dest){tsGoTo(dest);} else {d.classList.add("tsFlash");setTimeout(function(){d.classList.remove("tsFlash")},180);} };
-        r.appendChild(d);
+        if(cell.v&&cell.v>1){
+          // Tall button: in the photos it spans v grid rows (the rows
+          // under it hold empty cells). Render it full width inside a
+          // relative wrapper, stretched over those rows. Same tap
+          // behavior as any other button.
+          var wr=document.createElement("div"); wr.className="tsTallWrap"; wr.style.flex=cell.w?cell.w:1;
+          d.style.flex=""; d.style.height="calc("+(cell.v*100)+"% + "+((cell.v-1)*6)+"px)";
+          wr.appendChild(d); r.appendChild(wr);
+        } else {
+          r.appendChild(d);
+        }
       });
       g.appendChild(r);
     });

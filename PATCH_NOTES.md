@@ -3,6 +3,11 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.12 — Prod — Nov 22, 2026
+
+- Tablet Sim pages corrected to match the POS photos
+- Quiz tabs now show the real tablet tab labels
+
 ## Build 300.11 — Prod — Nov 21, 2026
 
 - Removed the description text from the Tablet Sim window
