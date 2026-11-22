@@ -356,7 +356,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.10</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.11</span>
     </div>
   </div>
 
@@ -434,6 +434,7 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.11</b><span>Nov 21, 2026</span></div><ul><li>Removed the description text from the Tablet Sim window</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.10</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim adds the ten pages before SEAFOOD</li><li>Quiz POS tabs corrected from the new pages</li><li>Kids meals are no longer sent to the bar</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.9</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim clock now shows Eastern time.</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.8</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim clock now shows the current time.</li></ul></div>
@@ -454,7 +455,7 @@
     <div id="tabletOverlay" role="dialog" aria-label="Tablet Sim, POS tablet simulator">
       <div class="tsBackdrop"></div>
       <div class="tsWindow">
-        <div class="tsHead"><div class="tsHeadText"><div class="tsTitle">📱 Tablet Sim</div><div class="tsSub">The POS tablet, all 35 pages. Tap a tab on the right to open its page. The bottom tab flips the tab list down a set, the top tab flips it back up. Item buttons just flash, nothing is rung up.</div></div><button id="tsClose" aria-label="Close Tablet Sim and return to the hub">✕ Close, back to hub</button></div>
+        <div class="tsHead"><div class="tsHeadText"><div class="tsTitle">📱 Tablet Sim</div></div><button id="tsClose" aria-label="Close Tablet Sim and return to the hub">✕ Close, back to hub</button></div>
         <div class="tsBezel"><div class="tsScreen">
           <div class="tsHdr"><span class="tsQ">?</span><span id="tsHdrL"></span><span class="tsMid" id="tsHdrM"></span><span class="tsRight">Table: 55T, Check: 0073</span><span class="tsBatt">▬▲</span></div>
           <div class="tsMain"><div class="tsZone" id="tsZone"></div><div class="tsOrder"><div class="tsArrows"><span>▲</span><span>▼</span></div><div class="tsSp"></div><div class="tsTot"><span>Total:</span><span>0.00</span></div><div class="tsLogo">POS<span>i</span>touch</div></div><div class="tsTabs" id="tsTabs"></div></div>
@@ -481,18 +482,14 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.10 (Prod): three parts on top of Prod 300.9.
-// Part 1: the Tablet Sim gains the missing first tab set (set 0: DR LANDING,
-// SPECIALS SCREEN, SH FOOD, APPETIZER, MARTI/MANH, WINE GLASS, WINE GLASS 9OZ,
-// BEER, BEVERAGES, PREMIUM BEVERAGES, SEAFOOD as the seam into the old set 1),
-// all 10 new pages built from the Nov 21 evening photo addendum, 35 pages
-// total, and the sim now opens on DR LANDING. Part 2: quiz POS tab sets are
-// corrected from pos-mapping-update-nov21.md (starters on APPETIZER, Social
-// Hour dishes on SH FOOD, guide drinks gain MARTI/MANH, wines gain WINE GLASS
-// and WINE GLASS 9OZ, all 11 beer and beverages items on BEER). Part 3: kids
-// meals (Minnow Meals) are never picked for barstool orders. Everything else
-// is exactly as Prod 300.9 shipped. Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.10';
+// This build is Build 300.11 (Prod): one change on top of
+// Prod 300.10. The small description paragraph under the Tablet Sim
+// heading in the Tablet Sim window is removed entirely, no replacement
+// text. The Tablet Sim heading and the Close, back to hub button stay,
+// and the tablet sits up in the space the paragraph freed. Nothing else
+// changes: no behavior, data, or layout changes anywhere else.
+// Displayed in the header as "Build N".
+var BUILD_NUMBER = '300.11';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
