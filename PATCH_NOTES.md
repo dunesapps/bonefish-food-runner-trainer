@@ -3,6 +3,10 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.13 — Prod — Nov 22, 2026
+
+- Fixed the SH FOOD page layout in the Tablet Sim
+
 ## Build 300.12 — Prod — Nov 22, 2026
 
 - Tablet Sim pages corrected to match the POS photos

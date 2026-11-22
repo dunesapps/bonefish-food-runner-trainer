@@ -358,7 +358,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.12</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.13</span>
     </div>
   </div>
 
@@ -436,6 +436,7 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.13</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim SH FOOD page fixed: its buttons now sit at their real width on the left of the screen, like the real tablet, instead of stretching across it</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.12</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim pages corrected to match the POS photos</li><li>Quiz tabs now show the real tablet tab labels</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.11</b><span>Nov 21, 2026</span></div><ul><li>Removed the description text from the Tablet Sim window</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.10</b><span>Nov 21, 2026</span></div><ul><li>Tablet Sim adds the ten pages before SEAFOOD</li><li>Quiz POS tabs corrected from the new pages</li><li>Kids meals are no longer sent to the bar</li></ul></div>
@@ -485,14 +486,16 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.12 (Prod): a visual fidelity pass
-// on the Tablet Sim against the POS photos (all 35 pages). Button
-// size, color, and on-screen location were checked photo by photo and
-// corrected where the sim drifted from the real tablet, and the quiz
-// POS tab displays now use the proper tablet tab names and rail icons.
-// Representation only: no behavior changes anywhere.
+// This build is Build 300.13 (Prod): the Tablet Sim SH FOOD page
+// is fixed to match its POS photo. The page is a 4-column grid with
+// only the left two columns filled, so its ten buttons now sit at
+// their real width in a block on the left of the screen, with the
+// rest of the row empty, instead of two buttons stretching across
+// the full width of the screen. Labels and colors already matched
+// the photo and are unchanged. Representation only: no behavior
+// changes anywhere.
 // Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.12';
+var BUILD_NUMBER = '300.13';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -1898,11 +1901,11 @@ specials:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("",""),tsB("",""),tsB("",""),tsB("","")],
 [tsB("",""),tsB("1st TIME GUEST","cyan"),tsB("",""),tsB("","")]]},
 shfood:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
-[tsB("SH BANG CHIX","pink"),tsB("ENT SH BANG CHIX","orange")],
-[tsB("SH CSPY CAULI","pink"),tsB("ENT SH CSP CAULI","orange")],
-[tsB("SHRIMP TOAST","pink"),tsB("ENT SHRIMP TOAST","orange")],
-[tsB("TUNA WONTONS","pink"),tsB("ENT TUNA WONTONS","orange")],
-[tsB("SH FRIED PICKLES","pink"),tsB("ENT SH FR PICKLS","orange")]]},
+[tsB("SH BANG CHIX","pink"),tsB("ENT SH BANG CHIX","orange"),tsB("",""),tsB("","")],
+[tsB("SH CSPY CAULI","pink"),tsB("ENT SH CSP CAULI","orange"),tsB("",""),tsB("","")],
+[tsB("SHRIMP TOAST","pink"),tsB("ENT SHRIMP TOAST","orange"),tsB("",""),tsB("","")],
+[tsB("TUNA WONTONS","pink"),tsB("ENT TUNA WONTONS","orange"),tsB("",""),tsB("","")],
+[tsB("SH FRIED PICKLES","pink"),tsB("ENT SH FR PICKLS","orange"),tsB("",""),tsB("","")]]},
 appetizer:{h:"Order Screen 11/21/26 20:39|TRAINING T - DINING RM DIN I",rows:[
 [tsB("BANG BANG","pink"),tsB("ENT BANG BANG","orange"),tsB("BANG CHIX BITES","pink"),tsB("ENT BANG CHIX BI","orange"),tsB("BREAD","orange")],
 [tsB("CALAMARI","pink"),tsB("ENT CALAMARI","orange"),tsB("SH CSPY CAULI","pink"),tsB("ENT SH CSP CAULI","orange"),tsB("BREAD ($1)","green")],
