@@ -3,6 +3,19 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.16 — Prod — Nov 24, 2026
+
+- Quiz info cards now show the tablet screen with the button lit in place
+- Items found on more than one screen show every screen
+
+## Build 300.15 — Prod — Nov 22, 2026
+
+- Fixed the tablet rail flipping back up
+
+## Build 300.14 — Prod — Nov 22, 2026
+
+- Rebuilt the tablet right rail with even tab sizes on every page
+
 ## Build 300.13 — Prod — Nov 22, 2026
 
 - Fixed the SH FOOD page layout in the Tablet Sim

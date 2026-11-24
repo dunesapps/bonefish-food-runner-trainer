@@ -269,6 +269,46 @@
   .posTabChip{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(#1a4fe0,#0030b8);border:1.5px solid #9db4ff;border-radius:6px;color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:10.5px;line-height:1.15;padding:4px 8px;text-transform:uppercase;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
   .posTabLine{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
   .mOpt .posTabs{margin-left:8px}
+  /* Tablet button locator (Build 300.16): instead of just naming the POS
+     tab, an item card shows a picture of each tablet screen the item
+     lives on, drawn like the instruction-card diagrams, with the item's
+     own button lit up in gold on every screen that has it. */
+  .posScreens{margin-top:10px}
+  .posScreensHead{font-family:system-ui,sans-serif;font-size:13.5px;font-weight:700;line-height:1.4;margin:2px 0 2px}
+  .posScreen{background:#2b0a0e;border:1px solid var(--line);border-radius:10px;padding:7px 8px 8px;margin:9px 0}
+  .posScreenBar{display:flex;align-items:center;gap:8px;background:linear-gradient(#f4f4f4,#c9c9c9);color:#222;border-radius:5px;padding:3px 8px;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.02em}
+  .posScreenBarR{margin-left:auto;font-weight:600;font-size:10.5px;color:#445}
+  .posScreenBody{display:flex;gap:6px;margin-top:6px;align-items:stretch}
+  .posMiniQty{flex:0 0 15px;background:linear-gradient(#fff,#ddd);color:#333;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-size:7.5px;font-weight:700;writing-mode:vertical-rl;letter-spacing:.14em}
+  .posMiniGrid{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+  .posMiniRow{display:flex;gap:3px;min-height:16px}
+  .posMiniBtn{flex:1;border-radius:4px;color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:7.5px;line-height:1.12;padding:1px 2px;text-transform:uppercase;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);overflow:hidden;position:relative}
+  .posMiniSpacer{flex:1;visibility:hidden}
+  .posMiniTag{background:#ff2e4d;color:#fff;font-size:6.5px;border-radius:6px;padding:0 4px;margin-top:1px;font-weight:800}
+  .posMiniBtn[data-c="blue"]{background:linear-gradient(#25a5ec,#0b7fc6)}
+  .posMiniBtn[data-c="royal"]{background:linear-gradient(#5b7cf0,#4663d8)}
+  .posMiniBtn[data-c="red"]{background:linear-gradient(#f43a47,#d80f1e)}
+  .posMiniBtn[data-c="hot"]{background:linear-gradient(#f43a8e,#d8006e)}
+  .posMiniBtn[data-c="pink"]{background:linear-gradient(#e91e7e,#c4006a)}
+  .posMiniBtn[data-c="mag"]{background:linear-gradient(#d633f0,#a800c8)}
+  .posMiniBtn[data-c="purp"]{background:linear-gradient(#b44ae0,#8e24c8)}
+  .posMiniBtn[data-c="orange"]{background:linear-gradient(#ff9a1f,#f56f00)}
+  .posMiniBtn[data-c="teal"]{background:linear-gradient(#17b8cc,#0793a8)}
+  .posMiniBtn[data-c="cyan"]{background:linear-gradient(#1fb6d9,#0899bd)}
+  .posMiniBtn[data-c="green"]{background:linear-gradient(#22d84f,#00b02e)}
+  .posMiniBtn[data-c="mint"]{background:linear-gradient(#1fd67f,#00b35c)}
+  .posMiniBtn[data-c="slate"]{background:linear-gradient(#5a6b7d,#3c4a5a)}
+  .posMiniBtn[data-c="gray"]{background:linear-gradient(#7d8a99,#5a6675)}
+  .posMiniBtn[data-c="dark"]{background:linear-gradient(#4a4a52,#2e2e36)}
+  .posMiniBtn[data-c="white"]{background:linear-gradient(#fff,#ddd);color:#333}
+  .posMiniBtn.hit{background:linear-gradient(#ffd76a,#f0a92e);color:#241a05;outline:2.5px solid #fff3c4;box-shadow:0 0 0 3px rgba(255,180,40,.55),0 2px 8px rgba(0,0,0,.55);z-index:2}
+  .posMiniStar{color:#b3541e;font-size:8px;line-height:1}
+  .posMiniRail{flex:0 0 17.5%;display:flex;flex-direction:column;gap:3px}
+  .posMiniTab{flex:1;background:linear-gradient(#1a4fe0,#0030b8);color:#fff;border:1px solid #9db4ff;border-radius:4px;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:6.5px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;padding:1px;text-transform:uppercase;min-height:13px}
+  .posMiniTab.on{background:linear-gradient(#2ee6a8,#0bbf83);border-color:#bff5e2}
+  .posScreenCap{font-family:system-ui,sans-serif;font-size:13px;line-height:1.45;color:#f5ead9;margin-top:7px}
+  .posScreenCap b{color:#ffd76a}
+  .posScreenCap.warn{color:#f0c9a8}
   .mOpt .posOptText{font-weight:600}
   /* Tablet Sim (Build 200.14): a window over the blurred restaurant holding
      the full POS tablet simulator, recreated screens in the standalone
@@ -358,7 +398,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.13</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.16</span>
     </div>
   </div>
 
@@ -436,6 +476,9 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.16</b><span>Nov 24, 2026</span></div><ul><li>Item cards in Menu Training no longer just name the POS tab: each card now shows a <b>picture of the actual tablet screen</b> with the item's <b>button lit up in gold</b>, its button name, and its row and position</li><li>Items that live on more than one screen show <b>every screen</b>, each with its own button lit, on the delivery cards and in the quiz answer feedback</li></ul></div>
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.15</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim right rail: flipping back up works again. Tapping the top tab of a flipped-down window (SEAFOOD, A-M COCKTAILS HH, CORDIALS) now returns the rail to the window above it, so you can flip all the way back up to DR LANDING instead of only going down</li></ul></div>
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.14</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim right rail fixed to match the POS photos: every page now shows 11 tabs at the same height (10 on the last window), so tab spacing no longer jumps while flipping through the tabs</li><li>CORDIALS and the cocktail pages now open with the rail windows shown in their photos</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.13</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim SH FOOD page fixed: its buttons now sit at their real width on the left of the screen, like the real tablet, instead of stretching across it</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.12</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim pages corrected to match the POS photos</li><li>Quiz tabs now show the real tablet tab labels</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.11</b><span>Nov 21, 2026</span></div><ul><li>Removed the description text from the Tablet Sim window</li></ul></div>
@@ -486,16 +529,23 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.13 (Prod): the Tablet Sim SH FOOD page
-// is fixed to match its POS photo. The page is a 4-column grid with
-// only the left two columns filled, so its ten buttons now sit at
-// their real width in a block on the left of the screen, with the
-// rest of the row empty, instead of two buttons stretching across
-// the full width of the screen. Labels and colors already matched
-// the photo and are unchanged. Representation only: no behavior
-// changes anywhere.
+// This build is Build 300.16 (Prod): Menu Training item cards show
+// where an item's button actually sits on the tablet screen (a
+// replica screen per tab, button lit in gold) instead of only naming
+// the POS tab. Build 300.15 made the Tablet Sim right rail able to
+// flip back up again. Build 300.14 made the rail a sliding window of
+// 11 tabs over one long tab list (10 on the final CORDIALS window,
+// which ends at TEST), with each page opening on the window its
+// photo shows, but the windows overlap by one tab and the shared
+// tab's window starts at itself, so tapping the top tab re-showed
+// the same window: flipping down worked, flipping up did not, and
+// the DR LANDING window was unreachable once you had flipped past
+// it. The rail window is now stateful: tapping the top tab when it
+// is that shared tab flips the rail up to the window that ends on
+// it, keeping the page open. Page buttons, labels, colors, and tab
+// heights are unchanged.
 // Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.13';
+var BUILD_NUMBER = '300.16';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -1819,8 +1869,8 @@ function exitToHub(placeX){
 // The full POS tablet simulator as a training track: the same recreation
 // as the standalone Bonefish POS Simulator Space, data and navigation
 // carried over from it (all 35 photographed pages, the tablet frame,
-// right side tabs with the active tab lit green, tab sets that flip from
-// the bottom tab down a set or the top tab back up a set, in-page
+// right side tabs with the active tab lit green, the rail as a sliding
+// window of 11 tabs over one long tab list (Build 300.14), in-page
 // sub-screen buttons, and the TEST page as an empty frame with its not
 // photographed note). Pages are recreated screens (styled buttons), not
 // photos. Item buttons only flash when tapped. It opens in a window over
@@ -1862,22 +1912,323 @@ function posTabChipsHTML(tabs){
   return h+'</span>';
 }
 function posTabLineHTML(it){
-  if(!it || !it.posTabs || !it.posTabs.length) return '';
-  var names=it.posTabs.map(function(t){ return posTabCanon(t); });
-  return '<div class="posTabLine" style="margin-top:6px">POS tab: ' + posTabChipsHTML(it.posTabs) + '<b>' + escHtml(names.join(', ')) + '</b></div>';
+  // Build 300.16: the info card no longer just names the POS tab. It
+  // shows a picture of the tablet screen itself (one per tab the item
+  // lives on, so multi-spot items show every spot) with the item's own
+  // button lit up in gold, its name, and its row and position, the
+  // same diagram style as the guide booklet's instruction cards.
+  return posScreensHTML(it);
 }
 function posTabSetHTML(text){
   var tabs=String(text).split(', ');
   var names=tabs.map(function(t){ return posTabCanon(t); });
   return '<span class="posOptText">' + escHtml(names.join(', ')) + '</span>' + posTabChipsHTML(tabs);
 }
-var TS_SETS=[
-["drlanding","specials","shfood","appetizer","marti","wineglass","wineglass9","beer","beverages","premiumbev","seafood"],
-["seafood","landfood","seasonal","partner","soup","dinapps","desserts","kids","winebottle","featwine","amcock"],
-["amcock","nzcock","vodka","bourbon","rum","shooter","cordials"],
-["cordials","mgrcomp","misc","gift","refills","privatedining","brunch","lunch","bundles","test"]];
+// ----- Tablet button locator (Build 300.16) -----
+// posScreensHTML draws, for every POS tab an item is rung on, a small
+// replica of that tab's real tablet screen: the same button grid and
+// right rail the Tablet Sim renders (from TS_PAGES / tsRailWindow),
+// with the item's button(s) highlighted. Finding the button on a
+// screen is a match between the item's name and the screen's button
+// labels, which are heavily abbreviated POS spellings (BANG BANG,
+// ENT BANG BANG, SHRMP TMTO LING, G KIM CRAWF SB and so on). The
+// matcher below handles the abbreviation habits of the real screens:
+// prefixes (ENT, SD, G, B, LPF...), dropped vowels (MSCT, BTRFSH),
+// clipped words (LEM, FASHN), letter initials for word groups (SB =
+// Sauvignon Blanc, LCB = Lemon Caper Butter, KP = Kung Pao), draft /
+// bottle markers (D, BT), and one-letter typos. App and ENT variants
+// of one dish are both its button, so every cell tied for the best
+// match on a screen lights up. A handful of items whose real button
+// cannot be derived from the name alone are pinned in
+// POS_BTN_OVERRIDES. When no button on a photographed screen matches
+// an item at all (a few provisional wine and seasonal entries), the
+// screen is still shown, unlit, with a note saying so, rather than
+// lighting up a wrong button.
+var POS_PAGE_BY_LABEL=null;
+function posNormLabel(s){ return String(s).toUpperCase().replace(/\s*\/\s*/g,'/').replace(/\s+/g,' ').trim(); }
+function posPageIdForTab(tabName){
+  if(!POS_PAGE_BY_LABEL){
+    POS_PAGE_BY_LABEL={};
+    try{ for(var k in TS_TABLABEL) POS_PAGE_BY_LABEL[posNormLabel(TS_TABLABEL[k])]=k; }catch(e){}
+  }
+  return POS_PAGE_BY_LABEL[posNormLabel(posTabCanon(tabName))]||null;
+}
+function posFold(s){
+  var t=String(s).replace(/®/g,'');
+  try{ t=t.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch(e){}
+  return t.toUpperCase();
+}
+function posTokens(s){
+  return posFold(s).replace(/['\u2019]/g,'').replace(/[^A-Z0-9]+/g,' ').split(' ').filter(function(w){ return w.length>0; });
+}
+function posSkel(t){ return t.replace(/[AEIOU]/g,''); }
+function posSubseq(needle,hay){
+  var i=0;
+  for(var j=0;j<hay.length&&i<needle.length;j++){ if(hay.charAt(j)===needle.charAt(i)) i++; }
+  return i===needle.length;
+}
+function posLevSmall(a,b){
+  if(a===b) return true;
+  if(Math.abs(a.length-b.length)>1) return false;
+  var i=0,j=0,diff=0;
+  while(i<a.length&&j<b.length){
+    if(a.charAt(i)===b.charAt(j)){ i++; j++; continue; }
+    diff++; if(diff>1) return false;
+    if(a.length===b.length){ // substitution or one adjacent transposition
+      if(a.charAt(i)===b.charAt(j+1)&&a.charAt(i+1)===b.charAt(j)){ i+=2; j+=2; }
+      else { i++; j++; }
+    } else if(a.length>b.length){ i++; } else { j++; }
+  }
+  if(i<a.length||j<b.length) diff++;
+  return diff<=1;
+}
+var POS_ABBREV={CHIX:'CHICKEN',CHX:'CHICKEN',CHKN:'CHICKEN',CZR:'CAESAR',HSE:'HOUSE',SHV:'SHAVED',BRS:'BRUSSELS',BRSSL:'BRUSSELS',SLM:'SALMON',SLMN:'SALMON',SHRMP:'SHRIMP',SHMP:'SHRIMP',TMTO:'TOMATO',BSQ:'BISQUE',CRB:'CRAB',BLKND:'BLACKENED',BLKN:'BLACKENED',BTR:'BUTTER',SAUC:'SAUCE',GLZ:'GLAZE',CHZ:'CHEESE',BRBN:'BOURBON',MNGO:'MANGO',DRGN:'DRAGON',DRG:'DRAGON',STRW:'STRAWBERRY',STRWBRRY:'STRAWBERRY',CSPY:'CRISPY',CRSP:'CRISPY',CAULI:'CAULIFLOWER',LEM:'LEMON',FASHN:'FASHIONED',MSCT:'MOSCATO',MOSC:'MOSCATO',RS:'RIESLING',BB:'BLUEBERRY',WP:'WHISTLEPIG',WH:'WHITE',SFT:'SOFT',FR:'FRIED',BI:'BITES'};
+var POS_BTN_IGNORE={ENT:1,SD:1,G:1,B:1,'9':1,L:1,LPF:1,FB:1,SH:1,N:1,A:1,OZ:1,CT:1,EA:1,TBS:1,ML:1,SCOOP:1,OMG:1};
+// Preparation and size words: a button whose only unmatched words are
+// these is still the item's button (CHOWDER CUP / BOWL, ENT LG CAESAR,
+// SH FRIED PICKLES), and one matched only through these words is not.
+var POS_BTN_VARIANT={CUP:1,BOWL:1,LG:1,FR:1,GR:1,APP:1,FRIED:1,GRILLED:1,BLACKENED:1,BLKN:1,CRISPY:1,CSPY:1,CRSP:1,STEAMED:1,SEARED:1,ROASTED:1,RSTD:1,BAKED:1,SAUTEED:1,SMOKED:1,SMKD:1,TOASTED:1,CRUSTED:1,GLAZED:1,STUFFED:1,BROILED:1};
+var POS_BTN_OVERRIDES={
+  'Whistlepig Old Fashioned':{marti:['WP MPL OLD FASHN']},
+  "Parker's Margarita":{marti:['PARK SAUZA RITA','PARK PATRON RITA']},
+  'Bang Bang Shrimp\u00AE':{appetizer:['BANG BANG','ENT BANG BANG']},
+  'Bang Bang Shrimp Tacos':{seafood:['BANG SFT T-3']},
+  'Baja Fish Tacos':{seafood:['FISH SFT T-3']},
+  'Grilled Chicken\u2013Live Well Option':{kids:['CHIX AND VEGGIE']},
+  'Grilled Shrimp\u2013Live Well Option':{kids:['L- KID GR SHRIMP']},
+  'Twin Cold Water Lobster Tails':{seafood:['TAILS 2']},
+  'Garlic Whipped Potatoes':{dinapps:['SD GPOT']},
+  'Lemon Caper Butter':{refills:['LCB 1oz']},
+  'Strawberry Rose Sidecar Martini':{nzcock:['SIDECAR']},
+  'Butterfish (aka Black Cod, Sablefish)':{seafood:['PAN ASIAN BTRFSH']}
+};
+// Screens where an item is rung from a screen but no photographed
+// button can honestly be named for it: show the screen unlit.
+var POS_BTN_NOHIT={
+  'Grilled Scallops & Shrimp':{seafood:1},
+  'J. Lohr Seven Oak Cabernet Sauvignon':{winebottle:1}
+};
+function posTokenMatch(itTok,btnTok){
+  if(itTok===btnTok) return true;
+  if(POS_ABBREV[btnTok]===itTok||POS_ABBREV[itTok]===btnTok) return true;
+  var a=itTok,b=btnTok;
+  if(a.length>3&&a.charAt(a.length-1)==='S'&&a.slice(0,-1)===b) return true;
+  if(b.length>3&&b.charAt(b.length-1)==='S'&&b.slice(0,-1)===a) return true;
+  if(a.length>=3&&b.length>=3&&(a.indexOf(b)===0||b.indexOf(a)===0)) return true;
+  var sa=posSkel(a),sb=posSkel(b);
+  if(sa.length>=3&&sa===sb) return true;
+  if(sa.length>=3&&sb.length>=3&&(sa.indexOf(sb)===0||sb.indexOf(sa)===0)) return true;
+  if(b.length>=4&&posSubseq(b,a)) return true;
+  if(b.length>=4&&a.length>=b.length+3&&a.slice(a.length-b.length)===b) return true;
+  if(a.length>=5&&b.length>=5&&posLevSmall(a,b)) return true;
+  return false;
+}
+function posItemTokens(it){
+  var name=String(it.name).replace(/\([^)]*\)/g,' ');
+  var toks=posTokens(name);
+  var stop={THE:1,AND:1,WITH:1,AKA:1,SIMPLY:1,BY:1,OR:1,BONEFISH:1,BFG:1,SPIRIT:1,FREE:1};
+  var out=[],seen={};
+  toks.forEach(function(t){ if(t.length>1&&!stop[t]&&!seen[t]){ seen[t]=1; out.push(t); } });
+  if(it.section==='Beer & Beverages'&&it.sub){
+    posTokens(it.sub).forEach(function(t){ if(!seen[t]&&t!=='BEVERAGES'){ seen[t]=1; out.push(t); } });
+  }
+  return out;
+}
+function posScoreButton(itToks,cell){
+  var label=cell.l;
+  var btnToks=posTokens(label);
+  var matched={}, matchedW={}, initUsed={}, usedCount=0, scorable=0, direct=false;
+  function markInit(t){ if(!matched[t]){ matched[t]=1; matchedW[t]=0.5; } }
+  function initialsOf(win){ return win.map(function(t){return t.charAt(0);}).join(''); }
+  // Letter-initial groups: SB, PG, LCB, KP, and runs like S&S. They
+  // count half weight: real but weaker evidence than a spelled-out
+  // word, so CC on an unrelated button cannot outrank a real button.
+  btnToks.forEach(function(bt){
+    if(bt.length>=2&&bt.length<=4){
+      for(var s=0;s+bt.length<=itToks.length;s++){
+        var win=itToks.slice(s,s+bt.length);
+        if(initialsOf(win)===bt){ win.forEach(markInit); initUsed[bt]=1; break; }
+      }
+    }
+  });
+  var singles=btnToks.filter(function(t){return t.length===1;});
+  if(singles.length>=2){
+    var otherHit=btnToks.some(function(bt){ return bt.length>=2&&itToks.some(function(t){return posTokenMatch(t,bt);}); });
+    if(otherHit){
+      var sg=singles.join('');
+      for(var s2=0;s2+sg.length<=itToks.length;s2++){
+        var win2=itToks.slice(s2,s2+sg.length);
+        if(initialsOf(win2)===sg){ win2.forEach(markInit); singles.forEach(function(t){initUsed[t]=1;}); break; }
+      }
+    }
+  }
+  var unmatched=[];
+  btnToks.forEach(function(bt){
+    if(POS_BTN_IGNORE[bt]||/^\d+$/.test(bt)) return;
+    scorable++;
+    if(initUsed[bt]){ usedCount++; return; }
+    if(bt==='D'){ if(itToks.indexOf('DRAFT')>=0){ matched['DRAFT']=1; matchedW['DRAFT']=1; usedCount++; direct=true; } else unmatched.push(bt); return; }
+    if(bt==='BT'){ if(itToks.indexOf('BOTTLE')>=0){ matched['BOTTLE']=1; matchedW['BOTTLE']=1; usedCount++; direct=true; } else unmatched.push(bt); return; }
+    var hit=false;
+    for(var i=0;i<itToks.length;i++){ if(posTokenMatch(itToks[i],bt)){ matched[itToks[i]]=1; matchedW[itToks[i]]=1; hit=true; break; } }
+    if(hit){ usedCount++; direct=true; } else unmatched.push(bt);
+  });
+  if(/\$/.test(label)){ scorable++; unmatched.push('PRICE'); } // a priced variant (BREAD ($1)) is a different button from the plain one
+  var wSum=0, directMatched={};
+  for(var mk in matchedW){ wSum+=matchedW[mk]; if(matchedW[mk]>=1) directMatched[mk]=1; }
+  var cov=itToks.length?wSum/itToks.length:0;
+  if(!direct&&cov>0){
+    // Matched only through letter initials, with a long unmatched word
+    // on the button (GROUPER & CC matching Corn Chowder through the
+    // initials C.C.): that is a different dish's button, not this one.
+    var foreign=unmatched.some(function(t){ return t.length>=5&&!POS_BTN_VARIANT[t]; });
+    if(foreign) cov=0;
+  }
+  return {cov:cov, prec:scorable?usedCount/scorable:0, matched:matched, directMatched:directMatched, unmatched:unmatched};
+}
+function posVariantClean(c){
+  // Every word on the button is either the item's or a preparation /
+  // size word, and at least one matched word is a real name word.
+  var hasContent=Object.keys(c.matched).some(function(t){ return !POS_BTN_VARIANT[t]; });
+  if(!hasContent) return false;
+  return c.unmatched.every(function(t){ return POS_BTN_VARIANT[t]||POS_BTN_VARIANT[POS_ABBREV[t]]; });
+}
+function posFindHits(it,pageId){
+  var page=TS_PAGES[pageId];
+  if(!page||!page.rows) return [];
+  var nh=POS_BTN_NOHIT[it.name];
+  if(nh&&nh[pageId]) return [];
+  var ov=POS_BTN_OVERRIDES[it.name];
+  if(ov&&ov[pageId]){
+    var oh=[];
+    page.rows.forEach(function(row,ri){ row.forEach(function(cell,ci){ if(cell.l&&ov[pageId].indexOf(cell.l)>=0) oh.push({r:ri,c:ci,label:cell.l}); }); });
+    if(oh.length) return oh;
+  }
+  var itToks=posItemTokens(it);
+  if(!itToks.length) return [];
+  var cands=[];
+  page.rows.forEach(function(row,ri){
+    row.forEach(function(cell,ci){
+      if(!cell.l) return;
+      if(cell.d) return; // a screen link (COCKTAIL N-Z, APP SCRN...), not an order button
+      if(/SCR/.test(cell.l)||cell.l==='DRIVE'||cell.l==='FOOD ONLY'||cell.l==='1st TIME GUEST'||cell.l==='**NAME**'||cell.l==='**ROVER**') return;
+      var sc=posScoreButton(itToks,cell);
+      if(sc.cov>0) cands.push({r:ri,c:ci,label:cell.l,cov:sc.cov,prec:sc.prec,matched:sc.matched,directMatched:sc.directMatched,unmatched:sc.unmatched});
+    });
+  });
+  if(!cands.length) return [];
+  var bestCov=0,bestPrec=0;
+  cands.forEach(function(c){ if(c.cov>bestCov) bestCov=c.cov; });
+  cands.forEach(function(c){ if(c.cov===bestCov&&c.prec>bestPrec) bestPrec=c.prec; });
+  // Among the best-coverage buttons, the cleanest label wins (plain
+  // BREAD over BREAD ($1), TOMATO LINGUINE over CHIX TMTO LING);
+  // buttons whose extra words are all prep/size words stay in, since
+  // app and ENT variants of one dish differ exactly that way.
+  var top=cands.filter(function(c){ return c.cov===bestCov&&(c.prec>=bestPrec-0.01||posVariantClean(c)); });
+  // How many buttons on this screen directly match each name word: a
+  // word only one button matches is distinctive (SKEWER, BRUT,
+  // RIESLING...). App and ENT variants of one button share a core
+  // and count once.
+  var counts={}, coresSeen={};
+  cands.forEach(function(c){
+    var core=posTokens(c.label).filter(function(t){ return !POS_BTN_IGNORE[t]; }).join(' ');
+    if(coresSeen[core]) return;
+    coresSeen[core]=1;
+    Object.keys(c.directMatched).forEach(function(t){ counts[t]=(counts[t]||0)+1; });
+  });
+  // Accept each finalist on its own merits, so a right button is not
+  // dragged down (or a wrong one carried) by a tie: strong name
+  // coverage on a clean button, a button fully explained by the name,
+  // a distinctive name word, or a button whose extra words are all
+  // prep/size words.
+  var accepted=top.filter(function(c){
+    if((c.cov>=0.5&&c.prec>0.5)||c.cov>=0.99||c.prec>=0.99) return true;
+    var unique=Object.keys(c.directMatched).some(function(t){ return counts[t]===1&&!POS_BTN_VARIANT[t]; });
+    return unique||posVariantClean(c);
+  });
+  if(!accepted.length) return [];
+  // First-word rule: when a finalist matches the item's first name
+  // word (CAKEBREAD, VEUVE), finalists that match only a later word
+  // are a different item's button (KJ CHARD, SPLT BRUT) and drop out,
+  // unless their own coverage is strong.
+  var firstTok=null;
+  for(var fi=0;fi<itToks.length;fi++){ if(itToks[fi].length>1){ firstTok=itToks[fi]; break; } }
+  if(firstTok&&accepted.some(function(c){ return !!c.matched[firstTok]; })){
+    accepted=accepted.filter(function(c){ return !!c.matched[firstTok]||c.cov>0.5; });
+  }
+  if(!accepted.length) return [];
+  accepted.sort(function(a,b){ return (b.prec-a.prec)||(a.r-b.r)||(a.c-b.c); });
+  return accepted.slice(0,6).map(function(c){ return {r:c.r,c:c.c,label:c.label}; });
+}
+function posOrdinal(n){ return n+(n===1?'st':n===2?'nd':n===3?'rd':'th'); }
+function posScreensHTML(it){
+  if(!it||!it.posTabs||!it.posTabs.length) return '';
+  var screens=[];
+  it.posTabs.forEach(function(tab){
+    var pid=posPageIdForTab(tab);
+    if(pid&&TS_PAGES[pid]&&screens.indexOf(pid)<0) screens.push(pid);
+  });
+  var h='<div class="posScreens"><div class="posScreensHead">📱 Where it is on the tablet — its button is lit up in gold on every screen that has it:</div>';
+  if(!screens.length){
+    return h+'<div class="posScreenCap warn" style="color:var(--muted)">The screens for '+escHtml(it.posTabs.join(', '))+' have not been photographed for the sim yet, so there is no screen picture to show.</div></div>';
+  }
+  screens.forEach(function(pid){
+    var page=TS_PAGES[pid];
+    var hits=posFindHits(it,pid);
+    var hitKey={};
+    hits.forEach(function(x){ hitKey[x.r+':'+x.c]=1; });
+    h+='<div class="posScreen"><div class="posScreenBar"><span>'+escHtml(TS_TABLABEL[pid])+' screen</span><span class="posScreenBarR">POSitouch · training tablet</span></div><div class="posScreenBody">';
+    if(page.qty) h+='<div class="posMiniQty">QTY 0 – 9</div>';
+    h+='<div class="posMiniGrid">';
+    page.rows.forEach(function(row,ri){
+      h+='<div class="posMiniRow">';
+      row.forEach(function(cell,ci){
+        if(!cell.l){ h+='<div class="posMiniSpacer" style="flex:'+(cell.w||1)+'"></div>'; return; }
+        var isHit=!!hitKey[ri+':'+ci];
+        h+='<div class="posMiniBtn'+(isHit?' hit':'')+'" data-c="'+escHtml(cell.c||'blue')+'" style="flex:'+(cell.w||1)+'"><span>'+escHtml(cell.l)+'</span>'+(cell.t?'<span class="posMiniTag">'+escHtml(cell.t)+'</span>':'')+(isHit?'<span class="posMiniStar" aria-hidden="true">★</span>':'')+'</div>';
+      });
+      h+='</div>';
+    });
+    h+='</div><div class="posMiniRail" aria-hidden="true">';
+    try{
+      tsRailWindow(pid).forEach(function(tid){ h+='<div class="posMiniTab'+(tid===pid?' on':'')+'">'+escHtml(TS_TABLABEL[tid])+'</div>'; });
+    }catch(e){}
+    h+='</div></div>';
+    if(hits.length){
+      var parts=hits.map(function(x){
+        var n=0;
+        page.rows[x.r].forEach(function(cell,ci){ if(cell.l&&ci<=x.c) n++; });
+        return '<b>'+escHtml(x.label)+'</b> — row '+(x.r+1)+', '+posOrdinal(n)+' button from the left';
+      });
+      h+='<div class="posScreenCap">👆 On the <b>'+escHtml(TS_TABLABEL[pid])+'</b> screen, tap '+parts.join('. Also here: ')+'.</div>';
+    } else {
+      h+='<div class="posScreenCap warn">⚠ No button on this photographed <b>'+escHtml(TS_TABLABEL[pid])+'</b> screen carries this name. It is rung from this screen, so ask your trainer which button your store uses for it.</div>';
+    }
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+// Build 300.14: the right rail is NOT a set of separate tab lists. Re-checking
+// every POS photo shows one long ordered tab list, and the rail is a sliding
+// window of 11 tabs over it (10 on the final window, which ends at TEST).
+// Every photographed page shows 11 tabs at the same height and pitch; the old
+// third "set" had only 7 tabs (A-M COCKTAILS HH through CORDIALS), so those
+// tabs stretched to roughly one-and-a-half times their real height whenever
+// it was showing, which is the spacing Ryan kept seeing while flipping tabs.
+// TS_ALL is the full rail order from the photos. TS_RAILSTART is the first
+// tab of the window each page is photographed with:
+//   DR LANDING window (11): the ten pages before SEAFOOD, plus SEAFOOD itself
+//     sitting at the bottom of their window.
+//   SEAFOOD window (11): SEAFOOD through FEAT WINE/BEER, A-M at the bottom.
+//   A-M COCKTAILS HH window (11): A-M and N-Z pages, REFILLS at the bottom.
+//   DESSERTS window (11): VODKA/GIN, BOUR/SCO/WHISK, RUM/TEQ and SHOOTER/
+//     COFFEE DRNK pages, exactly as photographed, CORDIALS at the bottom.
+//   CORDIALS window (10): CORDIALS through TEST, the end of the list.
+var TS_ALL=["drlanding","specials","shfood","appetizer","marti","wineglass","wineglass9","beer","beverages","premiumbev","seafood","landfood","seasonal","partner","soup","dinapps","desserts","kids","winebottle","featwine","amcock","nzcock","vodka","bourbon","rum","shooter","cordials","mgrcomp","misc","gift","refills","privatedining","brunch","lunch","bundles","test"];
+var TS_RAILSTART={drlanding:0,specials:0,shfood:0,appetizer:0,marti:0,wineglass:0,wineglass9:0,beer:0,beverages:0,premiumbev:0,seasonlapp:0,seafood:10,landfood:10,seasonal:10,partner:10,soup:10,dinapps:10,desserts:10,kids:10,winebottle:10,featwine:10,amcock:20,nzcock:20,vodka:16,bourbon:16,rum:16,shooter:16,cordials:26,mgrcomp:26,misc:26,gift:26,refills:26,privatedining:26,brunch:26,lunch:26,bundles:26,test:26};
+function tsRailWindow(id){ var s=TS_RAILSTART[id]||0; return TS_ALL.slice(s,s+11); }
 var TS_TABLABEL={drlanding:"DR LANDING",specials:"SPECIALS SCREEN",shfood:"SH FOOD",appetizer:"APPETIZER",marti:"MARTI/MANH",wineglass:"WINE GLASS",wineglass9:"WINE GLASS 9OZ",beer:"BEER",beverages:"BEVERAGES",premiumbev:"PREMIUM BEVERAGES",seasonlapp:"SEASONL APP SCRN",seafood:"SEAFOOD",landfood:"LAND FOOD",seasonal:"SEASONAL ENT SPECIALS",partner:"PARTNER SELECT",soup:"SOUP & SALAD",dinapps:"DIN APPS/SIDES",desserts:"DESSERTS",kids:"KIDS",winebottle:"WINE BOTTLE",featwine:"FEAT WINE/ BEER",amcock:"A-M COCKTAILS HH",nzcock:"N-Z COCKTAILS HH",vodka:"VODKA/GIN HH",bourbon:"BOUR/SCO/ WHISK HH",rum:"RUM/TEQ HH",shooter:"SHOOTER/ COFFEE DRNK",cordials:"CORDIALS",mgrcomp:"MGR COMP",misc:"MISCELLANEOU",gift:"GIFT CARDS",refills:"REFILLS",privatedining:"PRIVATE_DINING",brunch:"BRUNCH",lunch:"LUNCH",bundles:"BUNDLES",test:"TEST"};
-var TS_NATURAL={drlanding:0,specials:0,shfood:0,appetizer:0,marti:0,wineglass:0,wineglass9:0,beer:0,beverages:0,premiumbev:0,seasonlapp:0,seafood:0,landfood:1,seasonal:1,partner:1,soup:1,dinapps:1,desserts:1,kids:1,winebottle:1,featwine:1,amcock:1,nzcock:2,vodka:2,bourbon:2,rum:2,shooter:2,cordials:2,mgrcomp:3,misc:3,gift:3,refills:3,privatedining:3,brunch:3,lunch:3,bundles:3,test:3};
+
 function tsB(l,c,t,w,d,v){return{l:l,c:c||"blue",t:t||"",w:w||0,d:d||"",v:v||0}}
 var COMMON4=[tsB("DRIVE","cyan"),tsB("BREAD","orange"),tsB("FOOD ONLY","cyan"),tsB("1st TIME GUEST","cyan")];
 var TS_PAGES={
@@ -2253,14 +2604,47 @@ bundles:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",qty
 [tsB("",""),tsB("$ ALC FB SIDE","blue"),tsB("",""),tsB(".5GAL LEMONADE","blue"),tsB("","")]]},
 test:{h:"Order Screen 11/17/26 18:07|TRAINING T - HH DINING RM DINNER II",test:true,rows:[]}
 };
-var tsCur="drlanding", tsCurSet=0;
-function tsGoTo(id,setIdx){tsCur=id; if(setIdx!==undefined&&setIdx!==null)tsCurSet=setIdx; else tsCurSet=TS_NATURAL[id]; tsRender();}
+var tsCur="drlanding";
+// Build 300.15: the rail window is stateful, not purely a function of
+// the current page. Adjacent windows overlap by one tab (SEAFOOD is
+// the bottom tab of the DR LANDING window and the top tab of the next
+// window down), and the shared tab's own photographed window starts
+// at itself, so "window follows page" made tapping the top tab a
+// no-op: you could flip down window by window but never back up, and
+// the DR LANDING window became unreachable. tsRailStart is the first
+// tab of the window currently shown; it follows the page on ordinary
+// navigation (tsGoTo), but tsTabClick flips it back up when the top
+// tab is tapped (see there).
+var tsRailStart=0;
+function tsPageStart(id){ return (id in TS_RAILSTART)?TS_RAILSTART[id]:0; }
+var TS_STARTS=(function(){ var seen={},out=[]; for(var k in TS_RAILSTART){ var s=TS_RAILSTART[k]; if(!seen[s]){seen[s]=1;out.push(s);} } out.sort(function(a,b){return a-b;}); return out; })();
+// Build 300.14: going to a page shows the rail window that page is
+// photographed with (see TS_RAILSTART), so tapping the bottom tab of a
+// window lands on a page whose window starts at that tab. The setIdx
+// argument is kept only so older call sites that pass one keep
+// working; the window comes from the page.
+// Build 300.15: that alone could not flip back up. The top tab of the
+// windows starting at SEAFOOD (10), A-M COCKTAILS HH (20), and
+// CORDIALS (26) is the previous window's bottom tab, but its page's
+// photographed window starts at itself, so tapping it re-showed the
+// same window and the windows above were unreachable (Ryan: "I can go
+// down but not up"). tsTabClick now special-cases that tap: when the
+// tapped tab is the window's top tab and its own window starts here,
+// flip the rail up to the photographed window that ends on this tab
+// (the window it is the bottom tab of), keeping this page open with
+// its tab lit at the bottom, exactly the arrangement the upper
+// window's photos show. From there the tabs above are tappable again,
+// and tapping this tab once more (now the bottom tab) flips back
+// down. All other taps keep the 300.14 behavior.
+function tsGoTo(id,setIdx){ tsCur=id; tsRailStart=tsPageStart(id); tsRender(); }
 function tsTabClick(id,idx){
-  var set=TS_SETS[tsCurSet];
-  var isTop=(idx===0), isBot=(idx===set.length-1);
-  if(isBot && tsCurSet<TS_SETS.length-1){ tsGoTo(id,tsCurSet+1); }
-  else if(isTop && tsCurSet>0){ tsGoTo(id,tsCurSet-1); }
-  else { tsGoTo(id,tsCurSet); }
+  if(idx===0 && tsRailStart>0 && tsPageStart(id)===tsRailStart){
+    for(var i=TS_STARTS.length-1;i>=0;i--){
+      var s=TS_STARTS[i];
+      if(s<tsRailStart && TS_ALL[s+10]===id){ tsCur=id; tsRailStart=s; tsRender(); return; }
+    }
+  }
+  tsGoTo(id);
 }
 // Build 300.9: the header clock is pinned to the restaurant's own time
 // zone, US Eastern (America/New_York), no matter what time zone the
@@ -2348,7 +2732,7 @@ function tsRender(){
     wrap.appendChild(g); zone.appendChild(wrap);
   }
   var tabs=document.getElementById("tsTabs"); tabs.innerHTML="";
-  TS_SETS[tsCurSet].forEach(function(id,idx){
+  TS_ALL.slice(tsRailStart,tsRailStart+11).forEach(function(id,idx){
     var t=document.createElement("div"); t.setAttribute("role","button"); t.className="tsTab"+(id===tsCur?" on":""); t.textContent=TS_TABLABEL[id];
     t.onclick=function(){tsTabClick(id,idx)}; tabs.appendChild(t);
   });
@@ -5620,7 +6004,7 @@ var CombinedModule=(function(){
       '<div class="mSteps">'+
       stepC('🔔','Bell rings','Your tray is waiting on the <b>pass</b>. A dining table tray carries <b>up to 2 dishes plus a drink for each dish</b>, all together: 1 dish carries 1 drink, 2 dishes carry 2 drinks. A barstool tray is <b>1 dish, food only</b>: drinks come from the bar, not the kitchen, so no drink ever goes to a barstool (101 to 114). The items are named in the <b>panel on the top left</b>.')+
       stepC('🍽️','Pick up and deliver','Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the table or barstool</b> it is headed to.')+
-      stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, garnish for drinks, and the <b>POS tab</b> it is rung on. <b>That is what the quiz asks about</b>, so give them a real read.')+
+      stepC('📖','Read the cards','When you deliver, the <b>card for each item</b> pops open with its picture, description, garnish for drinks, and a <b>picture of the tablet screen with its button lit up</b> — every screen it lives on, if it lives on more than one. <b>That is what the quiz asks about</b>, so give them a real read.')+
       stepC('❓','Quiz pops up','After a few runs you will get quizzed, <b>only on items you have served, food and drinks together</b>. You can tap <b>Quiz me</b> anytime if you want one sooner.')+
       stepC('🔥','Miss one? It refires','That item <b>comes back out</b> on another tray later. You will deliver it again and re-read the card first, before it can be quizzed again.')+
       stepC('⭐','Get it Solid','Get it right in <b>2 different rounds</b> and it turns <b>Solid</b>. For food dishes, that is when their <b>allergens unlock</b>.')+
