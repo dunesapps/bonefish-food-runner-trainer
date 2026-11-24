@@ -398,7 +398,7 @@
       <button class="toggle" id="pauseBtn" aria-pressed="false" aria-label="Pause">⏸ Pause</button>
       <button class="toggle" id="menuQuizBtn" style="display:none" aria-label="Quiz me, start a quiz round">❓ Quiz me</button>
       <button class="toggle" id="exitBtn" style="display:none" aria-label="Exit to the hub">🚪 Exit</button>
-      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.16</span>
+      <span class="buildTag" id="buildTag" aria-label="Build number">Build 300.19</span>
     </div>
   </div>
 
@@ -426,7 +426,7 @@
             <div class="bSteps">
               <div class="bStep"><div class="bIco" aria-hidden="true">🖥️</div><div class="bStepBody"><b>Stand in the ring for 2 seconds</b><span>The PCs are down in the lower-left corner, against the bottom wall just left of the front door. Step in and the ring turns gold. Step out and it starts over.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">🎫</div><div class="bStepBody"><b>Table Training</b><span>You'll run trays and learn the floor as you go, table numbers and all.</span></div></div>
-              <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Menu Training</b><span>Same idea, but you're learning the food while you run trays. Once you're in, a pop-up walks you through the rest.</span></div></div>
+              <div class="bStep"><div class="bIco" aria-hidden="true">🍽️</div><div class="bStepBody"><b>Menu Training</b><span>Same idea, but you're learning the menu while you run trays. Once you're in, a menu lets you pick <b>Everything together</b> or <b>Drinks only</b>, then a pop-up walks you through the rest.</span></div></div>
               <div class="bStep"><div class="bIco" aria-hidden="true">📱</div><div class="bStepBody"><b>Tablet Sim</b><span>The POS tablet itself, all 35 pages in a window over the floor. Flip through the tabs and learn where every button lives.</span></div></div>
             </div>
             <p class="bookNote">You won't see an exit ring here in the hub. You're not in a training run yet.</p>
@@ -476,6 +476,9 @@
         <div class="patchKicker">What's new</div>
         <h2>Patch notes</h2>
         <div class="patchLog" tabindex="0" aria-label="Patch notes">
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.19</b><span>Nov 24, 2026</span></div><ul><li>Added the Thai Coastal Grouper and Wood-Grilled Sage Ribeye.</li><li>Added the Mini Martini Flight.</li></ul></div>
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.18</b><span>Nov 24, 2026</span></div><ul><li>Added 6 new specials dishes to Menu Training.</li><li>Added the Winter White Cosmo, Santa Pants, and Winter White Sparkler.</li><li>Added 8 local beers and 6 additional wines for name practice.</li><li>Updated the Zesty Pickle Chips description.</li></ul></div>
+<div class="patchEntry"><div class="patchEntryHead"><b>Build 300.17</b><span>Nov 24, 2026</span></div><ul><li><b>Drinks only is back.</b> Entering Menu Training now opens a track menu first: <b>Everything together</b> or <b>Drinks only</b>, so you can focus just on drinks for a bit</li><li>Drinks only runs <b>one drink per tray to a dining table</b> (drinks still never go to the barstools), quizzes <b>only drinks you have served</b>, and shares your drink progress with the combined session — Solid, served and refires carry both ways</li><li>POS locations are in the drinks track too: every drink card, quiz answer and the new <b>Study cards &amp; POS screens</b> page shows the <b>tablet screen picture with the drink's button lit up in gold</b>, on every screen it lives on, and <b>POS tab questions</b> stay in the drinks quiz mix</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.16</b><span>Nov 24, 2026</span></div><ul><li>Item cards in Menu Training no longer just name the POS tab: each card now shows a <b>picture of the actual tablet screen</b> with the item's <b>button lit up in gold</b>, its button name, and its row and position</li><li>Items that live on more than one screen show <b>every screen</b>, each with its own button lit, on the delivery cards and in the quiz answer feedback</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.15</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim right rail: flipping back up works again. Tapping the top tab of a flipped-down window (SEAFOOD, A-M COCKTAILS HH, CORDIALS) now returns the rail to the window above it, so you can flip all the way back up to DR LANDING instead of only going down</li></ul></div>
 <div class="patchEntry"><div class="patchEntryHead"><b>Build 300.14</b><span>Nov 22, 2026</span></div><ul><li>Tablet Sim right rail fixed to match the POS photos: every page now shows 11 tabs at the same height (10 on the last window), so tab spacing no longer jumps while flipping through the tabs</li><li>CORDIALS and the cocktail pages now open with the rail windows shown in their photos</li></ul></div>
@@ -529,7 +532,20 @@
 // Build number channels (Ryan, Nov 19 2026): Alpha 100s, Beta 200s, Prod 300s.
 // Decimal bumps by 0.1 per edit within the channel. Prod numbers are assigned
 // only when Ryan signs off on a GitHub push; internal work stays in the 200s.
-// This build is Build 300.16 (Prod): Menu Training item cards show
+// This build is Build 300.19 (Prod): the three items the Nov 24
+// sheets named but the decks were missing join the curriculum:
+// Thai Coastal Grouper and Wood-Grilled Sage Ribeye (the two Chef
+// Robert Irvine dishes; their Seasonal Ent Specials buttons are
+// THAI CSTL GRPR and 13OZ SAGE RIBEYE) and the Mini Martini Flight
+// (Social Hour; MINI TINI FLIGHT on MARTI/MANH and BRUNCH), quizzed
+// on its three component martinis.
+// Build 300.18: the Nov 24 local menu sheets
+// join the curriculum: 6 new specials dishes, the Winter White
+// Cosmo and Winter White Sparkler take over the two seasonal
+// ask-trainer drink slots (same deck slots, so saved drink progress
+// carries onto the real drinks), Santa Pants is added, and 8 local
+// beers plus 6 additional wines join the name practice lists.
+// Build 300.16: Menu Training item cards show
 // where an item's button actually sits on the tablet screen (a
 // replica screen per tab, button lit in gold) instead of only naming
 // the POS tab. Build 300.15 made the Tablet Sim right rail able to
@@ -545,7 +561,7 @@
 // it, keeping the page open. Page buttons, labels, colors, and tab
 // heights are unchanged.
 // Displayed in the header as "Build N".
-var BUILD_NUMBER = '300.16';
+var BUILD_NUMBER = '300.19';
 (function(){ var el=document.getElementById('buildTag'); if(el) el.textContent='Build '+BUILD_NUMBER; })();
 // ---------- Floor plan: exact verified layout ----------
 // Grid: x 0..20.0 left-right. Kitchen y 0..3.0 across the top; dining room y 3.0..16.4 below it.
@@ -747,6 +763,12 @@ var menuWorldActive=false, menuCurrentBlock=null, menuTrayDishes=[], menuInfoOpe
 // live); CombinedModule owns the merged store, served pool and refire
 // queues for both item types.
 var menuDeck=null;
+// Build 300.17: the Drinks only track is back as a sub-menu choice when
+// Menu Training is entered. The focus lives inside CombinedModule (one
+// shared store, so drink progress counts in both tracks); this global
+// mirror only lets the floor chrome word its messages for the track
+// that is actually running.
+var menuFocus='combined';
 function activeMenuModule(){
   if(typeof CombinedModule!=='undefined') return CombinedModule;
   return (typeof MenuModule!=='undefined') ? MenuModule : null;
@@ -2000,13 +2022,39 @@ var POS_BTN_OVERRIDES={
   'Garlic Whipped Potatoes':{dinapps:['SD GPOT']},
   'Lemon Caper Butter':{refills:['LCB 1oz']},
   'Strawberry Rose Sidecar Martini':{nzcock:['SIDECAR']},
-  'Butterfish (aka Black Cod, Sablefish)':{seafood:['PAN ASIAN BTRFSH']}
+  'Butterfish (aka Black Cod, Sablefish)':{seafood:['PAN ASIAN BTRFSH']},
+  'Spinach Bacon Blue Unicorn Fish':{partner:['GR UNICORN FISH','SAU UNICORN FISH']},
+  'Cedar Plank "Old-Fashioned" Salmon':{seasonal:['OF CEDAR SALMON']},
+  'Swordfish & Pumpkin Ravioli':{seasonal:['SWD & PUMPKN RAV']},
+  'Lobster Stuffed Shrimp':{seasonal:['LOB STFD SHRIMP']},
+  'Grouper with Crab Cake & Lobster Cream Sauce':{seasonal:['GROUPER & CC']},
+  'Ocean Mixed Grill':{seasonal:['OCEAN MIXD GRILL']},
+  'Winter White Cosmo':{marti:['WHITE COSMO'],nzcock:['WHITE COSMO']},
+  'Santa Pants':{marti:['SANTA PANTS MARG']},
+  'Winter White Sparkler':{marti:['NA WINTER SPRKLR']},
+  'Apothic Dark Blend':{featwine:['GL 6 Apothic','BTL Apothic','GLS 9 Apothic']},
+  'Alamos Malbec':{featwine:['GL 6 Alamos mlbc','Btl Alamos mlbc','GLS 9 Alamos']},
+  'Villa Antinori Red Blend':{winebottle:['B-V ANTINORI RD'],wineglass:['G-V ANTINORI RD'],wineglass9:['9 G ANTINORI RED']},
+  'Prati Louis Martini Cabernet Sauvignon':{winebottle:['B LOUIS MT CAB'],wineglass:['G LOUIS MARTINI'],wineglass9:['9 G LOUIS MRTINI']},
+  'Dogfish Head 60 Minute IPA':{featwine:['DF IPA 60MIN']},
+  'Down East Apple Pie Cider':{featwine:['APPLE PIE BEER']},
+  'Troegs Leaf Seeker West Coast IPA':{featwine:['Troegs Leaf Btl']},
+  'Vault Dead Cat Double IPA':{featwine:['VAULT Dead Cat']},
+  'Vault Five Cees IPA':{featwine:['Vault 5 CEES']},
+  'Vault of Hops & Clouds':{featwine:['Vault Clouds']},
+  'Yuengling Lager':{featwine:['YUENG LAGER']},
+  'Thai Coastal Grouper':{seasonal:['THAI CSTL GRPR']},
+  'Wood-Grilled Sage Ribeye':{seasonal:['13OZ SAGE RIBEYE']},
+  'Mini Martini Flight':{marti:['MINI TINI FLIGHT'],brunch:['MINI TINI FLIGHT']}
 };
 // Screens where an item is rung from a screen but no photographed
 // button can honestly be named for it: show the screen unlit.
 var POS_BTN_NOHIT={
   'Grilled Scallops & Shrimp':{seafood:1},
-  'J. Lohr Seven Oak Cabernet Sauvignon':{winebottle:1}
+  'J. Lohr Seven Oak Cabernet Sauvignon':{winebottle:1},
+  'Menage a Trois Moscato':{winebottle:1},
+  'Robert Mondavi Merlot':{winebottle:1},
+  'New Belgium Voodoo Ranger 1985':{featwine:1}
 };
 function posTokenMatch(itTok,btnTok){
   if(itTok===btnTok) return true;
@@ -2738,8 +2786,13 @@ function tsRender(){
   });
   var foot=document.getElementById("tsFoot"); foot.innerHTML="";
   ["Menu","Delete Item","Modify Item","Review Order","Send/Stay","Send Order","Print Check"].forEach(function(l){
-    var f=document.createElement("div"); f.setAttribute("role","button"); f.className="tsFbtn"; f.textContent=l;
-    f.onclick=function(){f.classList.add("tsFlash");setTimeout(function(){f.classList.remove("tsFlash")},180)}; foot.appendChild(f);
+    var f=document.createElement("div"); f.className="tsFbtn"; f.textContent=l;
+    // "Print Check" is footer artwork on the real tablet screen, not
+    // a working control in the sim (there is no printer in the game
+    // window), so it renders as a plain label; the other footer keys
+    // keep their tap flash.
+    if(l!=="Print Check"){ f.setAttribute("role","button"); f.onclick=function(){f.classList.add("tsFlash");setTimeout(function(){f.classList.remove("tsFlash")},180)}; }
+    foot.appendChild(f);
   });
 }
 tsRender();
@@ -2761,13 +2814,17 @@ document.getElementById('tabletOverlay').addEventListener('click',function(e){ i
 // Training terminal opens the one combined session directly, see
 // CombinedModule below. The Seasonal only list and drill stay.)
 // ---------- Seasonal only: list & drill (Build 200.10) ----------
-// The four seasonal ask-manager items across both decks. The guide gives
+// The seasonal ask-manager items. The guide gives
 // each one an "ask manager or trainer" style line instead of a real
 // description, and the two food desserts share the exact same line, so
 // they are kept out of the general quiz pools entirely (see the food and
 // drinks modules) and drilled here on their own instead: every question
 // names the item it means, and shows its picture where it has one.
-var SEASONAL_NAMES_ALL=['Seasonal Cheesecake','Seasonal Crème Brulee','Seasonal Cocktail','Spirit Free: Seasonal'];
+// Build 300.18: the two drinks slots are seasonal no longer. The
+// Winter White Cosmo and the Winter White Sparkler are the current
+// seasonal drinks, with real descriptions, so they joined the drinks
+// deck as regular drinks and only the two desserts remain here.
+var SEASONAL_NAMES_ALL=['Seasonal Cheesecake','Seasonal Crème Brulee'];
 var SEASONAL_ASK_TEXTS=['Ask manager or trainer','Ask your trainer about the seasonal offering','Ask your trainer about the seasonal offering.','Ask your Trainer or Management team for details','Ask your Trainer or Management team for details.'];
 function seasonalAllItems(){
   var out=[];
@@ -2816,7 +2873,7 @@ function renderSeasonalList(){
   var rootEl=document.getElementById('menuRoot');
   var items=seasonalAllItems();
   var html=seasonalTopBar('🍂 Seasonal only')+
-    '<p><b>Only the seasonal options</b>, across food and drinks. The guide does not describe these, it just points you at a manager or trainer, and the two desserts share the exact same line. So this list names each item on its own, and the drill asks one item at a time, with the item named (and pictured, where it has a picture) so you always know which one the question means.</p>';
+    '<p><b>Only the seasonal options</b>. The guide does not describe these, it just points you at a manager or trainer, and the two desserts share the exact same line. So this list names each item on its own, and the drill asks one item at a time, with the item named (and pictured, where it has a picture) so you always know which one the question means.</p>';
   items.forEach(function(si){
     html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:18px">'+escS(si.name)+'</div><div class="mMeta">'+escS(si.deckLabel)+' · '+escS(si.section)+'</div></div>'+
       seasonalPhotoHTMLS(si)+
@@ -2893,15 +2950,16 @@ function renderSeasonalResults(){
   document.getElementById('menuOverlay').scrollTop=0;
 }
 function enterMenuTraining(){
-  mode='menu'; menuDeck='combined';
+  mode='menu'; menuDeck='combined'; menuFocus='combined';
   if(musicOn) startMusic();
   menuWorldActive=false; menuCurrentBlock=null; menuTrayDishes=[]; menuInfoOpen=false; menuQuizOpen=false;
   hideMenuWorldChrome();
   document.getElementById('menuOverlay').style.display='block';
-  // Build 200.11: no deck picker. The terminal opens the one combined
-  // session (food and drinks together) and its entry pop-up explains it.
+  // Build 300.17: the terminal opens a track sub-menu first, like
+  // before the combined merge: Everything together, or Drinks only
+  // for a focused drinks run. Both tracks share one progress store.
   CombinedModule.open();
-  setMsg('<b>Menu Training.</b> One combined session, food and drinks together. Start the session to get on the floor.','');
+  setMsg('<b>Menu Training.</b> Pick your track: everything together, or drinks only.','');
   updateHUD();
 }
 // Starting the session (from the entry pop-up / session home) puts you on
@@ -2919,7 +2977,13 @@ function startMenuWorld(block){
   // Entry teleport: straight to the kitchen pass for the first dish, same
   // as Table Training, no walk in through the IN door first.
   player.x=passX; player.y=passY; player.moving=false; joyReset(); camGlideUntil=performance.now()+400;
-  setMsg('<b>Menu Training, one session, food and drinks together.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>up to two dishes plus a drink for each dish</b> for a table (two dishes carry two drinks), or <b>one dish</b> for a barstool. Drinks come from the bar, so they only ever ride along to tables, never to the barstools. Deliver it and you\'ll get to read the cards. After a few runs you\'ll get a quiz on everything you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  try{ menuFocus=(typeof CombinedModule!=='undefined'&&CombinedModule.getFocus)?CombinedModule.getFocus():'combined'; }catch(e){}
+  menuDeck=(menuFocus==='drinks')?'drinks':'combined';
+  if(menuFocus==='drinks'){
+    setMsg('<b>Menu Training, drinks only.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with <b>one drink</b> for a dining table. Drinks come from the bar, so they only ever ride to tables, never to the barstools. Deliver it and you\'ll get to read its card, <b>tablet screens included</b>. After a few runs you\'ll get a quiz on the drinks you\'ve served, drinks only. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  } else {
+    setMsg('<b>Menu Training, one session, food and drinks together.</b> You\'re starting right at the <b>kitchen pass</b>. The bell will ring with a tray of <b>up to two dishes plus a drink for each dish</b> for a table (two dishes carry two drinks), or <b>one dish</b> for a barstool. Drinks come from the bar, so they only ever ride along to tables, never to the barstools. Deliver it and you\'ll get to read the cards. After a few runs you\'ll get a quiz on everything you\'ve served. To leave, use the <b>small coral EXIT ring on the dining floor just below the kitchen wall, left of the OUT door</b> (or Exit / Esc).','');
+  }
   updateHUD();
   if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
   nextTimer=setTimeout(newTicket,1200);
@@ -3039,7 +3103,15 @@ var MENU_RAW=[
 ["Shrimp Toast","Social Hour Offerings",3,"Seasoned and roasted shrimp tossed in a savory cream sauce served over toasted pesto butter crostini and topped with diced tomatoes, avocados and green onions","SDW"],
 ["Bangin' Chicken Bites","Social Hour Offerings",3,"Tender juicy chicken bites tossed in our signature creamy, spicy sauce (bang bang sauce) served over a bed of lettuce and topped with green onions. Served with 2 chopsticks","X"],
 ["Crispy Cauliflower Bites","Social Hour Offerings",3,"Cauliflower dipped in buttermilk and seasoned flour, flash fried, tossed on our Asian bang sauce served over shredded cabbage and topped with green onions. Served with a spoon","DW"],
-["Zesty Pickle Chips","Social Hour Offerings",3,"Hand battered pickles and jalapeno slices fried served with a side of tangy mustard","W"]
+["Zesty Pickle Chips","Social Hour Offerings",3,"Hand-battered, crispy fried pickle chips and jalapeno slices served with a chef-crafted tangy mustard dipping sauce","W"],
+["Spinach Bacon Blue Unicorn Fish","Partner Selection",3,"Unicorn fish topped with sauteed spinach, crispy bacon, blue cheese, and finished with a lemon butter glaze, served with jasmine rice and broccoli. The same unicorn fish is also offered simply grilled","X"],
+["Cedar Plank \"Old-Fashioned\" Salmon","Today's Specials",3,"Cedar plank-roasted salmon brushed with a Jim Beam bourbon honey glaze, finished with a Bordeaux cherry gastrique and fresh orange zest, served with seasonal vegetables and perfect jasmine rice","X"],
+["Swordfish & Pumpkin Ravioli","Today's Specials",3,"Wood-grilled swordfish and pumpkin ravioli finished with browned butter sauce, crispy onions, crumbled feta and sage, served with seasonal vegetable","X"],
+["Lobster Stuffed Shrimp","Today's Specials",3,"Jumbo shrimp stuffed with lobster imperial, topped with lemon butter sauce, served with seasonal vegetable and perfect jasmine rice","X"],
+["Grouper with Crab Cake & Lobster Cream Sauce","Today's Specials",3,"Wood-grilled grouper paired with a lump crab cake and lobster cream sauce, served with seasonal vegetable and perfect jasmine rice","X"],
+["Ocean Mixed Grill","Today's Specials",3,"For two, the perfect taste of Bonefish Grill. Each guest has a choice of a cup of soup or side salad. Four topped proteins to share: wood-grilled shrimp with Chimichurri, wood-grilled Atlantic Salmon with Pan-Asian Sauce, blackened ahi tuna with lemon butter sauce and wood-grilled Atlantic Salmon with mango salsa. Choice of two signature shareable sides","X"],
+["Thai Coastal Grouper","Chef Robert Irvine",3,"Wood-grilled grouper, finished with Thai green curry sauce, topped with pineapple salsa, garnished with pickled Peruvian drop peppers, served with perfect jasmine rice. A portion of the proceeds from this dish benefits the Robert Irvine Foundation.","X"],
+["Wood-Grilled Sage Ribeye","Chef Robert Irvine",3,"13 oz ribeye topped with thin, crispy onions and fried sage, finished with smoked sage demi-glace, served with garlic whipped potatoes and seasonal vegetable. A portion of the proceeds from this dish benefits the Robert Irvine Foundation.","X"]
 ];
 var MENU_ITEMS=MENU_RAW.map(function(r,i){return {id:i,name:r[0],section:r[1],block:r[2],desc:r[3],alg:r[4]==='X'?null:r[4].split('').filter(function(c){return c!==' ';})};});
 var STEAK_TEMPS=[["Rare","Cool, red center"],["Medium Rare","Warm, red center"],["Medium","Bright pink, touch of red in the middle"],["Medium Well","Warm brown, pink center"],["Well Done","Hot brown center, no pink"]];
@@ -3061,19 +3133,19 @@ var ING_TERMS=[
 'cilantro lime crema','kung pao sauce','creamy spicy sauce','bang bang sauce','pan-asian glaze',
 'lemon caper butter','garlic lemon butter','pesto butter crostini','pesto crostini',
 'lobster butter','chimichurri sauce','enchilada sauce','sashimi sauce','asian bang sauce',
-'asian sauce','tartar sauce','wasabi cream sauce','creamy wasabi sauce','thai chili glaze',
+'asian sauce','tartar sauce','wasabi cream sauce','creamy wasabi sauce','thai chili glaze','thai green curry sauce',
 'sweet thai chili','bourbon glaze','bourbon sauce','myers rum sauce','balsamic glaze',
 'truffle aioli','truffle salt','veggie butter','garlic oil','olive oil','malt vinegar',
 'tangy mustard','goat cheese','fontina cheese','mozzarella cheese','cheddar cheese',
 'parmesan cheese','grated cheese','caesar dressing','macadamia nuts','hearts of palm','artichoke hearts',
 'brussels sprouts','crispy onions','pickled vegetables','eggroll crisps','tortilla chips',
 'garlic croutons','garlic breadcrumbs','tempura flakes','pepita seeds','kalamata olives',
-'green onions','red peppers','red pepper','red onion','diced tomatoes','diced tomato',
+'green onions','peruvian drop peppers','red peppers','red pepper','red onion','diced tomatoes','diced tomato',
 'black beans','blackened chicken','blackened fish','bang bang shrimp','lump crab',
 'ahi tuna','unicorn fish','rainbow trout','chicken breast','chicken bites',
 'cavatappi pasta','jasmine rice','spring mix','shredded lettuce','ciabatta bread',
 'graham cracker crust','vanilla ice cream','whipped cream','lime zest','lemon juice',
-'lemon wedge','lemon butter','mango salsa','lobster tail','smoked bacon','roasted garlic','fresh garlic',
+'lemon wedge','lemon butter','mango salsa','pineapple salsa','lobster tail','smoked bacon','roasted garlic','fresh garlic',
 'fresh basil','sweet heat seasoning','crushed red pepper','french fries','soy sauce','sriracha',
 'shrimp','scallops','calamari','oysters','lobster','salmon','tuna','cod','filet','burger',
 'pork chop','ravioli','linguine','brownie','coconut pie','edamame','romaine','lettuce',
@@ -4150,9 +4222,11 @@ var MenuModule=(function(){
 // Garnish line in the garnish field, shown on its card and quizzed as its
 // own question type. Chocolate Martini and Indigo Sunset are NOT in the
 // guide and are removed. The single Signature Sangria splits into
-// Blackberry Red Sangria and Sparkling White Mango Sangria. Seasonal
-// Cocktail and Spirit Free: Seasonal are ask your trainer entries with
-// no invented details and no invented image (Image pending placeholder).
+// Blackberry Red Sangria and Sparkling White Mango Sangria. The two
+// seasonal slots held ask your trainer entries until Build 300.18,
+// when the current seasonal drinks (Winter White Cosmo and Winter
+// White Sparkler, from the store's own specials sheet) took those
+// same slots with real details.
 // Wine and beer and the remaining beverages stay provisional on the
 // public Pennsylvania menu, name practice only; no guide pages exist
 // for them and no wine or beer guide content is invented.
@@ -4180,13 +4254,13 @@ var DRINK_ITEMS=[
   {name:'Coral Reef Punch',section:'Hand-Crafted Cocktails',desc:'Tropical flavors of passion fruit, pineapple, and orange mixed with Bacardi Superior and Malibu Rum, topped with a splash of bitters, soda water.',garnish:'Pineapple Leaf & Pineapple Wedge',details:[],facts:[]},
   {name:'Blackberry Red Sangria',section:'Hand-Crafted Cocktails',desc:'Refreshing and sweet blackberry flavored sangria with fresh orange, cranberry juice. Apple juice, house cabernet.',garnish:'2 Fresh Blackberries',details:[],facts:[],conf:'Sparkling White Mango Sangria'},
   {name:'Sparkling White Mango Sangria',section:'Hand-Crafted Cocktails',desc:'Chardonnay sangria with flavors of fresh citrus and mango blended with champagne for a crisp but refreshing taste. Triple sec, house chardonnay. 2 squeeze limes, cherry and orange.',garnish:'Light Sprinkle of Cinnamon',details:[],facts:[],conf:'Blackberry Red Sangria'},
-  {name:'Seasonal Cocktail',section:'Hand-Crafted Cocktails',desc:'Ask your Trainer or Management team for details.',garnish:null,details:[],facts:[],seasonal:true},
+  {name:'Winter White Cosmo',section:'Hand-Crafted Cocktails',desc:'Our best-selling guest favorite of the year. Reyka vodka, Cointreau, St.-Germain Elderflower liqueur, white cranberry juice and lime juice.',garnish:null,details:[],facts:[]},
   {name:'Mimosa',section:'Other Cocktails',desc:'Crispy and refreshing champaign blended with orange juice.',garnish:'None',details:[],facts:[]},
   {name:'Bloody Mary',section:'Other Cocktails',desc:"Guest's choice of vodka blended with Major Peter's Blood Mary Mix and topped with crispy bacon, olives, a lemon and a lime.",garnish:'Crispy Bacon, 3-olive Skewer, Lemon Wedge, & Lime Wedge',details:[],facts:[]},
   {name:'Whistlepig Old Fashioned',section:'Other Cocktails',desc:'A bold and oaky old fashion made with WhistlePig Piggyback Bourbon, a touch of bitters, and their very own Vermont Maple Syrup.',garnish:'Crispy Candied Bacon',details:[],facts:[]},
   {name:'Spirit Free: Blueberry Refresher',section:'Other Cocktails',desc:'Refreshing and crisp citrusy blueberry mocktail, lime, blueberry syrup, sprite, soda water.',garnish:'Lime Wedge & Happy Mint',details:[],facts:[]},
   {name:"Spirit Free: No'jito",section:'Other Cocktails',desc:'Dragon Fruit "Mojito-inspired" mocktail with refreshing tropical flavors of dragon fruit blended with lime simple soda water and mint.',garnish:'Dried Dragon Fruit Wheel',details:[],facts:[]},
-  {name:'Spirit Free: Seasonal',section:'Other Cocktails',desc:'Ask your trainer about the seasonal offering.',garnish:null,details:[],facts:[],seasonal:true},
+  {name:'Winter White Sparkler',section:'Other Cocktails',desc:'Refreshing winter mocktail that dazzles with festive flavors. White cranberry juice, pomegranate, house-made sour mix and Sprite.',garnish:null,details:[],facts:[]},
   {name:'Fresh Margarita',section:'Social Hour Cocktails',desc:'Classic margarita made with Lunazul Blanco Tequila and touch of Cointreau, lime simple, squeezed lime.',garnish:'None',details:[],facts:[]},
   {name:'Coconut Crush',section:'Social Hour Cocktails',desc:'A refreshing tropical cocktail with flavors of pineapple juice, coconut real, and orange juice made with Bacardi Superior Rum and Bacardi Quatro Añejo.',garnish:'Pineapple Wedge & Pineapple Leaf',details:[],facts:[]},
   {name:'Blueberry Lemon Drop',section:'Social Hour Cocktails',desc:'A blueberry flavored twist on a classic lemon drop martini made with Absolut Citron and sour mix.',garnish:'1/2 Sugar Rim',details:[],facts:[]},
@@ -4222,7 +4296,9 @@ var DRINK_ING={
   'Coconut Crush':['pineapple juice','coconut real','orange juice','Bacardi Superior Rum','Bacardi Quatro Añejo'],
   'Blueberry Lemon Drop':['blueberry','Absolut Citron','sour mix'],
   'Mango Bourbon Sour':['Jim Beam Bourbon','Mango','citrus','House-made Sugar in the Raw Simple Syrup','sour mix'],
-  'Jefferson Ocean Old Fashioned':["Jefferson's Ocean Bourbon",'House-made Sugar in the Raw Simple Syrup','Bitters']
+  'Jefferson Ocean Old Fashioned':["Jefferson's Ocean Bourbon",'House-made Sugar in the Raw Simple Syrup','Bitters'],
+  'Winter White Cosmo':['Reyka vodka','Cointreau','St.-Germain Elderflower liqueur','white cranberry juice','lime juice'],
+  'Winter White Sparkler':['white cranberry juice','pomegranate','house-made sour mix','Sprite']
 };
 DRINK_ITEMS.forEach(function(it){ if(DRINK_ING[it.name]) it.ing=DRINK_ING[it.name]; });
 // Generated drink illustrations by drink name, converted to ids below
@@ -4294,8 +4370,8 @@ DRINK_WINE_RAW.forEach(function(r){
 // Beer & Beverages (PA menu, provisional, name practice only): [name, group, description]
 // The three Spirit-Free entries from the provisional list are gone from
 // here: Blueberry Refresher and No'jito are now quizzed guide drinks in
-// Other Cocktails, and Seasonal Spirit Free is Spirit Free: Seasonal
-// there, so nothing is duplicated.
+// Other Cocktails, and the old seasonal spirit free slot there is now
+// the Winter White Sparkler, so nothing is duplicated.
 var DRINK_BEER_RAW=[
   ['Bud Light (Draft)','Draft','On draft'],
   ['Michelob ULTRA','Draft','On draft'],
@@ -4312,9 +4388,38 @@ var DRINK_BEER_RAW=[
 DRINK_BEER_RAW.forEach(function(r){
   DRINK_ITEMS.push({name:r[0],section:'Beer & Beverages',sub:r[1],desc:r[2],details:[],facts:[]});
 });
+// Local additions (Build 300.18, from the Nov 24, 2026 North Wales
+// sheets): Santa Pants joins the hand-crafted cocktails, six
+// additional wines join the wine name practice, and the eight
+// Beers of Bonefish Montgomeryville join the beer name practice as
+// the Local group. They are appended after the original deck, so
+// every drink that was already in the deck keeps its id and any
+// saved progress stays attached to the right drink. The two old
+// seasonal slots earlier in the deck now hold the Winter White
+// Cosmo and the Winter White Sparkler in the same slots.
+DRINK_ITEMS.push({name:'Santa Pants',section:'Hand-Crafted Cocktails',desc:'Pantalones Blanco tequila, Grand Marnier, pomegranate and fresh sour.',garnish:'Salted Rim, Frozen Cranberries, and a Tiny Pair of Santa\u2019s Red Pants',ing:['Pantalones Blanco tequila','Grand Marnier','pomegranate','fresh sour'],details:[],facts:[]});
+DRINK_ITEMS.push({name:'Apothic Dark Blend',section:'Wine',sub:'Reds',varietal:'Red Blend',region:'',desc:'Red Blend · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Villa Antinori Red Blend',section:'Wine',sub:'Reds',varietal:'Red Blend',region:'',desc:'Red Blend · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Alamos Malbec',section:'Wine',sub:'Reds',varietal:'Malbec',region:'',desc:'Malbec · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Prati Louis Martini Cabernet Sauvignon',section:'Wine',sub:'Reds',varietal:'Cabernet Sauvignon',region:'',desc:'Cabernet Sauvignon · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Menage a Trois Moscato',section:'Wine',sub:'Whites & Rosés',varietal:'Moscato',region:'',desc:'Moscato · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Robert Mondavi Merlot',section:'Wine',sub:'Reds',varietal:'Merlot',region:'',desc:'Merlot · 6oz / 9oz / bottle',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Dogfish Head 60 Minute IPA',section:'Beer & Beverages',sub:'Local',desc:'IPA · 6.0% · 12oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Down East Apple Pie Cider',section:'Beer & Beverages',sub:'Local',desc:'Gluten-free cider · 5.0% · 12oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Troegs Leaf Seeker West Coast IPA',section:'Beer & Beverages',sub:'Local',desc:'West Coast IPA · 6.4% · 12oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Vault Dead Cat Double IPA',section:'Beer & Beverages',sub:'Local',desc:'Double IPA · 8.0% · 16oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Vault Five Cees IPA',section:'Beer & Beverages',sub:'Local',desc:'IPA · 6.4% · 16oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Vault of Hops & Clouds',section:'Beer & Beverages',sub:'Local',desc:'5.5% · 12oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'Yuengling Lager',section:'Beer & Beverages',sub:'Local',desc:'Lager · 4.5% · 12oz',details:[],facts:[]});
+DRINK_ITEMS.push({name:'New Belgium Voodoo Ranger 1985',section:'Beer & Beverages',sub:'Local',desc:'Mango New England-style IPA · 6.7% · 16oz draft',details:[],facts:[]});
+// Build 300.19: the Mini Martini Flight from the Social Hour sheet
+// joins the guide drinks, quizzed on its three component martinis.
+// The Seasonal Martini in the flight is currently the Winter White
+// Cosmo. Appended last so every existing drink keeps its id.
+DRINK_ITEMS.push({name:'Mini Martini Flight',section:'Social Hour Cocktails',desc:'Sip and sample some of our top-selling hand-crafted cocktails. This flight includes the Pomegranate Martini, Crushed Pineapple Martini and our Seasonal Martini.',garnish:null,ing:['Pomegranate Martini','Crushed Pineapple Martini','Seasonal Martini'],details:[],facts:[]});
 DRINK_ITEMS.forEach(function(it,i){ it.id=i; });
 var DRINK_WINE_GROUPS=['Whites & Rosés','Reds','Sparkling'];
-var DRINK_BEER_GROUPS=['Draft','Domestic Bottle','Imports & Seltzers'];
+var DRINK_BEER_GROUPS=['Draft','Domestic Bottle','Imports & Seltzers','Local'];
 DRINK_ITEMS.forEach(function(it){ var src=DRINK_PHOTO_BY_NAME[it.name]; if(src){ DRINK_PHOTOS[it.id]=src; DRINK_GENERATED[it.id]=1; } });
 var DRINK_GUIDE_SECTIONS=['Martinis','Hand-Crafted Cocktails','Other Cocktails','Social Hour Cocktails'];
 function isGuideDrink(it){ return DRINK_GUIDE_SECTIONS.indexOf(it.section)>=0; }
@@ -4352,14 +4457,15 @@ var POS_TABS_FOOD=[
 ['DESSERTS','SEASONAL ENT SPECIALS'],['KIDS'],['KIDS'],['KIDS'],['KIDS'],
 ['KIDS'],['KIDS'],['LUNCH'],['LUNCH'],['LUNCH'],
 ['LUNCH'],['SH FOOD'],['SH FOOD'],['SH FOOD','APPETIZER'],['SH FOOD','APPETIZER','DIN APPS/SIDES'],
-['SH FOOD']
+['SH FOOD'],['PARTNER SELECT'],['SEASONAL ENT SPECIALS'],['SEASONAL ENT SPECIALS'],['SEASONAL ENT SPECIALS'],
+['SEASONAL ENT SPECIALS'],['SEASONAL ENT SPECIALS'],['SEASONAL ENT SPECIALS'],['SEASONAL ENT SPECIALS']
 ];
 var POS_TABS_DRINK=[
 ['MARTI/MANH'],['MARTI/MANH','A-M COCKTAILS HH'],['MARTI/MANH'],['MARTI/MANH','N-Z COCKTAILS HH'],['MARTI/MANH'],
 ['MARTI/MANH','BRUNCH'],['MARTI/MANH'],['MARTI/MANH','N-Z COCKTAILS HH'],['MARTI/MANH'],['MARTI/MANH'],
 ['MARTI/MANH','A-M COCKTAILS HH'],['MARTI/MANH','BRUNCH','A-M COCKTAILS HH'],['MARTI/MANH'],['WINE GLASS','BRUNCH'],['WINE GLASS','BRUNCH'],
-['A-M COCKTAILS HH'],['A-M COCKTAILS HH','BRUNCH'],['A-M COCKTAILS HH','BRUNCH'],['MARTI/MANH','N-Z COCKTAILS HH'],['MARTI/MANH','BRUNCH'],
-['MARTI/MANH','BRUNCH','BUNDLES'],['BRUNCH'],['MARTI/MANH','A-M COCKTAILS HH'],['MARTI/MANH'],['MARTI/MANH','A-M COCKTAILS HH'],
+['MARTI/MANH','N-Z COCKTAILS HH'],['A-M COCKTAILS HH','BRUNCH'],['A-M COCKTAILS HH','BRUNCH'],['MARTI/MANH','N-Z COCKTAILS HH'],['MARTI/MANH','BRUNCH'],
+['MARTI/MANH','BRUNCH','BUNDLES'],['MARTI/MANH'],['MARTI/MANH','A-M COCKTAILS HH'],['MARTI/MANH'],['MARTI/MANH','A-M COCKTAILS HH'],
 ['MARTI/MANH','N-Z COCKTAILS HH'],['MARTI/MANH','N-Z COCKTAILS HH'],['WINE BOTTLE','WINE GLASS'],['WINE GLASS 9OZ'],['WINE BOTTLE'],
 ['WINE BOTTLE'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],
 ['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],
@@ -4367,7 +4473,11 @@ var POS_TABS_DRINK=[
 ['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['WINE BOTTLE'],
 ['WINE BOTTLE','FEAT WINE/BEER'],['WINE BOTTLE'],['WINE BOTTLE'],['WINE BOTTLE'],['BEER'],
 ['BEER'],['BEER'],['BEER'],['BEER'],['BEER'],
-['BEER'],['BEER'],['BEER'],['BEER'],['BEER']
+['BEER'],['BEER'],['BEER'],['BEER'],['BEER'],
+['MARTI/MANH'],['FEAT WINE/BEER'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],['FEAT WINE/BEER'],['WINE BOTTLE','WINE GLASS','WINE GLASS 9OZ'],
+['WINE BOTTLE'],['WINE BOTTLE'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],
+['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],['FEAT WINE/BEER'],
+['MARTI/MANH','BRUNCH']
 ];
 // Build 300.7: the tab set the quiz uses excludes BUNDLES for any item
 // that also lives on at least one other tab, so BUNDLES never shows as
@@ -4929,8 +5039,8 @@ var DrinksModule=(function(){
 
 
 // ---------- Combined Menu Training module (Build 200.11, routing 300.4) ----------
-// Food and drinks are ONE pool now: a single session over all 76 dishes
-// and all 65 drinks entries. Delivery routing (Build 300.4): drinks
+// Food and drinks are ONE pool now: a single session over all 82 dishes
+// and all 80 drinks entries. Delivery routing (Build 300.4): drinks
 // come from the bar, not the kitchen, so no drink ever targets the
 // barstools. Every dining table order (200s to 800s) carries one drink
 // alongside its food (up to 2 dishes plus 1 drink on one tray), and
@@ -4947,6 +5057,12 @@ var DrinksModule=(function(){
 // decks survives the merge. Nothing is wiped.
 var CombinedModule=(function(){
   var root=null, store=null;
+  // Build 300.17: track focus for the Menu Training sub-menu. 'combined'
+  // is the full food + drinks session; 'drinks' is the reinstated
+  // Drinks only track. One store either way: drink Solid / served /
+  // refire progress is the same pool in both tracks.
+  var focus='combined';
+  function isDrinksFocus(){ return focus==='drinks'; }
   var KEY='bfg-combined-v1', OLD_FOOD_KEY='bfg-menu-v1', OLD_DRINK_KEY='bfg-drinks-v2';
   function blankCombined(){ return {foodProg:{},drinkProg:{},foodRefire:[],drinkRefire:[],foodDeck:null,drinkDeck:null,gates:{all:false},roundSeq:0,visits:0,nextType:'food',merged:true}; }
   function readOld(k){ try{ var s=localStorage.getItem(k); if(s){ var o=JSON.parse(s); if(o&&typeof o==='object') return o; } }catch(e){} return null; }
@@ -5003,7 +5119,12 @@ var CombinedModule=(function(){
   function foodServed(){ return MENU_ITEMS.filter(function(it){return PF(it.id).served;}); }
   function drinkServed(){ return DRINK_ITEMS.filter(function(it){return PD(it.id).served;}); }
   function servedEntries(){ return foodServed().map(fEntry).concat(drinkServed().map(dEntry)); }
-  function quizPoolEntries(){ return servedEntries().filter(function(e){return !isRefireE(e);}); }
+  function quizPoolEntries(){
+    var pool=servedEntries().filter(function(e){return !isRefireE(e);});
+    // Drinks only track: the quiz pool is drinks and nothing else.
+    if(isDrinksFocus()) pool=pool.filter(function(e){return e.type==='drink';});
+    return pool;
+  }
   function foodSolidCount(){ return MENU_ITEMS.filter(function(it){return PF(it.id).solid;}).length; }
   function drinkSolidCount(){ return DRINK_ITEMS.filter(function(it){return PD(it.id).solid;}).length; }
   function algEligibleF(it){ return it.alg!==null; }
@@ -5224,6 +5345,23 @@ var CombinedModule=(function(){
   function handleNewTicket(){
     if(!menuWorldActive||menuCurrentBlock===null||menuCurrentBlock===undefined) return;
     if(target&&(trayOnPass||carrying)) return;
+    if(isDrinksFocus()){
+      // Drinks only track: one drink per tray, always to a dining
+      // table. The Build 300.4 routing rule still holds — drinks come
+      // from the bar, so no drink ever targets a barstool, not even
+      // here. pickDrinks deals refiring drinks first, then unserved
+      // drinks off the shuffled deck, then repeats of served drinks.
+      target=nextDiningTableC();
+      if(!target){ setMsg('📋 <b>No drinks available right now.</b>',''); updateHUD(); return; }
+      var onlyDrinks=pickDrinks(1);
+      if(!onlyDrinks.length){ target=null; setMsg('📋 <b>No drinks available right now.</b>',''); updateHUD(); return; }
+      menuTrayDishes=onlyDrinks.slice(0,1);
+      trayOnPass=true; carrying=false;
+      bell();
+      setMsg('🔔 <b>Order up!</b> One drink for <b>table '+target.n+'</b>, waiting on the pass inside the kitchen. It is listed in the panel up top on the left. Go in through the <b>IN door</b> on the right.'+(isRefireE(dEntry(menuTrayDishes[0]))?' 🔥 <b>Refire on this tray.</b> Deliver it again and re-read the card so it can be quizzed again.':''),'');
+      updateHUD(); updateMenuWorldButtons();
+      return;
+    }
     var drinkRefireWaiting=store.drinkRefire.length>0;
     var tableFoodRefireWaiting=store.foodRefire.some(function(id){return foodDestOf(id)==='table';});
     var barFoodRefireWaiting=store.foodRefire.some(function(id){return foodDestOf(id)==='bar';});
@@ -5310,9 +5448,15 @@ var CombinedModule=(function(){
       }
     });
     var poolN=quizPoolEntries().length;
-    html+='<p class="mMeta">Session: <b>'+servedN+' of '+totalN+'</b> items served · <b>'+poolN+'</b> ready to quiz.</p>'+
-      '<div class="mRow"><button class="mBtn" id="mCInfoDone">↩ Back to the expo →</button></div>'+
-      '<p class="mMeta">When you are done here, you will head back to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on everything you have served, food and drinks together, is up next.':'')+'</p>';
+    if(isDrinksFocus()){
+      html+='<p class="mMeta">Drinks only: <b>'+drinkServed().length+' of '+DRINK_ITEMS.length+'</b> drinks served · <b>'+poolN+'</b> ready to quiz.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mCInfoDone">↩ Back to the expo →</button></div>'+
+        '<p class="mMeta">When you are done here, you will head back to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on the drinks you have served is up next.':'')+'</p>';
+    } else {
+      html+='<p class="mMeta">Session: <b>'+servedN+' of '+totalN+'</b> items served · <b>'+poolN+'</b> ready to quiz.</p>'+
+        '<div class="mRow"><button class="mBtn" id="mCInfoDone">↩ Back to the expo →</button></div>'+
+        '<p class="mMeta">When you are done here, you will head back to the kitchen pass.'+(menuDeliveriesSinceQuiz>=2&&poolN?' A quiz round on everything you have served, food and drinks together, is up next.':'')+'</p>';
+    }
     root.innerHTML=html;
     document.getElementById('mCInfoDone').addEventListener('click',dismissInfoCardC);
     document.getElementById('menuOverlay').scrollTop=0;
@@ -5332,13 +5476,15 @@ var CombinedModule=(function(){
   function startWorldQuizC(isAuto){
     var pool=quizPoolEntries();
     if(!pool.length){
-      if(!isAuto) setMsg('🍽️ <b>Nothing ready to quiz yet.</b> Deliver something first. Quizzes only cover items you have served, food and drinks together, and if an item is on a refire you have to deliver it again before it counts.','bad');
+      if(!isAuto) setMsg(isDrinksFocus()
+        ? '🍸 <b>No drinks ready to quiz yet.</b> Deliver a drink first. Quizzes only cover drinks you have served, and if a drink is on a refire you have to deliver it again before it counts.'
+        : '🍽️ <b>Nothing ready to quiz yet.</b> Deliver something first. Quizzes only cover items you have served, food and drinks together, and if an item is on a refire you have to deliver it again before it counts.','bad');
       return false;
     }
     if(nextTimer){ clearTimeout(nextTimer); nextTimer=null; }
     menuQuizOpen=true; menuDeliveriesSinceQuiz=0;
     document.getElementById('menuOverlay').style.display='block';
-    startSprintC(pool,'Quiz, everything you have served',null,'all',false);
+    startSprintC(pool,isDrinksFocus()?'Quiz, drinks you have served':'Quiz, everything you have served',null,'all',false);
     updateMenuWorldButtons();
     return true;
   }
@@ -5619,8 +5765,10 @@ var CombinedModule=(function(){
   function startServedSprintC(){
     var pool=quizPoolEntries();
     if(!pool.length){
-      root.innerHTML=topBar('🍽️ Nothing to quiz yet')+
-        '<div class="mCard"><p>Quizzes only cover items you have <b>served</b> in the session, food and drinks together. And if an item is waiting on a <b>refire</b>, you have to deliver it again before it can be quizzed. Run a tray or two first and you will be set.</p>'+
+      root.innerHTML=topBar(isDrinksFocus()?'🍸 Nothing to quiz yet':'🍽️ Nothing to quiz yet')+
+        '<div class="mCard"><p>'+(isDrinksFocus()
+          ? 'Quizzes only cover drinks you have <b>served</b> in Drinks only. And if a drink is waiting on a <b>refire</b>, you have to deliver it again before it can be quizzed. Run a drink or two first and you will be set.'
+          : 'Quizzes only cover items you have <b>served</b> in the session, food and drinks together. And if an item is waiting on a <b>refire</b>, you have to deliver it again before it can be quizzed. Run a tray or two first and you will be set.')+'</p>'+
         '<div class="mRow"><button class="mBtn" id="mCNoticeShift">▶ Start session</button><button class="mBtn ghost" id="mCNoticeBack">← Session home</button></div></div>';
       bindHub();
       document.getElementById('mCNoticeBack').addEventListener('click',renderHomeC);
@@ -5628,7 +5776,7 @@ var CombinedModule=(function(){
       document.getElementById('menuOverlay').scrollTop=0;
       return;
     }
-    startSprintC(pool,'Sprint, everything you have served',null,null,true);
+    startSprintC(pool,isDrinksFocus()?'Sprint, drinks you have served':'Sprint, everything you have served',null,null,true);
   }
   function startScopedSprintC(entries,title){
     var pool=entries.filter(function(e){ return POf(e).served&&!isRefireE(e); });
@@ -5770,7 +5918,7 @@ var CombinedModule=(function(){
       var algReady=MENU_ITEMS.filter(algUnlockedF).length;
       root.innerHTML=topBar('Round complete')+
         '<div class="mCard"><div class="mBig">'+acc+'%</div><p>'+CS.correct+' of '+CS.answered+' correct'+(CS.kind==='sprint'?' · Score <b>'+CS.score+'</b>':'')+'</p>'+solidNote+missList+
-        '<div class="mRow"><button class="mBtn" id="mCFloorBtn">▶ Back to the floor</button>'+(algReady?'<button class="mBtn ghost" id="mCAlgFromQuiz">⚠️ Allergen rounds ('+algReady+' ready)</button>':'')+'</div></div>';
+        '<div class="mRow"><button class="mBtn" id="mCFloorBtn">▶ Back to the floor</button>'+((algReady&&!isDrinksFocus())?'<button class="mBtn ghost" id="mCAlgFromQuiz">⚠️ Allergen rounds ('+algReady+' ready)</button>':'')+'</div></div>';
       bindHub();
       document.getElementById('mCFloorBtn').addEventListener('click',function(){ returnToFloorFromMenuQuiz(); });
       var ab=document.getElementById('mCAlgFromQuiz');
@@ -5990,8 +6138,124 @@ var CombinedModule=(function(){
     var tb=document.getElementById('mCTempSprint'); if(tb) tb.addEventListener('click',startTempSprintC);
     document.getElementById('menuOverlay').scrollTop=0;
   }
+  // ----- Track sub-menu (Build 300.17): pick a track on entry -----
+  // Shown every time Menu Training is entered, like the deck picker
+  // from before the combined merge. Everything together is the full
+  // session; Drinks only is the focused drinks track. Both write to
+  // the same store, so a drink served or turned Solid in one track
+  // counts in the other.
+  function renderChooserC(){
+    var totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
+    var servedAll=servedEntries().length, scAll=foodSolidCount()+drinkSolidCount();
+    var servedD=drinkServed().length, scD=drinkSolidCount(), refD=store.drinkRefire.length;
+    var html=topBar('🍽️ Menu Training')+
+      '<p><b>Pick your track.</b> Run the whole menu at once, or focus just on drinks for a bit. Your progress is shared: drinks you serve and turn Solid here count in the combined session too, and the other way round.</p>'+
+      '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍽️🍸 Everything together</div><div class="mMeta">'+totalN+' items</div></div>'+
+      '<p>Food and drinks in one session. Table trays carry dishes with a drink for each dish, barstool trays are one dish, food only.</p>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*scAll/totalN)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedAll+' / '+totalN+'</b> · Solid: <b>'+scAll+' / '+totalN+'</b></div>'+
+      '<div class="mRow"><button class="mBtn" id="mPickCombined">▶ Everything together</button></div></div>'+
+      '<div class="mCard"><div class="mCardTop"><div class="mCardTitle">🍸 Drinks only</div><div class="mMeta">'+DRINK_ITEMS.length+' drinks</div></div>'+
+      '<p>Just the drinks deck: martinis, hand-crafted and other cocktails, Social Hour, wine and beer. One drink per tray to a dining table, quizzes cover <b>drinks only</b>, and every drink card shows <b>where its button is on the tablet</b>.</p>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*scD/DRINK_ITEMS.length)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedD+' / '+DRINK_ITEMS.length+'</b>'+(refD?' · 🔥 <b>'+refD+' refire'+(refD===1?'':'s')+' waiting</b>':'')+' · Solid: <b>'+scD+' / '+DRINK_ITEMS.length+'</b></div>'+
+      '<div class="mRow"><button class="mBtn" id="mPickDrinks">▶ Drinks only</button></div></div>';
+    root.innerHTML=html; bindHub();
+    document.getElementById('mPickCombined').addEventListener('click',function(){ focus='combined'; menuFocus='combined'; renderIntroC(); });
+    document.getElementById('mPickDrinks').addEventListener('click',function(){ focus='drinks'; menuFocus='drinks'; renderIntroC(); });
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Drinks only: entry pop-up -----
+  function renderIntroDrinksC(){
+    var servedN=drinkServed().length, refN=store.drinkRefire.length;
+    function stepD(icon,title,text){
+      return '<div class="mStep"><div class="mStepBody"><div class="mStepTitle">'+icon+' '+title+'</div><div class="mStepText">'+text+'</div></div></div>';
+    }
+    var html=topBar('🍸 Drinks only')+
+      '<div class="mCard"><div class="mCardTitle" style="font-size:20px">Drinks only, one focused session</div>'+
+      '<div class="mIntroChips"><span>'+DRINK_ITEMS.length+' drinks</span><span>Martinis · Cocktails · Social Hour · Wine · Beer</span><span>Drinks deck</span></div>'+
+      '<div class="mRow"><button class="mBtn" id="mDrIntroStartTop">▶ Start drinks, skip the tour</button><button class="mBtn ghost small" id="mDrIntroTracks">← Track menu</button></div>'+
+      '<div class="mSteps">'+
+      stepD('🔔','Bell rings, one drink','Your tray is waiting on the <b>pass</b>: <b>one drink</b>, headed to a <b>dining table</b>. Drinks come from the bar, so they never go to the barstools. The drink is named in the <b>panel on the top left</b>.')+
+      stepD('🍸','Pick up &amp; deliver','Go in through the <b>IN door</b>, grab the tray at the expo, and <b>walk it right into the table</b>.')+
+      stepD('📖','Read the card','When you deliver, the <b>drink card</b> pops open with its picture, the guide description, its garnish, and a <b>picture of the tablet screen with its button lit up in gold</b> — every screen it lives on, if it lives on more than one. <b>That is what the quiz asks about.</b>')+
+      stepD('❓','Quiz pops up, drinks only','After a few runs you will get quizzed, <b>only on drinks you have served</b> — descriptions, ingredient lists, garnishes, and <b>which POS tab each drink is rung on</b>. You can tap <b>Quiz me</b> anytime if you want one sooner.')+
+      stepD('🔥','Miss one? It refires','That drink <b>comes back out</b> on another tray later. You will deliver it again and re-read the card first, before it can be quizzed again.')+
+      stepD('⭐','Get it Solid','Get it right in <b>2 different rounds</b> and it turns <b>Solid</b>. Drinks Solid here counts toward your combined session too.')+
+      stepD('🚪','Leaving','Stand in the small <b>coral EXIT ring</b> by the OUT door for <b>2 seconds</b>. Tapping <b>Exit</b> or hitting <b>Esc</b> works too.')+
+      '</div>'+
+      (servedN?'<p class="mMeta">Picking up where you left off: <b>'+servedN+' of '+DRINK_ITEMS.length+'</b> drinks served'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+'. Progress saves on this device and is shared with the combined session.</p>':'<p class="mMeta">Progress saves on this device and is shared with the combined session.</p>')+
+      '<div class="mRow"><button class="mBtn" id="mDrIntroStart">▶ Start drinks</button></div></div>';
+    root.innerHTML=html; bindHub();
+    menuIntroCanvases=[];
+    function goD(){ startMenuWorld('all'); }
+    document.getElementById('mDrIntroStart').addEventListener('click',goD);
+    document.getElementById('mDrIntroStartTop').addEventListener('click',goD);
+    document.getElementById('mDrIntroTracks').addEventListener('click',renderChooserC);
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Drinks only: session home -----
+  function renderHomeDrinksC(){
+    var list=DRINK_ITEMS, sc=drinkSolidCount();
+    var servedN=drinkServed().length, refN=store.drinkRefire.length;
+    var html=topBar('🍸 Drinks only, session home')+
+      '<p><b>Drinks only.</b> You run one drink at a time to the dining tables, read the cards — tablet screens included — then get quizzed on the drinks you have served. Miss one and it <b>refires</b> and comes back out. Food progress is untouched, and your drink progress counts in the combined session too.</p>';
+    html+='<div class="mCard"><div class="mCardTop"><div class="mCardTitle">The drinks deck, all '+list.length+' drinks</div></div>'+
+      '<div class="mProg"><i style="width:'+Math.round(100*sc/list.length)+'%"></i></div>'+
+      '<div class="mMeta">Served: <b>'+servedN+' / '+list.length+'</b>'+(refN?' · 🔥 <b>'+refN+' refire'+(refN===1?'':'s')+' waiting</b>':'')+' · Solid: <b>'+sc+' / '+list.length+'</b></div>'+
+      '<div class="mRow"><button class="mBtn" data-d2act="shift">▶ Start session, back on the floor</button>'+
+      '<button class="mBtn ghost" data-d2act="sprint">⚡ Sprint served drinks</button></div>'+
+      '<div class="mRow"><button class="mBtn ghost small" data-d2act="study">Study cards &amp; POS screens</button><button class="mBtn ghost small" data-d2act="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-d2act="tracks">← Track menu</button></div></div>'+
+      '<div class="mCard"><div class="mCardTitle">Drinks mock, all '+list.length+' drinks</div><p>Text only, drinks only, and you will not see any feedback until the very end, just like the real written final.</p><div class="mRow"><button class="mBtn ghost" data-d2act="mock">Start drinks mock</button></div></div>'+
+      '<div class="mCard"><div class="mCardTitle">Reset</div><p>Drinks progress only. Your food deck is not touched.</p>'+
+      '<div class="mRow"><button class="mBtn ghost small" id="mDrReset">Reset drinks progress</button></div><div id="mDrResetMsg"></div></div>'+
+      '<p class="mRule">Guide drinks corrected to the <b>study guide</b>: guide descriptions and garnishes, quizzed as written. Drink pictures are <b>generated illustrations</b> tagged Illustration and are never used for photo ID questions. Wine, beer and remaining beverages stay provisional on the public Pennsylvania menu, name practice only.</p>';
+    root.innerHTML=html; bindHub();
+    root.querySelectorAll('[data-d2act]').forEach(function(btn){ btn.addEventListener('click',function(){
+      var act=btn.getAttribute('data-d2act');
+      if(act==='shift') startMenuWorld('all'); else if(act==='sprint') startServedSprintC(); else if(act==='study') renderDrinksStudyC(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='tracks') renderChooserC(); else if(act==='mock') startMockC(DRINK_ITEMS.map(dEntry),'Drinks mock, all '+list.length+' drinks',null);
+    });});
+    var rs=document.getElementById('mDrReset');
+    rs.addEventListener('click',function(){
+      if(rs.getAttribute('data-arm')){ store.drinkProg={}; store.drinkRefire=[]; store.drinkDeck=null; save(); renderHomeDrinksC(); }
+      else { rs.setAttribute('data-arm','1'); rs.textContent='Tap again to confirm reset'; document.getElementById('mDrResetMsg').innerHTML='<p>This clears every drinks Solid, served drink and refire on this device, in both tracks. Food progress stays.</p>'; }
+    });
+    root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
+  }
+  // ----- Drinks only: study cards with POS screens -----
+  // Reference read, same rule as the combined sections page: reading a
+  // card does not put the drink in the quiz pool, delivering it does.
+  // Every card carries the Build 300.16 tablet locator, so this page
+  // doubles as the where-is-it-on-the-tablet reference for drinks.
+  function renderDrinksStudyC(){
+    var html=topBar('🍸 Drinks, study cards &amp; POS screens')+'<p>Reference only: reading these cards does <b>not</b> put a drink in your quiz pool. <b>Delivering</b> it on the floor does. Under each drink is a <b>picture of every tablet screen its button lives on, with the button lit up in gold</b>. Sprints here only quiz <b>drinks you have served</b>.</p>'+
+      '<div class="mRow"><button class="mBtn" id="mDrStudyShift">▶ Start session</button><button class="mBtn ghost" id="mDrStudySprint">⚡ Sprint served drinks (up to 12)</button><button class="mBtn ghost" id="mDrStudyHome">← Drinks home</button></div>';
+    function drinkStudyCard(title,items){
+      var sc=items.filter(function(it){return PD(it.id).solid;}).length;
+      var sv=items.filter(function(it){return PD(it.id).served;}).length;
+      var h='<div class="mCard"><div class="mCardTop"><div class="mCardTitle" style="font-size:16.5px">'+esc(title)+'</div><div class="mMeta">'+sv+' / '+items.length+' served · '+sc+' / '+items.length+' Solid</div></div>'+
+        '<div class="mProg"><i style="width:'+(items.length?Math.round(100*sc/items.length):0)+'%"></i></div>';
+      items.forEach(function(it){
+        h+='<div style="border-top:1px dashed var(--line);padding:8px 0 2px"><b>'+esc(it.name)+'</b>'+(PD(it.id).solid?' ⭐':'')+(PD(it.id).served?' <span class="mMeta">served ✓</span>':'')+(isGuideDrink(it)?drinkPhotoHTMLC(it):'')+'<div class="mMeta" style="font-size:13.5px;color:var(--ink)">'+esc(it.desc+(it.garnish?' Garnish: '+it.garnish:''))+'</div>'+detailTagsC(it)+posTabLineC(it)+'</div>';
+      });
+      return h+'</div>';
+    }
+    html+=drinkStudyCard('🍸 Signature Martinis',DRINK_ITEMS.filter(function(it){return it.section==='Martinis';}));
+    html+=drinkStudyCard('🥃 Hand-Crafted Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Hand-Crafted Cocktails';}));
+    html+=drinkStudyCard('🍹 Other Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Other Cocktails';}));
+    html+=drinkStudyCard('🕔 Social Hour Cocktails',DRINK_ITEMS.filter(function(it){return it.section==='Social Hour Cocktails';}));
+    DRINK_WINE_GROUPS.forEach(function(g){ html+=drinkStudyCard('🍷 Wine: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Wine'&&it.sub===g;})); });
+    DRINK_BEER_GROUPS.forEach(function(g){ html+=drinkStudyCard('🍺 Beer & Beverages: '+g,DRINK_ITEMS.filter(function(it){return it.section==='Beer & Beverages'&&it.sub===g;})); });
+    html+='<p class="mRule">Guide drinks corrected to the <b>study guide</b>: guide descriptions and garnishes, quizzed as written. Drink pictures are <b>generated illustrations</b> tagged Illustration and are never used for photo ID questions. Wine, beer and remaining beverages stay provisional on the public Pennsylvania menu, name practice only.</p>';
+    root.innerHTML=html; bindHub();
+    document.getElementById('mDrStudyHome').addEventListener('click',renderHomeDrinksC);
+    document.getElementById('mDrStudyShift').addEventListener('click',function(){ startMenuWorld('all'); });
+    document.getElementById('mDrStudySprint').addEventListener('click',function(){ startServedSprintC(); });
+    document.getElementById('menuOverlay').scrollTop=0;
+  }
   // ----- Entry pop-up and session home -----
   function renderIntroC(){
+    if(isDrinksFocus()){ renderIntroDrinksC(); return; }
     var totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
     var servedN=servedEntries().length, refN=store.foodRefire.length+store.drinkRefire.length;
     function stepC(icon,title,text){
@@ -6020,6 +6284,7 @@ var CombinedModule=(function(){
     root.scrollTop=0; document.getElementById('menuOverlay').scrollTop=0;
   }
   function renderHomeC(){
+    if(isDrinksFocus()){ renderHomeDrinksC(); return; }
     var totalN=MENU_ITEMS.length+DRINK_ITEMS.length;
     var scF=foodSolidCount(), scD=drinkSolidCount(), sc=scF+scD;
     var elig=MENU_ITEMS.filter(algEligibleF), unlocked=MENU_ITEMS.filter(algUnlockedF).length;
@@ -6034,14 +6299,14 @@ var CombinedModule=(function(){
       '<button class="mBtn ghost" data-cact="sprint">⚡ Sprint served items</button>'+
       '<button class="mBtn ghost" data-cact="alg">Allergen rounds'+(unlocked?' ('+unlocked+' ready)':'')+'</button>'+
       '<button class="mBtn ghost" data-cact="morning">☀️ Test morning</button></div>'+
-      '<div class="mRow"><button class="mBtn ghost small" data-cact="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-cact="seasonal">🍂 Seasonal only</button></div></div>';
+      '<div class="mRow"><button class="mBtn ghost small" data-cact="browse">Sections &amp; progress</button><button class="mBtn ghost small" data-cact="seasonal">🍂 Seasonal only</button><button class="mBtn ghost small" data-cact="drinks">🍸 Drinks only</button><button class="mBtn ghost small" data-cact="tracks">Track menu</button></div></div>';
     html+='<div class="mCard"><div class="mCardTitle">Cumulative mock, all '+totalN+' items</div><p>Text only, food and drinks together, and you will not see any feedback until the very end, just like the real written final.</p><div class="mRow"><button class="mBtn ghost" data-cact="cum">Start cumulative mock</button></div></div>'+
       '<div class="mCard"><div class="mCardTitle">Where you stand</div><p>Allergen Watchlist: <b>'+wc+' dish'+(wc===1?'':'es')+'</b> waiting for a clean re-check. Refires waiting: <b>'+refN+'</b>. Progress is saved on this device, so you can close this and pick up where you left off.</p>'+
       '<div class="mRow"><button class="mBtn ghost small" id="mCReset">Reset combined progress</button></div><div id="mCResetMsg"></div></div>';
     root.innerHTML=html; bindHub();
     root.querySelectorAll('[data-cact]').forEach(function(btn){ btn.addEventListener('click',function(){
       var act=btn.getAttribute('data-cact');
-      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBrowseC(); else if(act==='alg') renderAlgHomeC(); else if(act==='morning') startMorningC(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='sprint') startServedSprintC(); else if(act==='cum') startMockC(MENU_ITEMS.map(fEntry).concat(DRINK_ITEMS.map(dEntry)),'Cumulative mock, all '+totalN+' items',null);
+      if(act==='shift') startMenuWorld('all'); else if(act==='browse') renderBrowseC(); else if(act==='alg') renderAlgHomeC(); else if(act==='morning') startMorningC(); else if(act==='seasonal') openSeasonalOnly(); else if(act==='sprint') startServedSprintC(); else if(act==='drinks'){ focus='drinks'; menuFocus='drinks'; renderHomeC(); } else if(act==='tracks') renderChooserC(); else if(act==='cum') startMockC(MENU_ITEMS.map(fEntry).concat(DRINK_ITEMS.map(dEntry)),'Cumulative mock, all '+totalN+' items',null);
     });});
     var rs=document.getElementById('mCReset');
     rs.addEventListener('click',function(){
@@ -6054,13 +6319,24 @@ var CombinedModule=(function(){
     open:function(){
       root=document.getElementById('menuRoot');
       load(); store.visits++; save();
-      renderIntroC();
+      // Build 300.17: entry lands on the track sub-menu, not straight
+      // into a session. Picking a track sets the focus, then shows
+      // that track's own intro.
+      focus='combined'; menuFocus='combined';
+      renderChooserC();
+    },
+    openChooser:function(){
+      root=document.getElementById('menuRoot');
+      load();
+      renderChooserC();
     },
     openHome:function(){
       root=document.getElementById('menuRoot');
       load();
       renderHomeC();
     },
+    getFocus:function(){ return focus; },
+    setFocus:function(f){ focus=(f==='drinks')?'drinks':'combined'; menuFocus=focus; },
     handleNewTicket:handleNewTicket,
     handleMenuDeliver:handleMenuDeliver,
     startWorldQuiz:function(){ load(); return startWorldQuizC(false); },

@@ -3,6 +3,22 @@
 One entry per build. Build channels: Alpha 100s, Beta 200s,
 Prod 300s.
 
+## Build 300.19 — Prod — Nov 24, 2026
+
+- Added the Thai Coastal Grouper and Wood-Grilled Sage Ribeye
+- Added the Mini Martini Flight
+
+## Build 300.18 — Prod — Nov 24, 2026
+
+- Added 6 new specials dishes to Menu Training
+- Added the Winter White Cosmo, Santa Pants, and Winter White Sparkler
+- Added 8 local beers and 6 additional wines for name practice
+
+## Build 300.17 — Prod — Nov 24, 2026
+
+- Added a drinks only training track
+- Drink cards now show the POS screen with the button lit
+
 ## Build 300.16 — Prod — Nov 24, 2026
 
 - Quiz info cards now show the tablet screen with the button lit in place
